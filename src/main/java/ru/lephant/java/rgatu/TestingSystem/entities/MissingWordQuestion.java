@@ -1,0 +1,54 @@
+package ru.lephant.java.rgatu.TestingSystem.entities;
+
+import javax.persistence.*;
+import java.io.Serializable;
+
+@Entity
+@Table(name = "missing_word_questions")
+@PrimaryKeyJoinColumn(name = "id")
+public class MissingWordQuestion extends Question implements Serializable {
+
+    private String possibleAnswers;
+
+
+    public MissingWordQuestion() {
+    }
+
+    public MissingWordQuestion(Test test, String text, int value) {
+        super(test, text, value);
+    }
+
+    public MissingWordQuestion(Test test, String text, int value, Image image) {
+        super(test, text, value, image);
+    }
+
+
+    @Basic
+    @Column(name = "possible_answers", nullable = false, length = 1024)
+    public String getPossibleAnswers() {
+        return possibleAnswers;
+    }
+
+    public void setPossibleAnswers(String possibleAnswers) {
+        this.possibleAnswers = possibleAnswers;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        MissingWordQuestion question = (MissingWordQuestion) o;
+
+        return possibleAnswers != null ? possibleAnswers.equals(question.possibleAnswers) : question.possibleAnswers == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (possibleAnswers != null ? possibleAnswers.hashCode() : 0);
+        return result;
+    }
+}

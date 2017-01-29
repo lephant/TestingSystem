@@ -1,15 +1,26 @@
 package ru.lephant.java.rgatu.TestingSystem.entities;
 
 import javax.persistence.*;
-import java.util.Collection;
+import java.io.Serializable;
 
 @Entity
-public class Groups {
+@Table(name = "groups")
+public class Group implements Serializable {
+
     private long id;
     private String name;
-    private Collection<Students> studentsesById;
+
+
+    public Group() {
+    }
+
+    public Group(String name) {
+        this.name = name;
+    }
+
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     public long getId() {
         return id;
@@ -34,10 +45,10 @@ public class Groups {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Groups groups = (Groups) o;
+        Group group = (Group) o;
 
-        if (id != groups.id) return false;
-        if (name != null ? !name.equals(groups.name) : groups.name != null) return false;
+        if (id != group.id) return false;
+        if (name != null ? !name.equals(group.name) : group.name != null) return false;
 
         return true;
     }
@@ -47,14 +58,5 @@ public class Groups {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
-    }
-
-    @OneToMany(mappedBy = "groupsByGroupId")
-    public Collection<Students> getStudentsesById() {
-        return studentsesById;
-    }
-
-    public void setStudentsesById(Collection<Students> studentsesById) {
-        this.studentsesById = studentsesById;
     }
 }

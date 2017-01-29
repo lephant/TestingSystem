@@ -1,14 +1,24 @@
 package ru.lephant.java.rgatu.TestingSystem.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Collection;
 
 @Entity
-public class Images {
+@Table(name = "images")
+public class Image implements Serializable {
+
     private long id;
     private byte[] content;
-    private Collection<Questions> questionsesById;
+
+
+    public Image() {
+    }
+
+    public Image(byte[] content) {
+        this.content = content;
+    }
+
 
     @Id
     @Column(name = "id", nullable = false)
@@ -20,7 +30,7 @@ public class Images {
         this.id = id;
     }
 
-    @Basic
+    @Lob
     @Column(name = "content", nullable = false)
     public byte[] getContent() {
         return content;
@@ -35,10 +45,10 @@ public class Images {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Images images = (Images) o;
+        Image image = (Image) o;
 
-        if (id != images.id) return false;
-        if (!Arrays.equals(content, images.content)) return false;
+        if (id != image.id) return false;
+        if (!Arrays.equals(content, image.content)) return false;
 
         return true;
     }
@@ -48,14 +58,5 @@ public class Images {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + Arrays.hashCode(content);
         return result;
-    }
-
-    @OneToMany(mappedBy = "imagesByImageId")
-    public Collection<Questions> getQuestionsesById() {
-        return questionsesById;
-    }
-
-    public void setQuestionsesById(Collection<Questions> questionsesById) {
-        this.questionsesById = questionsesById;
     }
 }
