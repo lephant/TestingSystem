@@ -10,6 +10,7 @@ public class Choice implements Serializable {
     private Question question;
     private String text;
     private boolean correctIt;
+    private boolean marked;
 
 
     public Choice() {
@@ -67,6 +68,14 @@ public class Choice implements Serializable {
         this.correctIt = correctIt;
     }
 
+    @Transient
+    public boolean isMarked() {
+        return marked;
+    }
+
+    public void setMarked(boolean marked) {
+        this.marked = marked;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -9,6 +9,7 @@ import java.io.Serializable;
 public class MissingWordQuestion extends Question implements Serializable {
 
     private String possibleAnswers;
+    private String answer;
 
 
     public MissingWordQuestion() {
@@ -33,6 +34,14 @@ public class MissingWordQuestion extends Question implements Serializable {
         this.possibleAnswers = possibleAnswers;
     }
 
+    @Transient
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
 
     @Override
     public boolean equals(Object o) {
