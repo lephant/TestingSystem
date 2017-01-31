@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.controllers.ConnectionSettingController;
 import ru.lephant.java.rgatu.TestingSystem.controllers.TestSelectionController;
@@ -18,6 +19,7 @@ public class Main extends Application {
     @Override
     public void start(Stage mainStage) throws Exception {
         mainStage.setTitle("Система тестирования \"Пирожок\"");
+        mainStage.getIcons().add(new Image("/test.png"));
 
         mainStage.setOnCloseRequest(event -> {
             HibernateUtil.closeSessionFactory();
