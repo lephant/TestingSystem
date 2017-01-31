@@ -5,9 +5,7 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Properties;
 
 public class HibernateUtil {
@@ -16,10 +14,44 @@ public class HibernateUtil {
     private static final String HIBERNATE_CONNECTION_USERNAME = "hibernate.connection.username";
     private static final String HIBERNATE_CONNECTION_PASSWORD = "hibernate.connection.password";
 
-    public static final String PROPERTIES_FILE_PATH = "src/main/resources/hibernate.properties";
+    private static final String PROPERTIES_FILE_PATH = "src/main/resources/hibernate.properties";
 
-    private static final SessionFactory sessionFactory = buildSessionFactory();
+    private static SessionFactory sessionFactory;
 
+    private HibernateUtil() {
+    }
+
+    public static SessionFactory getSessionFactory() {
+        if (sessionFactory == null || sessionFactory.isClosed()) {
+            sessionFactory = buildSessionFactory();
+        }
+        return sessionFactory;
+    }
+
+    private static SessionFactory getSessionFactory(Properties properties) {
+        if (sessionFactory == null || sessionFactory.isClosed()) {
+            sessionFactory = buildSessionFactory(properties);
+        }
+        return sessionFactory;
+    }
+
+    public static boolean checkConnection() {
+        try {
+            sessionFactory = getSessionFactory();
+            return true;
+        } catch (Throwable ex) {
+            return false;
+        }
+    }
+
+    public static boolean checkConnection(Properties properties) {
+        try {
+            sessionFactory = getSessionFactory(properties);
+            return true;
+        } catch (Throwable ex) {
+            return false;
+        }
+    }
 
     private static SessionFactory buildSessionFactory() {
         try {
@@ -37,6 +69,24 @@ public class HibernateUtil {
         }
     }
 
+    private static SessionFactory buildSessionFactory(Properties prop) {
+        try {
+            Configuration configuration = new Configuration().configure("hibernate.cfg.xml");
+            Properties properties = configuration.getProperties();
+
+            properties.putAll(prop);
+
+            StandardServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                    .applySettings(configuration.getProperties()).build();
+            SessionFactory sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+            saveNewProperties(prop);
+            return sessionFactory;
+        } catch (Throwable ex) {
+            System.err.println("Initial SessionFactory creation failed." + ex);
+            throw new ExceptionInInitializerError(ex);
+        }
+    }
+
     private static void setChangeableProperties(Properties properties) {
         Properties prop = new Properties();
         loadProperties(prop);
@@ -46,16 +96,10 @@ public class HibernateUtil {
         properties.setProperty(HIBERNATE_CONNECTION_PASSWORD, prop.getProperty(HIBERNATE_CONNECTION_PASSWORD));
     }
 
-    public static SessionFactory getSessionFactory() {
-        return sessionFactory;
-    }
-
     private static void loadProperties(Properties prop) {
         InputStream input = null;
-
         try {
             input = new FileInputStream(PROPERTIES_FILE_PATH);
-
             prop.load(input);
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -70,4 +114,27 @@ public class HibernateUtil {
         }
     }
 
+    private static void saveNewProperties(Properties prop) {
+        OutputStream output = null;
+        try {
+            output = new FileOutputStream(PROPERTIES_FILE_PATH);
+            prop.store(output, null);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (output != null) {
+                try {
+                    output.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static void closeSessionFactory() {
+        if (sessionFactory != null && !sessionFactory.isClosed()) {
+            sessionFactory.close();
+        }
+    }
 }
