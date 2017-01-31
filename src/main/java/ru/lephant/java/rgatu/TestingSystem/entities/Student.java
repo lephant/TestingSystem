@@ -76,4 +76,9 @@ public class Student implements Serializable {
         result = 31 * result + group.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return fio + " (" + group + ")";
+    }
 }

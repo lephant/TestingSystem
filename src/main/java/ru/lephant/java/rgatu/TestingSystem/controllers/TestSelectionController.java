@@ -99,7 +99,7 @@ public class TestSelectionController {
 
             stage.setScene(new Scene(root));
             stage.setTitle("Выбор студента");
-            stage.setResizable(false);
+            stage.setResizable(true);
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(mainStage.getScene().getWindow());
             stage.show();
