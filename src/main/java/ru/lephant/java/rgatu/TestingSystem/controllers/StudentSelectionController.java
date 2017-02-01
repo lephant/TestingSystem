@@ -5,6 +5,9 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -16,6 +19,7 @@ import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,22 +67,43 @@ public class StudentSelectionController {
 
 
     public void testStartButtonClicked() {
-        openTestExecutionScene();
+        studentSelected();
     }
 
     public void onKeyPressed(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
-            openTestExecutionScene();
+            studentSelected();
         }
     }
 
     public void onMouseClicked(MouseEvent event) {
         if (event.getClickCount() == 2) {
-            openTestExecutionScene();
+            studentSelected();
         }
     }
 
-    private void openTestExecutionScene() {
+    public void registrationButtonClicked() {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/fxml/student_registration.fxml"));
+            Parent root = loader.load();
+
+            StudentRegistrationController studentRegistrationController = loader.getController();
+            studentRegistrationController.setModalStage(modalStage);
+            studentRegistrationController.setMainStage(mainStage);
+            studentRegistrationController.setTest(test);
+
+            modalStage.setTitle("Регистрация студента");
+            modalStage.setResizable(false);
+
+            modalStage.setScene(new Scene(root));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void studentSelected() {
         Student student = studentsList.getSelectionModel().getSelectedItem();
         if (student != null) {
             System.out.println(student);
@@ -100,7 +125,6 @@ public class StudentSelectionController {
             }
         }
     }
-
 
     private void addFioFieldListener() {
         fioField.textProperty().addListener(new ChangeListener<String>() {
@@ -127,5 +151,4 @@ public class StudentSelectionController {
         }
         return res;
     }
-
 }

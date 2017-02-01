@@ -90,7 +90,7 @@ public class TestSelectionController {
             Stage stage = new Stage();
 
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/fxml/user_selection.fxml"));
+            loader.setLocation(getClass().getResource("/fxml/student_selection.fxml"));
             Parent root = loader.load();
 
             StudentSelectionController studentSelectionController = loader.getController();
