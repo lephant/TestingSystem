@@ -41,27 +41,34 @@ public class ConnectionSettingController {
         properties.put("hibernate.connection.password", password);
 
         if (HibernateUtil.checkConnection(properties)) {
-            doTransitionToTestSelectionScene();
+            doTransitionToTestSelectionStage();
         } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Ошибка");
-            alert.setHeaderText("Не удалось соединиться с базой данных!");
-            alert.setContentText("Проверьте введенные данные и попробуйте снова.");
-            alert.show();
+            showConnectionErrorAlert();
         }
     }
 
-    private void doTransitionToTestSelectionScene() {
+    private void doTransitionToTestSelectionStage() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(getClass().getResource("/fxml/test_selection.fxml"));
             Parent fxmlMain = fxmlLoader.load();
             TestSelectionController testSelectionController = fxmlLoader.getController();
             testSelectionController.setMainStage(mainStage);
+            mainStage.setResizable(true);
+            mainStage.setMinWidth(420D);
+            mainStage.setMinHeight(400D);
             mainStage.setScene(new Scene(fxmlMain));
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void showConnectionErrorAlert() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Ошибка");
+        alert.setHeaderText("Не удалось соединиться с базой данных!");
+        alert.setContentText("Проверьте введенные данные и попробуйте снова.");
+        alert.show();
     }
 
     public void setMainStage(Stage mainStage) {

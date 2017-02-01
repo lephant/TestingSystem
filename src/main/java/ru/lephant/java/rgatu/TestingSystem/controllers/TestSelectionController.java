@@ -71,12 +71,11 @@ public class TestSelectionController implements Initializable {
     private void testSelected() {
         Test test = testTableView.getSelectionModel().getSelectedItem();
         if (test != null) {
-            openUserSelectionModalStage(test);
+            openStudentSelectionModalStage(test);
         }
     }
 
-
-    private void openUserSelectionModalStage(Test test) {
+    private void openStudentSelectionModalStage(Test test) {
         try {
             Stage stage = new Stage();
 
@@ -92,7 +91,13 @@ public class TestSelectionController implements Initializable {
             stage.setScene(new Scene(root));
             stage.setTitle("Выбор студента");
             stage.getIcons().add(new Image("/test.png"));
+
             stage.setResizable(true);
+            stage.setWidth(438D);
+            stage.setHeight(314D);
+            stage.setMinWidth(438D);
+            stage.setMinHeight(314D);
+
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(mainStage.getScene().getWindow());
             stage.show();

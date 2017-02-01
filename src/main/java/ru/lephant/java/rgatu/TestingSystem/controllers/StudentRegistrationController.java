@@ -131,6 +131,10 @@ public class StudentRegistrationController implements Initializable {
 
             modalStage.setTitle("Выбор студента");
             modalStage.setResizable(true);
+            modalStage.setWidth(438D);
+            modalStage.setHeight(314D);
+            modalStage.setMinWidth(438D);
+            modalStage.setMinHeight(314D);
 
             modalStage.setScene(new Scene(root));
         } catch (IOException e) {

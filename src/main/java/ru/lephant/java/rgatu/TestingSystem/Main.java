@@ -40,6 +40,7 @@ public class Main extends Application {
         ConnectionSettingController connectionSettingController = fxmlLoader.getController();
         connectionSettingController.setMainStage(mainStage);
         mainStage.setScene(new Scene(root));
+        mainStage.setResizable(false);
         mainStage.show();
     }
 
@@ -50,6 +51,11 @@ public class Main extends Application {
         TestSelectionController testSelectionController = fxmlLoader.getController();
         testSelectionController.setMainStage(mainStage);
         mainStage.setScene(new Scene(root));
+        mainStage.setResizable(true);
+        mainStage.setHeight(400D);
+        mainStage.setWidth(420D);
+        mainStage.setMinWidth(420D);
+        mainStage.setMinHeight(400D);
         mainStage.show();
     }
 
