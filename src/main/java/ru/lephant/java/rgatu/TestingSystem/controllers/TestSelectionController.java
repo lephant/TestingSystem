@@ -2,12 +2,11 @@ package ru.lephant.java.rgatu.TestingSystem.controllers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -22,9 +21,11 @@ import ru.lephant.java.rgatu.TestingSystem.entities.Test;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
+import java.util.ResourceBundle;
 
-public class TestSelectionController {
+public class TestSelectionController implements Initializable {
 
     private ObservableList<Test> tests = FXCollections.observableArrayList();
 
@@ -40,14 +41,11 @@ public class TestSelectionController {
     @FXML
     private TableColumn<Test, String> subjectTableColumn;
 
-    @FXML
-    private Button selectButton;
-
     private Stage mainStage;
 
 
-    @FXML
-    private void initialize() {
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
         initData();
 
         nameTableColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -57,14 +55,6 @@ public class TestSelectionController {
         testTableView.setItems(tests);
     }
 
-    public void setMainStage(Stage mainStage) {
-        this.mainStage = mainStage;
-    }
-
-
-    public void selectTest(ActionEvent event) {
-        testSelected();
-    }
 
     public void onKeyPressed(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
@@ -81,11 +71,12 @@ public class TestSelectionController {
     private void testSelected() {
         Test test = testTableView.getSelectionModel().getSelectedItem();
         if (test != null) {
-            openUserSelectionStage(test);
+            openUserSelectionModalStage(test);
         }
     }
 
-    private void openUserSelectionStage(Test test) {
+
+    private void openUserSelectionModalStage(Test test) {
         try {
             Stage stage = new Stage();
 
@@ -110,7 +101,6 @@ public class TestSelectionController {
         }
     }
 
-
     @SuppressWarnings("unchecked")
     private void initData() {
         Session session = null;
@@ -125,6 +115,15 @@ public class TestSelectionController {
                 session.close();
             }
         }
+    }
+
+
+    public void setMainStage(Stage mainStage) {
+        this.mainStage = mainStage;
+    }
+
+    public void selectTest() {
+        testSelected();
     }
 
 }

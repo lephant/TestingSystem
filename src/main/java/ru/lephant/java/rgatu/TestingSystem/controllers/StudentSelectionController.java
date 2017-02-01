@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ListView;
@@ -20,10 +21,12 @@ import ru.lephant.java.rgatu.TestingSystem.entities.Test;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
-public class StudentSelectionController {
+public class StudentSelectionController implements Initializable {
 
     @FXML
     private TextField fioField;
@@ -40,25 +43,8 @@ public class StudentSelectionController {
     private Test test;
 
 
-    public void setMainStage(Stage mainStage) {
-        this.mainStage = mainStage;
-    }
-
-    public void setModalStage(Stage modalStage) {
-        this.modalStage = modalStage;
-    }
-
-    public Test getTest() {
-        return test;
-    }
-
-    public void setTest(Test test) {
-        this.test = test;
-    }
-
-
-    @FXML
-    private void initialize() {
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
         getAllStudents();
         fillListView(allStudents);
         addFioFieldListener();
@@ -83,6 +69,11 @@ public class StudentSelectionController {
     }
 
     public void registrationButtonClicked() {
+        doTransitionToStudentRegistrationScene();
+    }
+
+
+    private void doTransitionToStudentRegistrationScene() {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/fxml/student_registration.fxml"));
@@ -95,26 +86,23 @@ public class StudentSelectionController {
 
             modalStage.setTitle("Регистрация студента");
             modalStage.setResizable(false);
-
             modalStage.setScene(new Scene(root));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-
     private void studentSelected() {
         Student student = studentsList.getSelectionModel().getSelectedItem();
         if (student != null) {
-            System.out.println(student);
+            System.out.println(student);//TODO: реализовать переход !!!с передачей студента!!!
         }
     }
-
 
     @SuppressWarnings("unchecked")
     private void getAllStudents() {
         Session session = null;
-        try{
+        try {
             session = HibernateUtil.getSessionFactory().openSession();
             allStudents = session
                     .createCriteria(Student.class)
@@ -137,18 +125,30 @@ public class StudentSelectionController {
     }
 
     private void fillListView(List<Student> res) {
-        students.clear();
-        students.addAll(res);
+        students.setAll(res);
     }
 
     private List<Student> search(String text) {
         List<Student> res = new ArrayList<>();
 
-        for(Student student : allStudents) {
-            if(student.getFio().toLowerCase().contains(text.toLowerCase())) {
+        for (Student student : allStudents) {
+            if (student.getFio().toLowerCase().contains(text.toLowerCase())) {
                 res.add(student);
             }
         }
         return res;
+    }
+
+
+    public void setMainStage(Stage mainStage) {
+        this.mainStage = mainStage;
+    }
+
+    public void setModalStage(Stage modalStage) {
+        this.modalStage = modalStage;
+    }
+
+    public void setTest(Test test) {
+        this.test = test;
     }
 }

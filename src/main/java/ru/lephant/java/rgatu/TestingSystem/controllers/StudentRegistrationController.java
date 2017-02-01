@@ -4,8 +4,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -16,9 +18,11 @@ import ru.lephant.java.rgatu.TestingSystem.entities.Test;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
+import java.util.ResourceBundle;
 
-public class StudentRegistrationController {
+public class StudentRegistrationController implements Initializable {
 
     @FXML
     private TextField fioField;
@@ -33,8 +37,8 @@ public class StudentRegistrationController {
     private Test test;
 
 
-    @FXML
-    private void initialize() {
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
         fillGroups();
         groupComboBox.setItems(groups);
     }
@@ -46,29 +50,12 @@ public class StudentRegistrationController {
             registrationNewStudent(student);
             doTransitionToTestExecution();
         } else {
-            //TODO: выбросить Alert!
+            showAlertAboutWrongData();
         }
     }
 
     public void onCancelClick() {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/fxml/student_selection.fxml"));
-            Parent root = loader.load();
-
-            StudentSelectionController studentSelectionController = loader.getController();
-            studentSelectionController.setModalStage(modalStage);
-            studentSelectionController.setMainStage(mainStage);
-            studentSelectionController.setTest(test);
-
-            modalStage.setTitle("Выбор студента");
-            modalStage.setResizable(true);
-
-            modalStage.setScene(new Scene(root));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        doTransitionToStudentSelectionScene();
     }
 
 
@@ -88,12 +75,11 @@ public class StudentRegistrationController {
         }
     }
 
-
     private Student createStudent() {
         Student student = new Student(fioField.getText());
         Group group = groupComboBox.getSelectionModel().getSelectedItem();
         student.setGroup(group);
-        return  student;
+        return student;
     }
 
     private boolean validateNewStudent(Student student) {
@@ -122,11 +108,40 @@ public class StudentRegistrationController {
         //TODO: реализовать переход !!!с передачей студента!!!
     }
 
+    private void showAlertAboutWrongData() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Ошибка");
+        alert.setHeaderText("Невалидные данные!");
+        alert.setContentText("ФИО студента не может быть пустым и не должно превышать 255 символов!\n" +
+                "Группа обязательно должна быть задана!\n" +
+                "Проверьте введенные данные и попробуйте снова.");
+        alert.show();
+    }
+
+    private void doTransitionToStudentSelectionScene() {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/fxml/student_selection.fxml"));
+            Parent root = loader.load();
+
+            StudentSelectionController studentSelectionController = loader.getController();
+            studentSelectionController.setModalStage(modalStage);
+            studentSelectionController.setMainStage(mainStage);
+            studentSelectionController.setTest(test);
+
+            modalStage.setTitle("Выбор студента");
+            modalStage.setResizable(true);
+
+            modalStage.setScene(new Scene(root));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void setMainStage(Stage mainStage) {
         this.mainStage = mainStage;
     }
-
 
     public void setModalStage(Stage modalStage) {
         this.modalStage = modalStage;

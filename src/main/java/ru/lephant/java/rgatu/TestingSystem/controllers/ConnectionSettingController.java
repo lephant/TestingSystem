@@ -1,6 +1,5 @@
 package ru.lephant.java.rgatu.TestingSystem.controllers;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -31,11 +30,7 @@ public class ConnectionSettingController {
     private Stage mainStage;
 
 
-    public void setMainStage(Stage mainStage) {
-        this.mainStage = mainStage;
-    }
-
-    public void doConnect(ActionEvent event) {
+    public void doConnect() {
         String url = urlField.getText();
         String username = userField.getText();
         String password = passwordField.getText();
@@ -46,7 +41,7 @@ public class ConnectionSettingController {
         properties.put("hibernate.connection.password", password);
 
         if (HibernateUtil.checkConnection(properties)) {
-            doTransitionToTestSelectionStage();
+            doTransitionToTestSelectionScene();
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Ошибка");
@@ -56,7 +51,7 @@ public class ConnectionSettingController {
         }
     }
 
-    private void doTransitionToTestSelectionStage() {
+    private void doTransitionToTestSelectionScene() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(getClass().getResource("/fxml/test_selection.fxml"));
@@ -67,5 +62,9 @@ public class ConnectionSettingController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setMainStage(Stage mainStage) {
+        this.mainStage = mainStage;
     }
 }
