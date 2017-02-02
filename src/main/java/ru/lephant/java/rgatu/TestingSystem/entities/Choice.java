@@ -27,6 +27,11 @@ public class Choice implements Serializable {
     }
 
 
+    public boolean answerIsCorrect() {
+        return marked == correctIt;
+    }
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)

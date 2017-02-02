@@ -24,6 +24,18 @@ public class MissingWordQuestion extends Question implements Serializable {
     }
 
 
+    @Override
+    public boolean checkAnswer() {
+        String[] possibleAnswersArray = possibleAnswers.split(",");
+        for (String s : possibleAnswersArray) {
+            if (s.trim().equals(answer)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     @Basic
     @Column(name = "possible_answers", nullable = false, length = 1024)
     public String getPossibleAnswers() {

@@ -27,6 +27,21 @@ public class Test implements Serializable {
     }
 
 
+    public double calculateResult() {
+        int receivedScores = 0;
+        int totalScores = 0;
+
+        for (Question question : questions) {
+            totalScores += question.getValue();
+            if (question.checkAnswer()) {
+                receivedScores += question.getValue();
+            }
+        }
+
+        return (double) receivedScores / (double) totalScores;
+    }
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
@@ -79,6 +94,7 @@ public class Test implements Serializable {
     }
 
     @OneToMany(mappedBy = "test", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    @OrderBy("id")
     public List<Question> getQuestions() {
         return questions;
     }

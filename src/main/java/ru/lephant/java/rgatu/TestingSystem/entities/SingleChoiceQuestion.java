@@ -24,6 +24,17 @@ public class SingleChoiceQuestion extends Question implements Serializable {
     }
 
 
+    @Override
+    public boolean checkAnswer() {
+        for (Choice choice : choices) {
+            if (!choice.answerIsCorrect()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @OrderBy("id")
     @OneToMany(mappedBy = "question", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
     public List<Choice> getChoices() {
         return choices;

@@ -15,7 +15,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
@@ -99,7 +101,47 @@ public class StudentSelectionController implements Initializable {
     private void studentSelected() {
         Student student = studentsList.getSelectionModel().getSelectedItem();
         if (student != null) {
-            System.out.println(student);//TODO: реализовать переход !!!с передачей студента!!!
+            doTransitionToTestExecution(student);
+        }
+    }
+
+    private void doTransitionToTestExecution(Student student) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(getClass().getResource("/fxml/test_execution.fxml"));
+            Parent root = fxmlLoader.load();
+            TestExecutionController testExecutionController = fxmlLoader.getController();
+            testExecutionController.setMainStage(mainStage);
+            initializeTestQuestions();
+            testExecutionController.setTest(test);
+            testExecutionController.setStudent(student);
+            testExecutionController.initializeQuestionList();
+            testExecutionController.showQuestion(0);
+            mainStage.setScene(new Scene(root));
+            mainStage.setResizable(true);
+            mainStage.setWidth(700D);
+            mainStage.setHeight(500D);
+            mainStage.setMinWidth(700D);
+            mainStage.setMinHeight(500D);
+            modalStage.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initializeTestQuestions() {
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
+            test = (Test) session
+                    .createCriteria(Test.class)
+                    .add(Restrictions.idEq(test.getId()))
+                    .uniqueResult();
+            Hibernate.initialize(test.getQuestions());
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
     }
 

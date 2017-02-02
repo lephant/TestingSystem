@@ -11,7 +11,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import ru.lephant.java.rgatu.TestingSystem.entities.Group;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
@@ -48,7 +50,7 @@ public class StudentRegistrationController implements Initializable {
         Student student = createStudent();
         if (validateNewStudent(student)) {
             registrationNewStudent(student);
-            doTransitionToTestExecution();
+            doTransitionToTestExecution(student);
         } else {
             showAlertAboutWrongData();
         }
@@ -104,8 +106,44 @@ public class StudentRegistrationController implements Initializable {
 
     }
 
-    private void doTransitionToTestExecution() {
-        //TODO: реализовать переход !!!с передачей студента!!!
+    private void doTransitionToTestExecution(Student student) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(getClass().getResource("/fxml/test_execution.fxml"));
+            Parent root = fxmlLoader.load();
+            TestExecutionController testExecutionController = fxmlLoader.getController();
+            testExecutionController.setMainStage(mainStage);
+            initializeTestQuestions();
+            testExecutionController.setTest(test);
+            testExecutionController.setStudent(student);
+            testExecutionController.initializeQuestionList();
+            testExecutionController.showQuestion(0);
+            mainStage.setScene(new Scene(root));
+            mainStage.setResizable(true);
+            mainStage.setWidth(700D);
+            mainStage.setHeight(500D);
+            mainStage.setMinWidth(700D);
+            mainStage.setMinHeight(500D);
+            modalStage.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initializeTestQuestions() {
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
+            test = (Test) session
+                    .createCriteria(Test.class)
+                    .add(Restrictions.idEq(test.getId()))
+                    .uniqueResult();
+            Hibernate.initialize(test.getQuestions());
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
     }
 
     private void showAlertAboutWrongData() {
