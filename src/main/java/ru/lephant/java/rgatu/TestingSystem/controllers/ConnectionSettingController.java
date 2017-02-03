@@ -30,6 +30,7 @@ public class ConnectionSettingController {
     private Stage mainStage;
 
 
+    @FXML
     public void doConnect() {
         String url = urlField.getText();
         String username = userField.getText();

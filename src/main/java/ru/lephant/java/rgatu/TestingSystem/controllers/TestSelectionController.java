@@ -56,16 +56,23 @@ public class TestSelectionController implements Initializable {
     }
 
 
+    @FXML
     public void onKeyPressed(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
             testSelected();
         }
     }
 
+    @FXML
     public void onMouseClicked(MouseEvent event) {
         if (event.getClickCount() == 2) {
             testSelected();
         }
+    }
+
+    @FXML
+    public void selectTest() {
+        testSelected();
     }
 
     private void testSelected() {
@@ -106,6 +113,7 @@ public class TestSelectionController implements Initializable {
         }
     }
 
+
     @SuppressWarnings("unchecked")
     private void initData() {
         Session session = null;
@@ -122,13 +130,8 @@ public class TestSelectionController implements Initializable {
         }
     }
 
-
     public void setMainStage(Stage mainStage) {
         this.mainStage = mainStage;
-    }
-
-    public void selectTest() {
-        testSelected();
     }
 
 }

@@ -31,7 +31,6 @@ public class StudentRegistrationController implements Initializable {
 
     @FXML
     private ComboBox<Group> groupComboBox;
-
     private ObservableList<Group> groups = FXCollections.observableArrayList();
 
     private Stage mainStage;
@@ -46,6 +45,7 @@ public class StudentRegistrationController implements Initializable {
     }
 
 
+    @FXML
     public void onRegistrationClick() {
         Student student = createStudent();
         if (validateNewStudent(student)) {
@@ -56,6 +56,7 @@ public class StudentRegistrationController implements Initializable {
         }
     }
 
+    @FXML
     public void onCancelClick() {
         doTransitionToStudentSelectionScene();
     }

@@ -35,7 +35,6 @@ public class StudentSelectionController implements Initializable {
 
     @FXML
     private ListView<Student> studentsList;
-
     private ObservableList<Student> students = FXCollections.observableArrayList();
 
     private List<Student> allStudents;
@@ -54,22 +53,26 @@ public class StudentSelectionController implements Initializable {
     }
 
 
+    @FXML
     public void testStartButtonClicked() {
         studentSelected();
     }
 
+    @FXML
     public void onKeyPressed(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
             studentSelected();
         }
     }
 
+    @FXML
     public void onMouseClicked(MouseEvent event) {
         if (event.getClickCount() == 2) {
             studentSelected();
         }
     }
 
+    @FXML
     public void registrationButtonClicked() {
         doTransitionToStudentRegistrationScene();
     }
