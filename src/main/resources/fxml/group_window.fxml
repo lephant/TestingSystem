@@ -27,17 +27,17 @@
     <bottom>
         <HBox alignment="CENTER" BorderPane.alignment="CENTER">
             <children>
-                <Button mnemonicParsing="false" text="Удалить">
+                <Button mnemonicParsing="false" onAction="#onDeleteButtonClicked" text="Удалить">
                     <HBox.margin>
                         <Insets right="10.0"/>
                     </HBox.margin>
                 </Button>
-                <Button mnemonicParsing="false" text="Редактировать">
+                <Button mnemonicParsing="false" onAction="#onEditButtonClicked" text="Редактировать">
                     <HBox.margin>
                         <Insets right="10.0"/>
                     </HBox.margin>
                 </Button>
-                <Button mnemonicParsing="false" text="Добавить"/>
+                <Button mnemonicParsing="false" onAction="#onAddButtonClicked" text="Добавить"/>
             </children>
             <BorderPane.margin>
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
