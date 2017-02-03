@@ -57,6 +57,12 @@ public class TestSelectionController implements Initializable {
 
 
     @FXML
+    public void onExitMenuItemClicked() {
+        mainStage.close();
+        HibernateUtil.closeSessionFactory();
+    }
+
+    @FXML
     public void onKeyPressed(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
             testSelected();
@@ -81,6 +87,7 @@ public class TestSelectionController implements Initializable {
             openStudentSelectionModalStage(test);
         }
     }
+
 
     private void openStudentSelectionModalStage(Test test) {
         try {
@@ -113,7 +120,6 @@ public class TestSelectionController implements Initializable {
         }
     }
 
-
     @SuppressWarnings("unchecked")
     private void initData() {
         Session session = null;
@@ -133,5 +139,4 @@ public class TestSelectionController implements Initializable {
     public void setMainStage(Stage mainStage) {
         this.mainStage = mainStage;
     }
-
 }

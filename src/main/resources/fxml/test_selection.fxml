@@ -12,7 +12,6 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.BorderPane?>
 
-
 <BorderPane prefHeight="399.0" prefWidth="418.0" xmlns="http://javafx.com/javafx/8.0.102"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="ru.lephant.java.rgatu.TestingSystem.controllers.TestSelectionController">
@@ -62,7 +61,7 @@
                         <MenuItem mnemonicParsing="false" text="Авторизоваться"/>
                         <MenuItem mnemonicParsing="false" text="Выйти" visible="false"/>
                         <SeparatorMenuItem mnemonicParsing="false"/>
-                        <MenuItem mnemonicParsing="false" text="Закрыть программу"/>
+                        <MenuItem mnemonicParsing="false" onAction="#onExitMenuItemClicked" text="Закрыть программу"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Действия">
