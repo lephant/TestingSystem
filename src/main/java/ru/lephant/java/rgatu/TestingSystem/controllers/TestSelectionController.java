@@ -49,7 +49,7 @@ public class TestSelectionController implements Initializable {
         initData();
 
         nameTableColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        teacherTableColumn.setCellValueFactory(new PropertyValueFactory<>("teacherFio"));
+        teacherTableColumn.setCellValueFactory(new PropertyValueFactory<>("teacher"));
         subjectTableColumn.setCellValueFactory(new PropertyValueFactory<>("subject"));
 
         testTableView.setItems(tests);

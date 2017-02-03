@@ -34,6 +34,8 @@ import java.util.ResourceBundle;
 public class TestExecutionController implements Initializable {
 
     private static final double IMAGE_VIEW_DEFAULT_WIDTH = 450D;
+
+
     @FXML
     private ListView<String> questionList;
     private ObservableList<String> questionListData = FXCollections.observableArrayList();
@@ -125,8 +127,8 @@ public class TestExecutionController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText("Ваши результаты по тесту:\n" +
                 "Название теста: " + testOfStudent.getTest().getName() + "\n" +
-                "Предмет: " + testOfStudent.getTest().getSubject() + "\n" +
-                "Преподаватель: " + testOfStudent.getTest().getTeacherFio() + "\n" +
+                "Предмет: " + testOfStudent.getTest().getSubject().getName() + "\n" +
+                "Преподаватель: " + testOfStudent.getTest().getTeacher().getFio() + "\n" +
                 "Вы: " + testOfStudent.getStudent().getFio() + " (" + testOfStudent.getStudent().getGroup().getName() + ")\n" +
                 "Результат: " + ((double) ((int) (testOfStudent.getResult().doubleValue() * 10000)) / 100.0) + "%" +
                 "\n \n" +
