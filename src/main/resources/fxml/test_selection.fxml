@@ -69,7 +69,8 @@
                         <MenuItem mnemonicParsing="false" text="Показать студентов"/>
                         <MenuItem mnemonicParsing="false" text="Показать  преподавателей"/>
                         <MenuItem mnemonicParsing="false" text="Показать предметы"/>
-                        <MenuItem mnemonicParsing="false" text="Показать группы"/>
+                        <MenuItem mnemonicParsing="false" onAction="#onShowGroupsMenuItemClicked"
+                                  text="Показать группы"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Создать тест"/>
