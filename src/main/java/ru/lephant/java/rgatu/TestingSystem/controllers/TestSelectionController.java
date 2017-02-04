@@ -80,6 +80,7 @@ public class TestSelectionController implements Initializable {
 
     @FXML
     public void onShowSubjectsMenuItemClicked() {
+        showSubjectStage();
     }
 
     @FXML
@@ -109,7 +110,6 @@ public class TestSelectionController implements Initializable {
     public void selectTest() {
         testSelected();
     }
-
 
     private void testSelected() {
         Test test = testTableView.getSelectionModel().getSelectedItem();
@@ -150,6 +150,7 @@ public class TestSelectionController implements Initializable {
         }
     }
 
+
     @SuppressWarnings("unchecked")
     private void initData() {
         Session session = null;
@@ -180,6 +181,36 @@ public class TestSelectionController implements Initializable {
 
             stage.setScene(new Scene(root));
             stage.setTitle("Список групп");
+            stage.getIcons().add(new Image("/test.png"));
+
+            stage.setResizable(true);
+            stage.setWidth(380D);
+            stage.setHeight(360D);
+            stage.setMinWidth(380D);
+            stage.setMinHeight(360D);
+
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(mainStage.getScene().getWindow());
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showSubjectStage() {
+        try {
+            Stage stage = new Stage();
+
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/fxml/subject_window.fxml"));
+            Parent root = loader.load();
+
+            SubjectWindowController subjectWindowController = loader.getController();
+            subjectWindowController.setMainStage(mainStage);
+            subjectWindowController.setModalStage(stage);
+
+            stage.setScene(new Scene(root));
+            stage.setTitle("Список предметов");
             stage.getIcons().add(new Image("/test.png"));
 
             stage.setResizable(true);
