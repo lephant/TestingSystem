@@ -72,6 +72,7 @@ public class TestSelectionController implements Initializable {
 
     @FXML
     public void onShowStudentsMenuItemClicked() {
+        showStudentStage();
     }
 
     @FXML
@@ -150,7 +151,6 @@ public class TestSelectionController implements Initializable {
         }
     }
 
-
     @SuppressWarnings("unchecked")
     private void initData() {
         Session session = null;
@@ -198,6 +198,7 @@ public class TestSelectionController implements Initializable {
         }
     }
 
+
     private void showSubjectStage() {
         try {
             Stage stage = new Stage();
@@ -241,7 +242,37 @@ public class TestSelectionController implements Initializable {
             teacherWindowController.setModalStage(stage);
 
             stage.setScene(new Scene(root));
-            stage.setTitle("Список преподавателей");
+            stage.setTitle("Список студентов");
+            stage.getIcons().add(new Image("/test.png"));
+
+            stage.setResizable(true);
+            stage.setWidth(380D);
+            stage.setHeight(360D);
+            stage.setMinWidth(380D);
+            stage.setMinHeight(360D);
+
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(mainStage.getScene().getWindow());
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showStudentStage() {
+        try {
+            Stage stage = new Stage();
+
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/fxml/student_window.fxml"));
+            Parent root = loader.load();
+
+            StudentWindowController studentWindowController = loader.getController();
+            studentWindowController.setMainStage(mainStage);
+            studentWindowController.setModalStage(stage);
+
+            stage.setScene(new Scene(root));
+            stage.setTitle("Список студентов");
             stage.getIcons().add(new Image("/test.png"));
 
             stage.setResizable(true);
