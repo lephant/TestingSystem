@@ -57,14 +57,38 @@ public class TestSelectionController implements Initializable {
 
 
     @FXML
+    public void onLogInMenuItemClicked() {
+    }
+
+    @FXML
+    public void onLogOffMenuItemClicked() {
+    }
+
+    @FXML
     public void onExitMenuItemClicked() {
         mainStage.close();
         HibernateUtil.closeSessionFactory();
     }
 
     @FXML
+    public void onShowStudentsMenuItemClicked() {
+    }
+
+    @FXML
+    public void onShowTeachersMenuItemClicked() {
+    }
+
+    @FXML
+    public void onShowSubjectsMenuItemClicked() {
+    }
+
+    @FXML
     public void onShowGroupsMenuItemClicked() {
         showGroupStage();
+    }
+
+    @FXML
+    public void onCreateTestMenuItemClicked() {
     }
 
     @FXML
@@ -85,6 +109,7 @@ public class TestSelectionController implements Initializable {
     public void selectTest() {
         testSelected();
     }
+
 
     private void testSelected() {
         Test test = testTableView.getSelectionModel().getSelectedItem();
