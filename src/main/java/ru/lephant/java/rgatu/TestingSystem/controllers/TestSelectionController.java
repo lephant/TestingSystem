@@ -76,6 +76,7 @@ public class TestSelectionController implements Initializable {
 
     @FXML
     public void onShowTeachersMenuItemClicked() {
+        showTeacherStage();
     }
 
     @FXML
@@ -117,7 +118,6 @@ public class TestSelectionController implements Initializable {
             openStudentSelectionModalStage(test);
         }
     }
-
 
     private void openStudentSelectionModalStage(Test test) {
         try {
@@ -167,6 +167,7 @@ public class TestSelectionController implements Initializable {
         }
     }
 
+
     private void showGroupStage() {
         try {
             Stage stage = new Stage();
@@ -211,6 +212,36 @@ public class TestSelectionController implements Initializable {
 
             stage.setScene(new Scene(root));
             stage.setTitle("Список предметов");
+            stage.getIcons().add(new Image("/test.png"));
+
+            stage.setResizable(true);
+            stage.setWidth(380D);
+            stage.setHeight(360D);
+            stage.setMinWidth(380D);
+            stage.setMinHeight(360D);
+
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(mainStage.getScene().getWindow());
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showTeacherStage() {
+        try {
+            Stage stage = new Stage();
+
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/fxml/teacher_window.fxml"));
+            Parent root = loader.load();
+
+            TeacherWindowController teacherWindowController = loader.getController();
+            teacherWindowController.setMainStage(mainStage);
+            teacherWindowController.setModalStage(stage);
+
+            stage.setScene(new Scene(root));
+            stage.setTitle("Список преподавателей");
             stage.getIcons().add(new Image("/test.png"));
 
             stage.setResizable(true);
