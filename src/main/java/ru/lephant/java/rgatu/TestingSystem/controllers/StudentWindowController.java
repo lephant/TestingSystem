@@ -2,7 +2,6 @@ package ru.lephant.java.rgatu.TestingSystem.controllers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -11,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
+import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.hibernate.Session;
@@ -41,9 +41,14 @@ public class StudentWindowController implements Initializable {
 
 
     @FXML
-    public void onShowStatisticsButtonClicked(ActionEvent event) {
-        System.out.println("Show statistics!");
-        //TODO: сделать вывод статистики
+    public void onShowStatisticsButtonClicked() {
+        Student student = studentListView.getSelectionModel().getSelectedItem();
+        if (student != null) {
+            showStudentStatisticsStage(student);
+        } else {
+            showNoSelectedStudentAlert("Не выбран студент!");
+        }
+
     }
 
     @FXML
@@ -79,7 +84,6 @@ public class StudentWindowController implements Initializable {
         alert.show();
     }
 
-
     @FXML
     public void onDeleteButtonClicked() {
         Student student = studentListView.getSelectionModel().getSelectedItem();
@@ -90,7 +94,7 @@ public class StudentWindowController implements Initializable {
             alert.setContentText(null);
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK){
+            if (result.get() == ButtonType.OK) {
                 deleteStudent(student);
                 students.remove(student);
                 alert.close();
@@ -101,6 +105,7 @@ public class StudentWindowController implements Initializable {
             showNoSelectedStudentAlert("Не выбран студент для удаления!");
         }
     }
+
 
     private boolean showStudentChangingDialog(String title, Student student) {
         try {
@@ -167,6 +172,38 @@ public class StudentWindowController implements Initializable {
             if (session != null) {
                 session.close();
             }
+        }
+    }
+
+    private void showStudentStatisticsStage(Student student) {
+        try {
+            Stage stage = new Stage();
+
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/fxml/student_statistics_window.fxml"));
+            Parent root = loader.load();
+
+            StudentStatisticsWindowController studentStatisticsWindowController = loader.getController();
+            studentStatisticsWindowController.setMainStage(mainStage);
+            studentStatisticsWindowController.setModalStage(stage);
+            studentStatisticsWindowController.setStudent(student);
+            studentStatisticsWindowController.fillContent();
+
+            stage.setScene(new Scene(root));
+            stage.setTitle("Статистика студента");
+            stage.getIcons().add(new Image("/test.png"));
+
+            stage.setResizable(true);
+            stage.setWidth(400D);
+            stage.setHeight(400D);
+            stage.setMinWidth(400D);
+            stage.setMinHeight(400D);
+
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(mainStage.getScene().getWindow());
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
