@@ -1,36 +1,44 @@
 package ru.lephant.java.rgatu.TestingSystem.controllers;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
+import ru.lephant.java.rgatu.TestingSystem.entities.User;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class TestSelectionController implements Initializable {
 
-    private ObservableList<Test> tests = FXCollections.observableArrayList();
 
     @FXML
     private TableView<Test> testTableView;
+    private ObservableList<Test> tests = FXCollections.observableArrayList();
 
     @FXML
     private TableColumn<Test, String> nameTableColumn;
@@ -41,11 +49,34 @@ public class TestSelectionController implements Initializable {
     @FXML
     private TableColumn<Test, String> subjectTableColumn;
 
+    @FXML
+    private ContextMenu testTableContextMenu;
+
+    @FXML
+    private MenuItem testEditMenuItem;
+
+    @FXML
+    private MenuItem testDeleteMenuItem;
+
+    @FXML
+    private MenuItem logInMenuItem;
+
+    @FXML
+    private MenuItem logOutMenuItem;
+
+    @FXML
+    private Menu actionMenu;
+
+    @FXML
+    private Menu createTestMenuItem;
+
     private Stage mainStage;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        authorize(false);
+
         initData();
 
         nameTableColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -58,10 +89,15 @@ public class TestSelectionController implements Initializable {
 
     @FXML
     public void onLogInMenuItemClicked() {
+        Optional<Pair<String, String>> usernameAndPassword = showLogInDialog();
+        if (usernameAndPassword.isPresent() && checkLoginAndPasswordInDB(usernameAndPassword)) {
+            authorize(true);
+        }
     }
 
     @FXML
     public void onLogOffMenuItemClicked() {
+        authorize(false);
     }
 
     @FXML
@@ -111,6 +147,98 @@ public class TestSelectionController implements Initializable {
     @FXML
     public void selectTest() {
         testSelected();
+    }
+
+
+    private Optional<Pair<String, String>> showLogInDialog() {
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle("Авторизация");
+        dialog.setHeaderText("Введите ваши данные:");
+        dialog.setGraphic(new ImageView(this.getClass().getResource("/login.png").toString()));
+
+        ButtonType loginButtonType = new ButtonType("Войти", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField username = new TextField();
+        username.setPromptText("Логин");
+        PasswordField password = new PasswordField();
+        password.setPromptText("Пароль");
+
+        grid.add(new Label("Логин:"), 0, 0);
+        grid.add(username, 1, 0);
+        grid.add(new Label("Пароль:"), 0, 1);
+        grid.add(password, 1, 1);
+
+        Node loginButton = dialog.getDialogPane().lookupButton(loginButtonType);
+        loginButton.setDisable(true);
+
+        username.textProperty().addListener((observable, oldValue, newValue) -> {
+            loginButton.setDisable(newValue.trim().isEmpty());
+        });
+
+        dialog.getDialogPane().setContent(grid);
+
+        Platform.runLater(() -> username.requestFocus());
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == loginButtonType) {
+                return new Pair<>(username.getText(), password.getText());
+            }
+            return null;
+        });
+
+        Optional<Pair<String, String>> result = dialog.showAndWait();
+
+        return result;
+    }
+
+    private boolean checkLoginAndPasswordInDB(Optional<Pair<String, String>> usernameAndPassword) {
+        String username = usernameAndPassword.get().getKey();
+        String password = usernameAndPassword.get().getValue();
+
+        Session session = null;
+        Object noteInDB;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
+            noteInDB = session.createCriteria(User.class)
+                    .add(Restrictions.eq("username", username))
+                    .add(Restrictions.eq("password", password))
+                    .add(Restrictions.eq("enabled", true))
+                    .setMaxResults(1)
+                    .uniqueResult();
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+
+        return noteInDB != null;
+    }
+
+    private void authorize(boolean isAuthorized) {
+        if (isAuthorized) {
+            testTableContextMenu.setOpacity(1D);
+        } else {
+            testTableContextMenu.setOpacity(0D);
+        }
+
+        testEditMenuItem.setDisable(!isAuthorized);
+        testEditMenuItem.setVisible(isAuthorized);
+
+        testDeleteMenuItem.setDisable(!isAuthorized);
+        testDeleteMenuItem.setVisible(isAuthorized);
+
+        logInMenuItem.setVisible(!isAuthorized);
+        logOutMenuItem.setVisible(isAuthorized);
+
+        actionMenu.setVisible(isAuthorized);
+
+        createTestMenuItem.setVisible(isAuthorized);
     }
 
     private void testSelected() {
@@ -166,7 +294,6 @@ public class TestSelectionController implements Initializable {
             }
         }
     }
-
 
     private void showGroupStage() {
         try {
