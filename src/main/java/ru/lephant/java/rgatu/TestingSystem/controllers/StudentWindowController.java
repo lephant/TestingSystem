@@ -200,7 +200,7 @@ public class StudentWindowController implements Initializable {
             stage.setMinHeight(400D);
 
             stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(mainStage.getScene().getWindow());
+            stage.initOwner(modalStage);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

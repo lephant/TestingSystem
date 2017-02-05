@@ -18,7 +18,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage mainStage) throws Exception {
-        mainStage.setTitle("Система тестирования \"Пирожок\"");
+        mainStage.setTitle("Система тестирования \"Degress\"");
         mainStage.getIcons().add(new Image("/test.png"));
 
         mainStage.setOnCloseRequest(event -> {

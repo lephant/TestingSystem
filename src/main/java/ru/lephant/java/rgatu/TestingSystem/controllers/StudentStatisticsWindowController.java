@@ -114,7 +114,7 @@ public class StudentStatisticsWindowController implements Initializable {
                 stage.setMinHeight(500D);
 
                 stage.initModality(Modality.WINDOW_MODAL);
-                stage.initOwner(mainStage.getScene().getWindow());
+                stage.initOwner(modalStage);
                 stage.show();
             } catch (IOException e) {
                 e.printStackTrace();
