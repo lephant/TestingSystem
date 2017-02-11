@@ -14,6 +14,7 @@ public class Test implements Serializable {
     private Teacher teacher;
     private boolean randomOrder;
     private List<Question> questions;
+    private List<TestOfStudent> testsOfStudents;
 
 
     public Test() {
@@ -103,6 +104,14 @@ public class Test implements Serializable {
         this.questions = questions;
     }
 
+    @OneToMany(mappedBy = "test", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    public List<TestOfStudent> getTestsOfStudents() {
+        return testsOfStudents;
+    }
+
+    public void setTestsOfStudents(List<TestOfStudent> testsOfStudents) {
+        this.testsOfStudents = testsOfStudents;
+    }
 
     @Override
     public boolean equals(Object o) {

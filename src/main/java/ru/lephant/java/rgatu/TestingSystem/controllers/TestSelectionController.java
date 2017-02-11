@@ -127,10 +127,6 @@ public class TestSelectionController implements Initializable {
     }
 
     @FXML
-    public void onCreateTestMenuItemClicked() {
-    }
-
-    @FXML
     public void onKeyPressed(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
             testSelected();
@@ -149,6 +145,24 @@ public class TestSelectionController implements Initializable {
         testSelected();
     }
 
+    @FXML
+    public void onCreateTestMenuItemClicked() {
+
+    }
+
+    @FXML
+    public void onTestEditMenuItemClicked() {
+
+    }
+
+    @FXML
+    public void onTestDeleteMenuItemClicked() {
+        Test test = testTableView.getSelectionModel().getSelectedItem();
+        if (test != null) {
+            deleteTestFromDb(test);
+            tests.remove(test);
+        }
+    }
 
     private Optional<Pair<String, String>> showLogInDialog() {
         Dialog<Pair<String, String>> dialog = new Dialog<>();
@@ -196,6 +210,7 @@ public class TestSelectionController implements Initializable {
 
         return result;
     }
+
 
     private boolean checkLoginAndPasswordInDB(Optional<Pair<String, String>> usernameAndPassword) {
         String username = usernameAndPassword.get().getKey();
@@ -325,7 +340,6 @@ public class TestSelectionController implements Initializable {
         }
     }
 
-
     private void showSubjectStage() {
         try {
             Stage stage = new Stage();
@@ -413,6 +427,20 @@ public class TestSelectionController implements Initializable {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void deleteTestFromDb(Test test) {
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
+            session.beginTransaction();
+            session.delete(test);
+            session.getTransaction().commit();
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
     }
 

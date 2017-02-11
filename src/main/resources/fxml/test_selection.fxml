@@ -32,8 +32,10 @@
             <contextMenu>
                 <ContextMenu fx:id="testTableContextMenu">
                     <items>
-                        <MenuItem fx:id="testEditMenuItem" disable="true" mnemonicParsing="false" text="Редактировать"/>
-                        <MenuItem fx:id="testDeleteMenuItem" disable="true" mnemonicParsing="false" text="Удалить"/>
+                        <MenuItem onAction="#onTestEditMenuItemClicked" fx:id="testEditMenuItem" disable="true"
+                                  mnemonicParsing="false" text="Редактировать"/>
+                        <MenuItem onAction="#onTestDeleteMenuItemClicked" fx:id="testDeleteMenuItem" disable="true"
+                                  mnemonicParsing="false" text="Удалить"/>
                     </items>
                 </ContextMenu>
             </contextMenu>
