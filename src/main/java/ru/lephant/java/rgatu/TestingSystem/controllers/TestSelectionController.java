@@ -444,6 +444,7 @@ public class TestSelectionController implements Initializable {
             TestEditingController testEditingController = loader.getController();
             testEditingController.setCurrentStage(stage);
             testEditingController.setTest(test);
+            testEditingController.fillFields();
 
             stage.setScene(new Scene(root));
             stage.setTitle("Конструктор тестов");

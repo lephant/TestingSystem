@@ -2,6 +2,7 @@ package ru.lephant.java.rgatu.TestingSystem.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -13,7 +14,7 @@ public class Test implements Serializable {
     private Subject subject;
     private Teacher teacher;
     private boolean randomOrder;
-    private List<Question> questions;
+    private List<Question> questions = new ArrayList<>();
     private List<TestOfStudent> testsOfStudents;
 
 

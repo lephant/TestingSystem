@@ -9,12 +9,15 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.hibernate.Session;
 import ru.lephant.java.rgatu.TestingSystem.entities.Question;
 import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
 import ru.lephant.java.rgatu.TestingSystem.entities.Teacher;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
+import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class TestEditingController implements Initializable {
@@ -57,6 +60,14 @@ public class TestEditingController implements Initializable {
         initializeTeachers();
     }
 
+    public void fillFields() {
+        testNameField.setText(test.getName());
+        teacherComboBox.getSelectionModel().select(test.getTeacher());
+        subjectComboBox.getSelectionModel().select(test.getSubject());
+        randomOrderCheckBox.setSelected(test.isRandomOrder());
+//        questions.setAll(test.getQuestions()); TODO
+    }
+
 
     @FXML
     public void onQuestionListClicked(MouseEvent mouseEvent) {
@@ -70,17 +81,55 @@ public class TestEditingController implements Initializable {
 
     @FXML
     public void onSaveTestButtonClicked(ActionEvent event) {
+        test.setName(testNameField.getText());
+        test.setTeacher(teacherComboBox.getSelectionModel().getSelectedItem());
+        test.setSubject(subjectComboBox.getSelectionModel().getSelectedItem());
+        test.setRandomOrder(randomOrderCheckBox.isSelected());
 
+        saveTest(test);
+
+        currentStage.close();
     }
-
 
 
     private void initializeTeachers() {
-
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
+            List list = session.createCriteria(Teacher.class).list();
+            teachers.setAll(list);
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
     }
 
     private void initializeSubjects() {
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
+            List list = session.createCriteria(Subject.class).list();
+            subjects.setAll(list);
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+    }
 
+    private void saveTest(Test test) {
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
+            session.beginTransaction();
+            session.saveOrUpdate(test);
+            session.getTransaction().commit();
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
     }
 
 
