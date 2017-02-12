@@ -32,10 +32,10 @@
             <contextMenu>
                 <ContextMenu fx:id="testTableContextMenu">
                     <items>
-                        <MenuItem onAction="#onTestEditMenuItemClicked" fx:id="testEditMenuItem" disable="true"
-                                  mnemonicParsing="false" text="Редактировать"/>
-                        <MenuItem onAction="#onTestDeleteMenuItemClicked" fx:id="testDeleteMenuItem" disable="true"
-                                  mnemonicParsing="false" text="Удалить"/>
+                        <MenuItem fx:id="testEditMenuItem" disable="true" mnemonicParsing="false"
+                                  onAction="#onTestEditMenuItemClicked" text="Редактировать"/>
+                        <MenuItem fx:id="testDeleteMenuItem" disable="true" mnemonicParsing="false"
+                                  onAction="#onTestDeleteMenuItemClicked" text="Удалить"/>
                     </items>
                 </ContextMenu>
             </contextMenu>
@@ -80,8 +80,11 @@
                                   text="Показать группы"/>
                     </items>
                 </Menu>
-                <Menu fx:id="createTestMenuItem" mnemonicParsing="false" onAction="#onCreateTestMenuItemClicked"
-                      text="Создать тест"/>
+                <Menu fx:id="createTestMenuItem" mnemonicParsing="false" text="Тест">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#onCreateTestMenuItemClicked" text="Создать тест"/>
+                    </items>
+                </Menu>
             </menus>
         </MenuBar>
     </top>

@@ -147,12 +147,15 @@ public class TestSelectionController implements Initializable {
 
     @FXML
     public void onCreateTestMenuItemClicked() {
-
+        showTestEditingStage(new Test());
     }
 
     @FXML
     public void onTestEditMenuItemClicked() {
-
+        Test test = testTableView.getSelectionModel().getSelectedItem();
+        if (test != null) {
+            showTestEditingStage(test);
+        }
     }
 
     @FXML
@@ -211,7 +214,6 @@ public class TestSelectionController implements Initializable {
         return result;
     }
 
-
     private boolean checkLoginAndPasswordInDB(Optional<Pair<String, String>> usernameAndPassword) {
         String username = usernameAndPassword.get().getKey();
         String password = usernameAndPassword.get().getValue();
@@ -234,6 +236,7 @@ public class TestSelectionController implements Initializable {
 
         return noteInDB != null;
     }
+
 
     private void authorize(boolean isAuthorized) {
         if (isAuthorized) {
@@ -421,6 +424,36 @@ public class TestSelectionController implements Initializable {
             stage.setHeight(360D);
             stage.setMinWidth(380D);
             stage.setMinHeight(360D);
+
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(mainStage.getScene().getWindow());
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showTestEditingStage(Test test) {
+        try {
+            Stage stage = new Stage();
+
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/fxml/test_editing.fxml"));
+            Parent root = loader.load();
+
+            TestEditingController testEditingController = loader.getController();
+            testEditingController.setCurrentStage(stage);
+            testEditingController.setTest(test);
+
+            stage.setScene(new Scene(root));
+            stage.setTitle("Конструктор тестов");
+            stage.getIcons().add(new Image("/test.png"));
+
+            stage.setResizable(true);
+            stage.setWidth(700D);
+            stage.setHeight(620D);
+            stage.setMinWidth(700D);
+            stage.setMinHeight(620D);
 
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(mainStage.getScene().getWindow());
