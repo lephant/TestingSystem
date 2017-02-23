@@ -175,7 +175,8 @@ public class TestSelectionController implements Initializable {
         dialog.setGraphic(new ImageView(this.getClass().getResource("/login.png").toString()));
 
         ButtonType loginButtonType = new ButtonType("Войти", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
+        ButtonType cancelButtonType = new ButtonType("Отмена", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, cancelButtonType);
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -387,7 +388,7 @@ public class TestSelectionController implements Initializable {
             teacherWindowController.setModalStage(stage);
 
             stage.setScene(new Scene(root));
-            stage.setTitle("Список студентов");
+            stage.setTitle("Список преподавателей");
             stage.getIcons().add(new Image("/test.png"));
 
             stage.setResizable(true);
