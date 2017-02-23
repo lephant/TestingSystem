@@ -460,9 +460,9 @@ public class TestSelectionController implements Initializable {
             stage.getIcons().add(new Image("/test.png"));
 
             stage.setResizable(true);
-            stage.setWidth(700D);
+            stage.setWidth(720D);
             stage.setHeight(620D);
-            stage.setMinWidth(700D);
+            stage.setMinWidth(720D);
             stage.setMinHeight(620D);
 
             stage.initModality(Modality.WINDOW_MODAL);
