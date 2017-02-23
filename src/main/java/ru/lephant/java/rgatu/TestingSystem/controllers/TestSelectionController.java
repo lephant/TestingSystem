@@ -21,6 +21,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
@@ -147,14 +148,14 @@ public class TestSelectionController implements Initializable {
 
     @FXML
     public void onCreateTestMenuItemClicked() {
-        showTestEditingStage(new Test());
+        showTestEditingStage(new Test(), true);
     }
 
     @FXML
     public void onTestEditMenuItemClicked() {
         Test test = testTableView.getSelectionModel().getSelectedItem();
         if (test != null) {
-            showTestEditingStage(test);
+            showTestEditingStage(test, false);
         }
     }
 
@@ -433,7 +434,7 @@ public class TestSelectionController implements Initializable {
         }
     }
 
-    private void showTestEditingStage(Test test) {
+    private void showTestEditingStage(Test test, boolean isNew) {
         try {
             Stage stage = new Stage();
 
@@ -443,8 +444,15 @@ public class TestSelectionController implements Initializable {
 
             TestEditingController testEditingController = loader.getController();
             testEditingController.setCurrentStage(stage);
-            testEditingController.setTest(test);
-            testEditingController.fillFields();
+
+            if (!isNew) {
+                test = initializeTestQuestions(test.getId());
+                testEditingController.setTest(test);
+                testEditingController.fillFields();
+                testEditingController.showQuestion(0);
+            } else {
+                testEditingController.setTest(test);
+            }
 
             stage.setScene(new Scene(root));
             stage.setTitle("Конструктор тестов");
@@ -462,6 +470,24 @@ public class TestSelectionController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private Test initializeTestQuestions(long id) {
+        Session session = null;
+        Test test = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
+            test = (Test) session
+                    .createCriteria(Test.class)
+                    .add(Restrictions.idEq(id))
+                    .uniqueResult();
+            Hibernate.initialize(test.getQuestions());
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+        return test;
     }
 
     private void deleteTestFromDb(Test test) {

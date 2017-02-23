@@ -2,6 +2,7 @@ package ru.lephant.java.rgatu.TestingSystem.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -9,7 +10,7 @@ import java.util.List;
 @PrimaryKeyJoinColumn(name = "id")
 public class MultiChoiceQuestion extends Question implements Serializable {
 
-    private List<Choice> choices;
+    private List<Choice> choices = new ArrayList<>();
 
 
     public MultiChoiceQuestion() {
