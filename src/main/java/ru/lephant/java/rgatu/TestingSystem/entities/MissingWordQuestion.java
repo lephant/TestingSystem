@@ -2,13 +2,15 @@ package ru.lephant.java.rgatu.TestingSystem.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "missing_word_questions")
 @PrimaryKeyJoinColumn(name = "id")
 public class MissingWordQuestion extends Question implements Serializable {
 
-    private String possibleAnswers;
+    private List<MissingPossibleAnswer> possibleAnswers = new ArrayList<>();
     private String answer;
 
 
@@ -26,9 +28,8 @@ public class MissingWordQuestion extends Question implements Serializable {
 
     @Override
     public boolean checkAnswer() {
-        String[] possibleAnswersArray = possibleAnswers.split(",");
-        for (String s : possibleAnswersArray) {
-            if (s.trim().equals(answer)) {
+        for (MissingPossibleAnswer missingPossibleAnswer : possibleAnswers) {
+            if (missingPossibleAnswer.getText().trim().toLowerCase().equals(answer.trim().toLowerCase())) {
                 return true;
             }
         }
@@ -36,13 +37,12 @@ public class MissingWordQuestion extends Question implements Serializable {
     }
 
 
-    @Basic
-    @Column(name = "possible_answers", nullable = false, length = 1024)
-    public String getPossibleAnswers() {
+    @OneToMany(mappedBy = "missingWordQuestion", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    public List<MissingPossibleAnswer> getPossibleAnswers() {
         return possibleAnswers;
     }
 
-    public void setPossibleAnswers(String possibleAnswers) {
+    public void setPossibleAnswers(List<MissingPossibleAnswer> possibleAnswers) {
         this.possibleAnswers = possibleAnswers;
     }
 

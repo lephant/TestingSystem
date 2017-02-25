@@ -25,9 +25,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class TestEditingController implements Initializable {
 
@@ -142,7 +140,7 @@ public class TestEditingController implements Initializable {
                     choice.setCorrectIt(true);
                 }
             });
-            addContextMenuToChoice(choice, radioButton);
+            addContextMenuToOption(choice, radioButton);
             radioButton.setWrapText(true);
             radioButton.setSelected(choice.isCorrectIt());
             choiceBox.getChildren().add(radioButton);
@@ -165,15 +163,17 @@ public class TestEditingController implements Initializable {
     }
 
     private void drawMissingWordQuestion(MissingWordQuestion question) {
-        TextField answerField = new TextField();
-        answerField.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                question.setAnswer(newValue);
-            }
-        });
-        answerField.setText(question.getAnswer());
-        choiceBox.getChildren().add(answerField);
+        for (MissingPossibleAnswer possibleAnswer : question.getPossibleAnswers()) {
+            TextField possibleAnswerField = new TextField();
+            possibleAnswerField.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    possibleAnswer.setText(newValue);
+                }
+            });
+            possibleAnswerField.setText(possibleAnswer.getText());
+            choiceBox.getChildren().add(possibleAnswerField);
+        }
     }
 
     private Class calculateQuestionClass(Question question) {
@@ -271,7 +271,7 @@ public class TestEditingController implements Initializable {
                 }
             });
 
-            addContextMenuToChoice(choice, radioButton);
+            addContextMenuToOption(choice, radioButton);
             choiceBox.getChildren().add(radioButton);
         } else if (clazz == MultiChoiceQuestion.class) {
             MultiChoiceQuestion question = (MultiChoiceQuestion) currentQuestion;
@@ -289,14 +289,63 @@ public class TestEditingController implements Initializable {
                 }
             });
 
-            addContextMenuToChoice(choice, checkBox);
+            addContextMenuToOption(choice, checkBox);
             choiceBox.getChildren().add(checkBox);
         } else if (clazz == MissingWordQuestion.class) {
+            MissingWordQuestion question = (MissingWordQuestion) currentQuestion;
+            MissingPossibleAnswer possibleAnswer = new MissingPossibleAnswer(question, "Новый вариант");
 
+            question.getPossibleAnswers().add(possibleAnswer);
+            TextField possibleAnswerField = new TextField();
+            possibleAnswerField.setText("Новый вариант");
+            possibleAnswerField.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    possibleAnswer.setText(newValue);
+                }
+            });
+
+            addContextMenuToOption(possibleAnswer, possibleAnswerField);
+            choiceBox.getChildren().add(possibleAnswerField);
         }
     }
 
-    private void addContextMenuToChoice(final Choice choice, final ButtonBase buttonBase) {
+    private void addContextMenuToOption(MissingPossibleAnswer possibleAnswer, TextField possibleAnswerField) {
+        ContextMenu contextMenu = new ContextMenu();
+
+        MenuItem editMenuItem = new MenuItem("Редактировать");
+        editMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                TextInputDialog dialog = new TextInputDialog(possibleAnswer.getText());
+                dialog.setTitle("Редактирование");
+                dialog.setHeaderText(null);
+                dialog.setContentText("Введите текст варианта ответа:");
+
+                Optional<String> result = dialog.showAndWait();
+                if (result.isPresent()) {
+                    possibleAnswer.setText(result.get());
+                    possibleAnswerField.setText(result.get());
+                }
+            }
+        });
+
+        MenuItem deleteMenuItem = new MenuItem("Удалить");
+        deleteMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                ((MissingWordQuestion) currentQuestion).getPossibleAnswers().remove(possibleAnswer);
+                choiceBox.getChildren().remove(possibleAnswerField);
+            }
+        });
+
+        contextMenu.getItems().add(editMenuItem);
+        contextMenu.getItems().add(deleteMenuItem);
+        possibleAnswerField.setContextMenu(contextMenu);
+    }
+
+    //TODO: перегрузить
+    private void addContextMenuToOption(final Choice choice, final ButtonBase buttonBase) {
         ContextMenu contextMenu = new ContextMenu();
 
         MenuItem editMenuItem = new MenuItem("Редактировать");

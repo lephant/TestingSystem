@@ -24,5 +24,6 @@
         <mapping class="ru.lephant.java.rgatu.TestingSystem.entities.Subject"/>
         <mapping class="ru.lephant.java.rgatu.TestingSystem.entities.Teacher"/>
         <mapping class="ru.lephant.java.rgatu.TestingSystem.entities.User"/>
+        <mapping class="ru.lephant.java.rgatu.TestingSystem.entities.MissingPossibleAnswer"/>
     </session-factory>
 </hibernate-configuration>
