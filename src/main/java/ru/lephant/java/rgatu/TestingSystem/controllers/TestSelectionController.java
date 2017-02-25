@@ -24,6 +24,7 @@ import javafx.util.Pair;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
 import ru.lephant.java.rgatu.TestingSystem.entities.User;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
@@ -265,6 +266,8 @@ public class TestSelectionController implements Initializable {
         Test test = testTableView.getSelectionModel().getSelectedItem();
         if (test != null) {
             openStudentSelectionModalStage(test);
+        } else {
+            new NoSelectedItemAlert("Не выбран тест для выполнения!");
         }
     }
 

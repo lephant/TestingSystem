@@ -2,10 +2,10 @@ package ru.lephant.java.rgatu.TestingSystem.controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
+import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Question;
 import ru.lephant.java.rgatu.TestingSystem.resolvers.CreationQuestionResolver;
 
@@ -48,7 +48,7 @@ public class QuestionCreationController implements Initializable {
             createdQuestion = question;
             currentStage.close();
         } else {
-            showNotSelectedItemDialog("Не выбран ни один тип вопроса!");
+            new NoSelectedItemAlert("Не выбран ни один тип вопроса!");
             createdQuestion = null;
         }
     }
@@ -59,14 +59,6 @@ public class QuestionCreationController implements Initializable {
         currentStage.close();
     }
 
-
-    private void showNotSelectedItemDialog(String headerText) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Ошибка");
-        alert.setHeaderText(headerText);
-        alert.setContentText(null);
-        alert.show();
-    }
 
     public Question getCreatedQuestion() {
         return createdQuestion;

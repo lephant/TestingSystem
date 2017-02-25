@@ -13,6 +13,7 @@ import javafx.scene.control.ListView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.hibernate.Session;
+import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Group;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 
@@ -53,7 +54,7 @@ public class GroupWindowController implements Initializable {
     public void onEditButtonClicked() {
         int index = groupListView.getSelectionModel().getSelectedIndex();
         if (index < 0) {
-            showNoSelectedGroupAlert("Не выбрана группа для редактирования!");
+            new NoSelectedItemAlert("Не выбрана группа для редактирования!");
             return;
         }
         Group group = groups.get(index);
@@ -62,14 +63,6 @@ public class GroupWindowController implements Initializable {
             saveGroup(group);
             groups.set(index, group);
         }
-    }
-
-    private void showNoSelectedGroupAlert(String headerText) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Ошибка!");
-        alert.setHeaderText(headerText);
-        alert.setContentText(null);
-        alert.show();
     }
 
     @FXML
@@ -90,7 +83,7 @@ public class GroupWindowController implements Initializable {
                 alert.close();
             }
         } else {
-            showNoSelectedGroupAlert("Не выбрана группа для удаления!");
+            new NoSelectedItemAlert("Не выбрана группа для удаления!");
         }
     }
 

@@ -14,6 +14,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.hibernate.Session;
+import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 
@@ -46,7 +47,7 @@ public class StudentWindowController implements Initializable {
         if (student != null) {
             showStudentStatisticsStage(student);
         } else {
-            showNoSelectedStudentAlert("Не выбран студент!");
+            new NoSelectedItemAlert("Не выбран студент!");
         }
 
     }
@@ -65,7 +66,7 @@ public class StudentWindowController implements Initializable {
     public void onEditButtonClicked() {
         int index = studentListView.getSelectionModel().getSelectedIndex();
         if (index < 0) {
-            showNoSelectedStudentAlert("Не выбран студент для редактирования!");
+            new NoSelectedItemAlert("Не выбран студент для редактирования!");
             return;
         }
         Student student = students.get(index);
@@ -74,14 +75,6 @@ public class StudentWindowController implements Initializable {
             saveStudent(student);
             students.set(index, student);
         }
-    }
-
-    private void showNoSelectedStudentAlert(String headerText) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Ошибка!");
-        alert.setHeaderText(headerText);
-        alert.setContentText(null);
-        alert.show();
     }
 
     @FXML
@@ -102,7 +95,7 @@ public class StudentWindowController implements Initializable {
                 alert.close();
             }
         } else {
-            showNoSelectedStudentAlert("Не выбран студент для удаления!");
+            new NoSelectedItemAlert("Не выбран студент для удаления!");
         }
     }
 

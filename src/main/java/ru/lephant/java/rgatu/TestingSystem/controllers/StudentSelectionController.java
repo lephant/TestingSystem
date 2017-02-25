@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
@@ -105,6 +106,8 @@ public class StudentSelectionController implements Initializable {
         Student student = studentsList.getSelectionModel().getSelectedItem();
         if (student != null) {
             doTransitionToTestExecution(student);
+        } else {
+            new NoSelectedItemAlert("Студент не выбран!");
         }
     }
 

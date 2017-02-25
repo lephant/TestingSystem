@@ -13,6 +13,7 @@ import javafx.scene.control.ListView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.hibernate.Session;
+import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Teacher;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 
@@ -53,7 +54,7 @@ public class TeacherWindowController implements Initializable {
     public void onEditButtonClicked() {
         int index = teacherListView.getSelectionModel().getSelectedIndex();
         if (index < 0) {
-            showNoSelectedTeacherAlert("Не выбран преподаватель для редактирования!");
+            new NoSelectedItemAlert("Не выбран преподаватель для редактирования!");
             return;
         }
         Teacher teacher = teachers.get(index);
@@ -62,14 +63,6 @@ public class TeacherWindowController implements Initializable {
             saveTeacher(teacher);
             teachers.set(index, teacher);
         }
-    }
-
-    private void showNoSelectedTeacherAlert(String headerText) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Ошибка!");
-        alert.setHeaderText(headerText);
-        alert.setContentText(null);
-        alert.show();
     }
 
     @FXML
@@ -90,7 +83,7 @@ public class TeacherWindowController implements Initializable {
                 alert.close();
             }
         } else {
-            showNoSelectedTeacherAlert("Не выбран преподаватель для удаления!");
+            new NoSelectedItemAlert("Не выбран преподаватель для удаления!");
         }
     }
 

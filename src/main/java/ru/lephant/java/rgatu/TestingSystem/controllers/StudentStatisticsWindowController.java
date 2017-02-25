@@ -7,7 +7,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.MapValueFactory;
@@ -22,6 +21,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
 import ru.lephant.java.rgatu.TestingSystem.entities.TestOfStudent;
@@ -29,7 +29,10 @@ import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 public class StudentStatisticsWindowController implements Initializable {
 
@@ -120,7 +123,7 @@ public class StudentStatisticsWindowController implements Initializable {
                 e.printStackTrace();
             }
         } else {
-            showNoSelectedItemAlert();
+            new NoSelectedItemAlert("Не выбрана запись!");
         }
     }
 
@@ -154,14 +157,6 @@ public class StudentStatisticsWindowController implements Initializable {
             dataRow.put(RESULT_KEY, result);
             statistics.add(dataRow);
         }
-    }
-
-    private void showNoSelectedItemAlert() {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Ошибка");
-        alert.setHeaderText("Не выбрана запись!");
-        alert.setContentText(null);
-        alert.show();
     }
 
 

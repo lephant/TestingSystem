@@ -13,6 +13,7 @@ import javafx.scene.control.ListView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.hibernate.Session;
+import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 
@@ -53,7 +54,7 @@ public class SubjectWindowController implements Initializable {
     public void onEditButtonClicked() {
         int index = subjectListView.getSelectionModel().getSelectedIndex();
         if (index < 0) {
-            showNoSelectedSubjectAlert("Не выбран предмет для редактирования!");
+            new NoSelectedItemAlert("Не выбран предмет для редактирования!");
             return;
         }
         Subject subject = subjects.get(index);
@@ -62,14 +63,6 @@ public class SubjectWindowController implements Initializable {
             saveSubject(subject);
             subjects.set(index, subject);
         }
-    }
-
-    private void showNoSelectedSubjectAlert(String headerText) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Ошибка!");
-        alert.setHeaderText(headerText);
-        alert.setContentText(null);
-        alert.show();
     }
 
     @FXML
@@ -90,7 +83,7 @@ public class SubjectWindowController implements Initializable {
                 alert.close();
             }
         } else {
-            showNoSelectedSubjectAlert("Не выбран предмет для удаления!");
+            new NoSelectedItemAlert("Не выбран предмет для удаления!");
         }
     }
 
