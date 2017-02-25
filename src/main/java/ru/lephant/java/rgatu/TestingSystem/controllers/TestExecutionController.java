@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 import org.hibernate.Session;
 import ru.lephant.java.rgatu.TestingSystem.entities.*;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
+import ru.lephant.java.rgatu.TestingSystem.resolvers.ToggleGroupResolver;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -61,9 +62,12 @@ public class TestExecutionController implements Initializable {
 
     private int questionNumber;
 
+    private ToggleGroupResolver toggleGroupResolver;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        toggleGroupResolver = new ToggleGroupResolver();
+
         questionList.setItems(questionListData);
     }
 
@@ -209,7 +213,7 @@ public class TestExecutionController implements Initializable {
     }
 
     private void drawSingleChoiceQuestion(SingleChoiceQuestion question) {
-        ToggleGroup toggleGroup = new ToggleGroup();
+        ToggleGroup toggleGroup = toggleGroupResolver.resolve(question);
         for (Choice choice : question.getChoices()) {
             RadioButton radioButton = new RadioButton(choice.getText());
             radioButton.setToggleGroup(toggleGroup);

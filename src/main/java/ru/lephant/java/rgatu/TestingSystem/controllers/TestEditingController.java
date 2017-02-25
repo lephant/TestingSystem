@@ -12,19 +12,21 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.hibernate.Session;
 import ru.lephant.java.rgatu.TestingSystem.entities.*;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
+import ru.lephant.java.rgatu.TestingSystem.resolvers.ToggleGroupResolver;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class TestEditingController implements Initializable {
@@ -62,6 +64,8 @@ public class TestEditingController implements Initializable {
     private int questionNumber;
     private Question currentQuestion;
 
+    private ToggleGroupResolver toggleGroupResolver;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -71,6 +75,10 @@ public class TestEditingController implements Initializable {
 
         initializeSubjects();
         initializeTeachers();
+
+        toggleGroupResolver = new ToggleGroupResolver();
+
+        questions.add("Добавить");
     }
 
     public void fillFields() {
@@ -79,22 +87,20 @@ public class TestEditingController implements Initializable {
         subjectComboBox.getSelectionModel().select(test.getSubject());
         randomOrderCheckBox.setSelected(test.isRandomOrder());
 
-        for (int i = 1; i <= test.getQuestions().size(); i++) {
-            questions.add("Вопрос " + i);
+        for (int i = 0; i < test.getQuestions().size(); i++) {
+            questions.add(i, "Вопрос " + (i + 1));
         }
-
-        questions.add("Добавить");
     }
 
 
     public void showQuestion(int questionNumber) {
+        if (questionNumber > test.getQuestions().size() - 1) return;
         this.questionNumber = questionNumber;
         questionList.getSelectionModel().select(questionNumber);
         currentQuestion = test.getQuestions().get(questionNumber);
         changeFields();
         drawQuestion();
 
-        //TODO: проверить на работоспособность, чтобы менялась цель (вопрос) (вариант - обращаться к новому методу, выставляющему значения)
         questionTextField.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -123,7 +129,7 @@ public class TestEditingController implements Initializable {
     }
 
     private void drawSingleChoiceQuestion(SingleChoiceQuestion question) {
-        ToggleGroup toggleGroup = new ToggleGroup();
+        ToggleGroup toggleGroup = toggleGroupResolver.resolve(question);
         for (Choice choice : question.getChoices()) {
             RadioButton radioButton = new RadioButton(choice.getText());
             radioButton.setToggleGroup(toggleGroup);
@@ -136,8 +142,9 @@ public class TestEditingController implements Initializable {
                     choice.setCorrectIt(true);
                 }
             });
+            addContextMenuToChoice(choice, radioButton);
             radioButton.setWrapText(true);
-            radioButton.setSelected(choice.isMarked());
+            radioButton.setSelected(choice.isCorrectIt());
             choiceBox.getChildren().add(radioButton);
         }
     }
@@ -194,7 +201,7 @@ public class TestEditingController implements Initializable {
     @FXML
     public void onQuestionListClicked() {
         int index = questionList.getSelectionModel().getSelectedIndex();
-        if (index != questionNumber) {
+        if (index != questionNumber || questions.size() == 1) {
             if (index == questions.size() - 1) {
                 showQuestionAddingDialog();
             } else {
@@ -245,7 +252,67 @@ public class TestEditingController implements Initializable {
 
     @FXML
     public void onAddChoiceButtonClicked() {
+        Class clazz = calculateQuestionClass(currentQuestion);
+        if (clazz == SingleChoiceQuestion.class) {
+            SingleChoiceQuestion question = (SingleChoiceQuestion) currentQuestion;
+            ToggleGroup toggleGroup = toggleGroupResolver.resolve(question);
+            Choice choice = new Choice(currentQuestion, "Новый ответ", false);
+            ((SingleChoiceQuestion) currentQuestion).getChoices().add(choice);
 
+            RadioButton radioButton = new RadioButton();
+            radioButton.setToggleGroup(toggleGroup);
+            radioButton.setText("Новый ответ.");
+            radioButton.setSelected(false);
+
+
+            radioButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    choice.setCorrectIt(radioButton.isSelected());
+                }
+            });
+
+            addContextMenuToChoice(choice, radioButton);
+            choiceBox.getChildren().add(choiceBox.getChildren().size(), radioButton);
+        } else if (clazz == MultiChoiceQuestion.class) {
+
+        } else if (clazz == MissingWordQuestion.class) {
+
+        }
+    }
+
+    private void addContextMenuToChoice(final Choice choice, final RadioButton radioButton) {
+        ContextMenu contextMenu = new ContextMenu();
+
+        MenuItem editMenuItem = new MenuItem("Редактировать");
+        editMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                TextInputDialog dialog = new TextInputDialog(choice.getText());
+                dialog.setTitle("Редактирование");
+                dialog.setHeaderText(null);
+                dialog.setContentText("Введите текст варианта ответа:");
+
+                Optional<String> result = dialog.showAndWait();
+                if (result.isPresent()) {
+                    choice.setText(result.get());
+                    radioButton.setText(result.get());
+                }
+            }
+        });
+
+        MenuItem deleteMenuItem = new MenuItem("Удалить");
+        deleteMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                ((SingleChoiceQuestion) currentQuestion).getChoices().remove(choice);
+                choiceBox.getChildren().remove(radioButton);
+            }
+        });
+
+        contextMenu.getItems().add(editMenuItem);
+        contextMenu.getItems().add(deleteMenuItem);
+        radioButton.setContextMenu(contextMenu);
     }
 
     @FXML

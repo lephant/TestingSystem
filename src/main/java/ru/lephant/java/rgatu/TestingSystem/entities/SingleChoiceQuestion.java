@@ -1,5 +1,7 @@
 package ru.lephant.java.rgatu.TestingSystem.entities;
 
+import javafx.scene.control.ToggleGroup;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,6 +13,8 @@ import java.util.List;
 public class SingleChoiceQuestion extends Question implements Serializable {
 
     private List<Choice> choices = new ArrayList<>();
+
+    private ToggleGroup toggleGroup;
 
 
     public SingleChoiceQuestion() {
@@ -61,5 +65,14 @@ public class SingleChoiceQuestion extends Question implements Serializable {
         int result = super.hashCode();
         result = 31 * result + (choices != null ? choices.hashCode() : 0);
         return result;
+    }
+
+    @Transient
+    public ToggleGroup getToggleGroup() {
+        return toggleGroup;
+    }
+
+    public void setToggleGroup(ToggleGroup toggleGroup) {
+        this.toggleGroup = toggleGroup;
     }
 }
