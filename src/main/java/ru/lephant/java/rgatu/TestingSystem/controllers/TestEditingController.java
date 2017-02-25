@@ -36,6 +36,9 @@ public class TestEditingController implements Initializable {
     private TextField testNameField;
 
     @FXML
+    private Button addChoiceButton;
+
+    @FXML
     private ComboBox<Teacher> teacherComboBox;
     private ObservableList<Teacher> teachers = FXCollections.observableArrayList();
 
@@ -92,7 +95,11 @@ public class TestEditingController implements Initializable {
 
 
     public void showQuestion(int questionNumber) {
-        if (questionNumber > test.getQuestions().size() - 1) return;
+        if (questionNumber > test.getQuestions().size() - 1 || questionNumber < 0) {
+            clearFields();
+            return;
+        }
+        setLock(false);
         this.questionNumber = questionNumber;
         questionList.getSelectionModel().select(questionNumber);
         currentQuestion = test.getQuestions().get(questionNumber);
@@ -105,6 +112,17 @@ public class TestEditingController implements Initializable {
                 currentQuestion.setText(newValue);
             }
         });
+    }
+
+    private void clearFields() {
+        questionTextField.setText("");
+        choiceBox.getChildren().clear();
+        setLock(true);
+    }
+
+    private void setLock(boolean isLock) {
+        questionTextField.setDisable(isLock);
+        addChoiceButton.setDisable(isLock);
     }
 
     private void changeFields() {
@@ -389,6 +407,18 @@ public class TestEditingController implements Initializable {
         saveTest(test);
 
         currentStage.close();
+    }
+
+    @FXML
+    public void onDeleteMenuItemClicked() {
+        int index = questionList.getSelectionModel().getSelectedIndex();
+        if (index >= 0 || index != questions.size() - 1) {
+            questions.remove(questions.size() - 2);
+            String question = questions.get(questionNumber);
+            questionList.getSelectionModel().select(question);
+            test.getQuestions().remove(index);
+            showQuestion(questionNumber);
+        }
     }
 
 
