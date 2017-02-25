@@ -159,7 +159,7 @@ public class TestEditingController implements Initializable {
                 }
             });
             checkBox.setWrapText(true);
-            checkBox.setSelected(choice.isMarked());
+            checkBox.setSelected(choice.isCorrectIt());
             choiceBox.getChildren().add(checkBox);
         }
     }
@@ -256,14 +256,13 @@ public class TestEditingController implements Initializable {
         if (clazz == SingleChoiceQuestion.class) {
             SingleChoiceQuestion question = (SingleChoiceQuestion) currentQuestion;
             ToggleGroup toggleGroup = toggleGroupResolver.resolve(question);
-            Choice choice = new Choice(currentQuestion, "Новый ответ", false);
-            ((SingleChoiceQuestion) currentQuestion).getChoices().add(choice);
+            Choice choice = new Choice(question, "Новый вариант", false);
+            question.getChoices().add(choice);
 
             RadioButton radioButton = new RadioButton();
             radioButton.setToggleGroup(toggleGroup);
-            radioButton.setText("Новый ответ.");
+            radioButton.setText("Новый вариант");
             radioButton.setSelected(false);
-
 
             radioButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -273,15 +272,31 @@ public class TestEditingController implements Initializable {
             });
 
             addContextMenuToChoice(choice, radioButton);
-            choiceBox.getChildren().add(choiceBox.getChildren().size(), radioButton);
+            choiceBox.getChildren().add(radioButton);
         } else if (clazz == MultiChoiceQuestion.class) {
+            MultiChoiceQuestion question = (MultiChoiceQuestion) currentQuestion;
+            Choice choice = new Choice(question, "Новый вариант", false);
+            question.getChoices().add(choice);
 
+            CheckBox checkBox = new CheckBox();
+            checkBox.setText("Новый вариант");
+            checkBox.setSelected(false);
+
+            checkBox.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    choice.setCorrectIt(checkBox.isSelected());
+                }
+            });
+
+            addContextMenuToChoice(choice, checkBox);
+            choiceBox.getChildren().add(checkBox);
         } else if (clazz == MissingWordQuestion.class) {
 
         }
     }
 
-    private void addContextMenuToChoice(final Choice choice, final RadioButton radioButton) {
+    private void addContextMenuToChoice(final Choice choice, final ButtonBase buttonBase) {
         ContextMenu contextMenu = new ContextMenu();
 
         MenuItem editMenuItem = new MenuItem("Редактировать");
@@ -296,7 +311,7 @@ public class TestEditingController implements Initializable {
                 Optional<String> result = dialog.showAndWait();
                 if (result.isPresent()) {
                     choice.setText(result.get());
-                    radioButton.setText(result.get());
+                    buttonBase.setText(result.get());
                 }
             }
         });
@@ -306,13 +321,13 @@ public class TestEditingController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 ((SingleChoiceQuestion) currentQuestion).getChoices().remove(choice);
-                choiceBox.getChildren().remove(radioButton);
+                choiceBox.getChildren().remove(buttonBase);
             }
         });
 
         contextMenu.getItems().add(editMenuItem);
         contextMenu.getItems().add(deleteMenuItem);
-        radioButton.setContextMenu(contextMenu);
+        buttonBase.setContextMenu(contextMenu);
     }
 
     @FXML
