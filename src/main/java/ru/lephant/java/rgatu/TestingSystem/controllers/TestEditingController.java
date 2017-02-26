@@ -176,6 +176,7 @@ public class TestEditingController implements Initializable {
             });
             checkBox.setWrapText(true);
             checkBox.setSelected(choice.isCorrectIt());
+            addContextMenuToOption(choice, checkBox);
             choiceBox.getChildren().add(checkBox);
         }
     }
@@ -190,6 +191,7 @@ public class TestEditingController implements Initializable {
                 }
             });
             possibleAnswerField.setText(possibleAnswer.getText());
+            addContextMenuToOption(possibleAnswer, possibleAnswerField);
             choiceBox.getChildren().add(possibleAnswerField);
         }
     }
@@ -312,8 +314,8 @@ public class TestEditingController implements Initializable {
         } else if (clazz == MissingWordQuestion.class) {
             MissingWordQuestion question = (MissingWordQuestion) currentQuestion;
             MissingPossibleAnswer possibleAnswer = new MissingPossibleAnswer(question, "Новый вариант");
-
             question.getPossibleAnswers().add(possibleAnswer);
+
             TextField possibleAnswerField = new TextField();
             possibleAnswerField.setText("Новый вариант");
             possibleAnswerField.textProperty().addListener(new ChangeListener<String>() {
