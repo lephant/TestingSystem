@@ -16,16 +16,10 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
-import ru.lephant.java.rgatu.TestingSystem.entities.TestOfStudent;
-import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 
 import java.io.IOException;
 import java.net.URL;
@@ -64,8 +58,7 @@ public class StudentStatisticsWindowController implements Initializable {
 
 
     public void fillContent() {
-        List list = getStatisticsFromDB();
-        fillStatisticsList(list);
+        fillStatisticsList(DaoFacade.getStudentResultsDAOService().getAllResultsOfStudent(student));
     }
 
 
@@ -133,22 +126,9 @@ public class StudentStatisticsWindowController implements Initializable {
     }
 
 
-    private List getStatisticsFromDB() {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Criteria criteria = session.createCriteria(TestOfStudent.class);
-        criteria.add(Restrictions.eq("student", student));
-        criteria.createAlias("test", "test");
-        ProjectionList projectionList = Projections.projectionList();
-        projectionList.add(Projections.groupProperty("test.subject"));
-        projectionList.add(Projections.avg("result"));
-        criteria.setProjection(projectionList);
-        return criteria.list();
-    }
-
-    private void fillStatisticsList(List list) {
-        for (Object aList : list) {
+    private void fillStatisticsList(List<Object[]> list) {
+        for (Object[] obj : list) {
             Map<String, Object> dataRow = new HashMap<>();
-            Object[] obj = (Object[]) aList;
             Subject subject = (Subject) obj[0];
             Double res = (Double) obj[1];
             res = (((int) (res * 10000)) / 100D);

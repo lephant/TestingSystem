@@ -1,15 +1,11 @@
 package ru.lephant.java.rgatu.TestingSystem.controllers;
 
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.entities.Group;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-public class GroupSaveWindowController implements Initializable {
+public class GroupSaveWindowController {
 
     @FXML
     private TextField nameField;
@@ -18,11 +14,6 @@ public class GroupSaveWindowController implements Initializable {
     private Group group;
 
     private boolean needToSave;
-
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-    }
 
 
     public void fillFields() {

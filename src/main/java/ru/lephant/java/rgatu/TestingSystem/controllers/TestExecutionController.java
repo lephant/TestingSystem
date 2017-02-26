@@ -16,9 +16,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.hibernate.Session;
+import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.entities.*;
-import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 import ru.lephant.java.rgatu.TestingSystem.resolvers.ToggleGroupResolver;
 
 import java.io.ByteArrayInputStream;
@@ -64,10 +63,10 @@ public class TestExecutionController implements Initializable {
 
     private ToggleGroupResolver toggleGroupResolver;
 
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         toggleGroupResolver = new ToggleGroupResolver();
-
         questionList.setItems(questionListData);
     }
 
@@ -88,7 +87,7 @@ public class TestExecutionController implements Initializable {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             TestOfStudent testOfStudent = composeTestOfStudent();
-            saveTestResult(testOfStudent);
+            DaoFacade.getStudentResultsDAOService().save(testOfStudent);
             showResult(testOfStudent);
             doTransitionToTestSelectionScene();
         } else {
@@ -109,20 +108,6 @@ public class TestExecutionController implements Initializable {
             e.printStackTrace();
         }
         return testOfStudent;
-    }
-
-    private void saveTestResult(TestOfStudent testOfStudent) {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            session.beginTransaction();
-            session.save(testOfStudent);
-            session.getTransaction().commit();
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
     }
 
     private void showResult(TestOfStudent testOfStudent) {

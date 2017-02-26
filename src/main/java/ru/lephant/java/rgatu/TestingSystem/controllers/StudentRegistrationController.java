@@ -11,17 +11,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
+import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.entities.Group;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
-import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class StudentRegistrationController implements Initializable {
@@ -40,7 +36,7 @@ public class StudentRegistrationController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        fillGroups();
+        groups.setAll(DaoFacade.getGroupDAOService().getList());
         groupComboBox.setItems(groups);
     }
 
@@ -49,7 +45,7 @@ public class StudentRegistrationController implements Initializable {
     public void onRegistrationClick() {
         Student student = createStudent();
         if (validateNewStudent(student)) {
-            registrationNewStudent(student);
+            DaoFacade.getStudentDAOService().save(student);
             doTransitionToTestExecution(student);
         } else {
             showAlertAboutWrongData();
@@ -61,22 +57,6 @@ public class StudentRegistrationController implements Initializable {
         doTransitionToStudentSelectionScene();
     }
 
-
-    @SuppressWarnings("unchecked")
-    private void fillGroups() {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            List<Group> groupList = session
-                    .createCriteria(Group.class)
-                    .list();
-            groups.setAll(groupList);
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-    }
 
     private Student createStudent() {
         Student student = new Student(fioField.getText());
@@ -92,21 +72,6 @@ public class StudentRegistrationController implements Initializable {
         return true;
     }
 
-    private void registrationNewStudent(Student student) {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            session.beginTransaction();
-            session.save(student);
-            session.getTransaction().commit();
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-
-    }
-
     private void doTransitionToTestExecution(Student student) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
@@ -114,7 +79,7 @@ public class StudentRegistrationController implements Initializable {
             Parent root = fxmlLoader.load();
             TestExecutionController testExecutionController = fxmlLoader.getController();
             testExecutionController.setMainStage(mainStage);
-            initializeTestQuestions();
+            test = DaoFacade.getTestDAOService().getByPK(test.getId());
             testExecutionController.setTest(test);
             testExecutionController.setStudent(student);
             testExecutionController.initializeQuestionList();
@@ -128,22 +93,6 @@ public class StudentRegistrationController implements Initializable {
             modalStage.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private void initializeTestQuestions() {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            test = (Test) session
-                    .createCriteria(Test.class)
-                    .add(Restrictions.idEq(test.getId()))
-                    .uniqueResult();
-            Hibernate.initialize(test.getQuestions());
-        } finally {
-            if (session != null) {
-                session.close();
-            }
         }
     }
 

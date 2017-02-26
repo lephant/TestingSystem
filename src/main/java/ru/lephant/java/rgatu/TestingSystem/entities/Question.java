@@ -16,6 +16,7 @@ public abstract class Question implements Serializable {
 
 
     public Question() {
+        value = 1;
     }
 
     public Question(Test test, String text, int value) {

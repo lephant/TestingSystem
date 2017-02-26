@@ -21,9 +21,9 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
 import ru.lephant.java.rgatu.TestingSystem.entities.User;
@@ -31,7 +31,6 @@ import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -79,7 +78,7 @@ public class TestSelectionController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         authorize(false);
 
-        initData();
+        tests.setAll(DaoFacade.getTestDAOService().getList());
 
         nameTableColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         teacherTableColumn.setCellValueFactory(new PropertyValueFactory<>("teacher"));
@@ -164,7 +163,7 @@ public class TestSelectionController implements Initializable {
     public void onTestDeleteMenuItemClicked() {
         Test test = testTableView.getSelectionModel().getSelectedItem();
         if (test != null) {
-            deleteTestFromDb(test);
+            DaoFacade.getTestDAOService().delete(test);
             tests.remove(test);
         }
     }
@@ -302,22 +301,6 @@ public class TestSelectionController implements Initializable {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private void initData() {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            List<Test> list = session
-                    .createCriteria(Test.class)
-                    .list();
-            tests.addAll(list);
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-    }
-
     private void showGroupStage() {
         try {
             Stage stage = new Stage();
@@ -450,7 +433,7 @@ public class TestSelectionController implements Initializable {
             testEditingController.setCurrentStage(stage);
 
             if (!isNew) {
-                test = initializeTestQuestions(test.getId());
+                test = DaoFacade.getTestDAOService().getByPK(test.getId());
                 testEditingController.setTest(test);
                 testEditingController.fillFields();
                 testEditingController.showQuestion(0);
@@ -476,37 +459,6 @@ public class TestSelectionController implements Initializable {
         }
     }
 
-    private Test initializeTestQuestions(long id) {
-        Session session = null;
-        Test test = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            test = (Test) session
-                    .createCriteria(Test.class)
-                    .add(Restrictions.idEq(id))
-                    .uniqueResult();
-            Hibernate.initialize(test.getQuestions());
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-        return test;
-    }
-
-    private void deleteTestFromDb(Test test) {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            session.beginTransaction();
-            session.delete(test);
-            session.getTransaction().commit();
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-    }
 
     public void setMainStage(Stage mainStage) {
         this.mainStage = mainStage;

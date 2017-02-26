@@ -12,14 +12,12 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.hibernate.Session;
+import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Teacher;
-import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -36,7 +34,7 @@ public class TeacherWindowController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         teacherListView.setItems(teachers);
-        initTeachers();
+        teachers.setAll(DaoFacade.getTeacherDAOService().getList());
     }
 
 
@@ -45,7 +43,7 @@ public class TeacherWindowController implements Initializable {
         Teacher teacher = new Teacher();
         boolean needToSave = showTeacherChangingDialog("Добавление группы", teacher);
         if (needToSave) {
-            saveTeacher(teacher);
+            DaoFacade.getTeacherDAOService().save(teacher);
             teachers.add(teacher);
         }
     }
@@ -60,7 +58,7 @@ public class TeacherWindowController implements Initializable {
         Teacher teacher = teachers.get(index);
         boolean needToSave = showTeacherChangingDialog("Редактирование преподавателя", teacher);
         if (needToSave) {
-            saveTeacher(teacher);
+            DaoFacade.getTeacherDAOService().save(teacher);
             teachers.set(index, teacher);
         }
     }
@@ -76,7 +74,7 @@ public class TeacherWindowController implements Initializable {
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
-                deleteTeacher(teacher);
+                DaoFacade.getTeacherDAOService().delete(teacher);
                 teachers.remove(teacher);
                 alert.close();
             } else {
@@ -111,48 +109,6 @@ public class TeacherWindowController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
             return false;
-        }
-    }
-
-    private void saveTeacher(Teacher teacher) {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            session.beginTransaction();
-            session.saveOrUpdate(teacher);
-            session.getTransaction().commit();
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-    }
-
-    private void deleteTeacher(Teacher teacher) {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            session.beginTransaction();
-            session.delete(teacher);
-            session.getTransaction().commit();
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void initTeachers() {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            List<Teacher> list = session.createCriteria(Teacher.class).list();
-            teachers.setAll(list);
-        } finally {
-            if (session != null) {
-                session.close();
-            }
         }
     }
 

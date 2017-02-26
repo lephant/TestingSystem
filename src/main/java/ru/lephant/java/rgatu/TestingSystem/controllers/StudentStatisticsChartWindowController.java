@@ -1,17 +1,14 @@
 package ru.lephant.java.rgatu.TestingSystem.controllers;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import ru.lephant.java.rgatu.TestingSystem.comparators.DateComporatorForTestOfStudent;
+import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
 import ru.lephant.java.rgatu.TestingSystem.entities.TestOfStudent;
-import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 
 import java.util.Date;
 import java.util.List;
@@ -28,7 +25,8 @@ public class StudentStatisticsChartWindowController {
 
 
     public void fillChart() {
-        List<TestOfStudent> testsOfStudent = getDataFromDB();
+        List<TestOfStudent> testsOfStudent = DaoFacade.getStudentResultsDAOService()
+                .getResultsOfStudentBySubject(student,subject);
         testsOfStudent.sort(new DateComporatorForTestOfStudent());
         XYChart.Series<String, Double> series = new XYChart.Series<>();
 
@@ -43,29 +41,10 @@ public class StudentStatisticsChartWindowController {
         areaChart.getData().add(series);
     }
 
-    @SuppressWarnings("unchecked")
-    private List<TestOfStudent> getDataFromDB() {
-        Session session = null;
-        List<TestOfStudent> list;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            list = session.createCriteria(TestOfStudent.class)
-                    .add(Restrictions.eq("student", student))
-                    .createAlias("test", "test")
-                    .add(Restrictions.eq("test.subject", subject))
-                    .list();
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-        return list;
-    }
-
-
-    public void onReturnButtonClicked(ActionEvent event) {
+    public void onReturnButtonClicked() {
         modalStage.close();
     }
+
 
     public void setModalStage(Stage modalStage) {
         this.modalStage = modalStage;

@@ -12,14 +12,12 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.hibernate.Session;
+import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Group;
-import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -36,7 +34,7 @@ public class GroupWindowController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         groupListView.setItems(groups);
-        initGroups();
+        groups.setAll(DaoFacade.getGroupDAOService().getList());
     }
 
 
@@ -45,7 +43,7 @@ public class GroupWindowController implements Initializable {
         Group group = new Group();
         boolean needToSave = showGroupChangingDialog("Добавление группы", group);
         if (needToSave) {
-            saveGroup(group);
+            DaoFacade.getGroupDAOService().save(group);
             groups.add(group);
         }
     }
@@ -60,7 +58,7 @@ public class GroupWindowController implements Initializable {
         Group group = groups.get(index);
         boolean needToSave = showGroupChangingDialog("Редактирование группы", group);
         if (needToSave) {
-            saveGroup(group);
+            DaoFacade.getGroupDAOService().save(group);
             groups.set(index, group);
         }
     }
@@ -76,7 +74,7 @@ public class GroupWindowController implements Initializable {
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK){
-                deleteGroup(group);
+                DaoFacade.getGroupDAOService().delete(group);
                 groups.remove(group);
                 alert.close();
             } else {
@@ -111,48 +109,6 @@ public class GroupWindowController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
             return false;
-        }
-    }
-
-    private void saveGroup(Group group) {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            session.beginTransaction();
-            session.saveOrUpdate(group);
-            session.getTransaction().commit();
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-    }
-
-    private void deleteGroup(Group group) {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            session.beginTransaction();
-            session.delete(group);
-            session.getTransaction().commit();
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void initGroups() {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            List<Group> list = session.createCriteria(Group.class).list();
-            groups.setAll(list);
-        } finally {
-            if (session != null) {
-                session.close();
-            }
         }
     }
 

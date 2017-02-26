@@ -1,15 +1,11 @@
 package ru.lephant.java.rgatu.TestingSystem.controllers;
 
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-public class SubjectSaveWindowController implements Initializable {
+public class SubjectSaveWindowController {
 
     @FXML
     private TextField nameField;
@@ -18,11 +14,6 @@ public class SubjectSaveWindowController implements Initializable {
     private Subject subject;
 
     private boolean needToSave;
-
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-    }
 
 
     public void fillFields() {

@@ -16,16 +16,16 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.hibernate.Session;
+import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.entities.*;
-import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 import ru.lephant.java.rgatu.TestingSystem.resolvers.ToggleGroupResolver;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.*;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 public class TestEditingController implements Initializable {
 
@@ -74,8 +74,8 @@ public class TestEditingController implements Initializable {
         subjectComboBox.setItems(subjects);
         teacherComboBox.setItems(teachers);
 
-        initializeSubjects();
-        initializeTeachers();
+        subjects.setAll(DaoFacade.getSubjectDAOService().getList());
+        teachers.setAll(DaoFacade.getTeacherDAOService().getList());
 
         toggleGroupResolver = new ToggleGroupResolver();
 
@@ -404,7 +404,7 @@ public class TestEditingController implements Initializable {
         test.setSubject(subjectComboBox.getSelectionModel().getSelectedItem());
         test.setRandomOrder(randomOrderCheckBox.isSelected());
 
-        saveTest(test);
+        DaoFacade.getTestDAOService().save(test);
 
         currentStage.close();
     }
@@ -418,47 +418,6 @@ public class TestEditingController implements Initializable {
             questionList.getSelectionModel().select(question);
             test.getQuestions().remove(index);
             showQuestion(questionNumber);
-        }
-    }
-
-
-    private void initializeTeachers() {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            List list = session.createCriteria(Teacher.class).list();
-            teachers.setAll(list);
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-    }
-
-    private void initializeSubjects() {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            List list = session.createCriteria(Subject.class).list();
-            subjects.setAll(list);
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-    }
-
-    private void saveTest(Test test) {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            session.beginTransaction();
-            session.saveOrUpdate(test);
-            session.getTransaction().commit();
-        } finally {
-            if (session != null) {
-                session.close();
-            }
         }
     }
 

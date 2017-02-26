@@ -7,13 +7,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import org.hibernate.Session;
+import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.entities.Group;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
-import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class StudentSaveWindowController implements Initializable {
@@ -33,10 +31,9 @@ public class StudentSaveWindowController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        fillGroups();
+        groups.setAll(DaoFacade.getGroupDAOService().getList());
         groupListView.setItems(groups);
     }
-
 
     public void fillFields() {
         fioField.setText(student.getFio());
@@ -61,6 +58,7 @@ public class StudentSaveWindowController implements Initializable {
         modalStage.close();
     }
 
+
     private boolean validateGroup() {
         String name = fioField.getText();
         if (name.trim().length() < 1) return false;
@@ -72,20 +70,6 @@ public class StudentSaveWindowController implements Initializable {
     private void applyChanges() {
         student.setFio(fioField.getText());
         student.setGroup(groupListView.getSelectionModel().getSelectedItem());
-    }
-
-    @SuppressWarnings("unchecked")
-    private void fillGroups() {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            List<Group> list = session.createCriteria(Group.class).list();
-            groups.setAll(list);
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
     }
 
 

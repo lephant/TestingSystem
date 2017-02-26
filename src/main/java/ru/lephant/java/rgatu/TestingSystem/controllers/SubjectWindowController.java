@@ -12,14 +12,12 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.hibernate.Session;
+import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
-import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -36,7 +34,7 @@ public class SubjectWindowController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         subjectListView.setItems(subjects);
-        initSubjects();
+        subjects.setAll(DaoFacade.getSubjectDAOService().getList());
     }
 
 
@@ -45,7 +43,7 @@ public class SubjectWindowController implements Initializable {
         Subject subject = new Subject();
         boolean needToSave = showSubjectChangingDialog("Добавление предмета", subject);
         if (needToSave) {
-            saveSubject(subject);
+            DaoFacade.getSubjectDAOService().save(subject);
             subjects.add(subject);
         }
     }
@@ -60,7 +58,7 @@ public class SubjectWindowController implements Initializable {
         Subject subject = subjects.get(index);
         boolean needToSave = showSubjectChangingDialog("Редактирование предмета", subject);
         if (needToSave) {
-            saveSubject(subject);
+            DaoFacade.getSubjectDAOService().save(subject);
             subjects.set(index, subject);
         }
     }
@@ -76,7 +74,7 @@ public class SubjectWindowController implements Initializable {
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK){
-                deleteSubject(subject);
+                DaoFacade.getSubjectDAOService().delete(subject);
                 subjects.remove(subject);
                 alert.close();
             } else {
@@ -111,48 +109,6 @@ public class SubjectWindowController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
             return false;
-        }
-    }
-
-    private void saveSubject(Subject subject) {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            session.beginTransaction();
-            session.saveOrUpdate(subject);
-            session.getTransaction().commit();
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-    }
-
-    private void deleteSubject(Subject subject) {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            session.beginTransaction();
-            session.delete(subject);
-            session.getTransaction().commit();
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void initSubjects() {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            List<Subject> list = session.createCriteria(Subject.class).list();
-            subjects.setAll(list);
-        } finally {
-            if (session != null) {
-                session.close();
-            }
         }
     }
 

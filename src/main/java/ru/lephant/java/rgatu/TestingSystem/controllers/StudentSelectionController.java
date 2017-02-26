@@ -15,13 +15,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
+import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
-import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 
 import java.io.IOException;
 import java.net.URL;
@@ -47,7 +44,7 @@ public class StudentSelectionController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        getAllStudents();
+        allStudents = new ArrayList<>(DaoFacade.getStudentDAOService().getList());
         fillListView(allStudents);
         addFioFieldListener();
         studentsList.setItems(students);
@@ -118,7 +115,7 @@ public class StudentSelectionController implements Initializable {
             Parent root = fxmlLoader.load();
             TestExecutionController testExecutionController = fxmlLoader.getController();
             testExecutionController.setMainStage(mainStage);
-            initializeTestQuestions();
+            test = DaoFacade.getTestDAOService().getByPK(test.getId());
             testExecutionController.setTest(test);
             testExecutionController.setStudent(student);
             testExecutionController.initializeQuestionList();
@@ -132,37 +129,6 @@ public class StudentSelectionController implements Initializable {
             modalStage.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private void initializeTestQuestions() {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            test = (Test) session
-                    .createCriteria(Test.class)
-                    .add(Restrictions.idEq(test.getId()))
-                    .uniqueResult();
-            Hibernate.initialize(test.getQuestions());
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void getAllStudents() {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            allStudents = session
-                    .createCriteria(Student.class)
-                    .list();
-        } finally {
-            if (session != null) {
-                session.close();
-            }
         }
     }
 
@@ -182,7 +148,6 @@ public class StudentSelectionController implements Initializable {
 
     private List<Student> search(String text) {
         List<Student> res = new ArrayList<>();
-
         for (Student student : allStudents) {
             if (student.getFio().toLowerCase().contains(text.toLowerCase())) {
                 res.add(student);

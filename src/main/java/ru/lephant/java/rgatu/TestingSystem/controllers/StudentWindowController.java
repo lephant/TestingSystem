@@ -13,14 +13,12 @@ import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.hibernate.Session;
+import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
-import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -37,7 +35,7 @@ public class StudentWindowController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         studentListView.setItems(students);
-        initStudents();
+        students.setAll(DaoFacade.getStudentDAOService().getList());
     }
 
 
@@ -57,7 +55,7 @@ public class StudentWindowController implements Initializable {
         Student student = new Student();
         boolean needToSave = showStudentChangingDialog("Добавление студента", student);
         if (needToSave) {
-            saveStudent(student);
+            DaoFacade.getStudentDAOService().save(student);
             students.add(student);
         }
     }
@@ -72,7 +70,7 @@ public class StudentWindowController implements Initializable {
         Student student = students.get(index);
         boolean needToSave = showStudentChangingDialog("Редактирование студента", student);
         if (needToSave) {
-            saveStudent(student);
+            DaoFacade.getStudentDAOService().save(student);
             students.set(index, student);
         }
     }
@@ -88,7 +86,7 @@ public class StudentWindowController implements Initializable {
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
-                deleteStudent(student);
+                DaoFacade.getStudentDAOService().delete(student);
                 students.remove(student);
                 alert.close();
             } else {
@@ -123,48 +121,6 @@ public class StudentWindowController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
             return false;
-        }
-    }
-
-    private void saveStudent(Student student) {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            session.beginTransaction();
-            session.saveOrUpdate(student);
-            session.getTransaction().commit();
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-    }
-
-    private void deleteStudent(Student student) {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            session.beginTransaction();
-            session.delete(student);
-            session.getTransaction().commit();
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void initStudents() {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            List<Student> list = session.createCriteria(Student.class).list();
-            students.setAll(list);
-        } finally {
-            if (session != null) {
-                session.close();
-            }
         }
     }
 
