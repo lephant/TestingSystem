@@ -1,11 +1,7 @@
 package ru.lephant.java.rgatu.TestingSystem.controllers;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -17,6 +13,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
+import ru.lephant.java.rgatu.TestingSystem.drawers.QuestionDrawerFactory;
+import ru.lephant.java.rgatu.TestingSystem.drawers.questiondrawers.QuestionDrawer;
 import ru.lephant.java.rgatu.TestingSystem.entities.*;
 import ru.lephant.java.rgatu.TestingSystem.resolvers.ToggleGroupResolver;
 
@@ -62,11 +60,13 @@ public class TestExecutionController implements Initializable {
     private int questionNumber;
 
     private ToggleGroupResolver toggleGroupResolver;
+    private QuestionDrawerFactory questionDrawerFactory;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         toggleGroupResolver = new ToggleGroupResolver();
+        questionDrawerFactory = new QuestionDrawerFactory();
         questionList.setItems(questionListData);
     }
 
@@ -187,70 +187,9 @@ public class TestExecutionController implements Initializable {
         if (question.getImage() != null) {
             drawImage(question);
         }
-        Class questionClass = calculateQuestionClass(question);
-        if (questionClass == SingleChoiceQuestion.class) {
-            drawSingleChoiceQuestion((SingleChoiceQuestion) question);
-        } else if (questionClass == MultiChoiceQuestion.class) {
-            drawMultiChoiceQuestion((MultiChoiceQuestion) question);
-        } else if (questionClass == MissingWordQuestion.class) {
-            drawMissingWordQuestion((MissingWordQuestion) question);
-        }
+        QuestionDrawer questionDrawer = questionDrawerFactory.getQuestionDrawer(question);
+        questionDrawer.draw(question, choiceBox, false);
     }
-
-    private void drawSingleChoiceQuestion(SingleChoiceQuestion question) {
-        ToggleGroup toggleGroup = toggleGroupResolver.resolve(question);
-        for (Choice choice : question.getChoices()) {
-            RadioButton radioButton = new RadioButton(choice.getText());
-            radioButton.setToggleGroup(toggleGroup);
-            radioButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    for (Choice choice : question.getChoices()) {
-                        choice.setMarked(false);
-                    }
-                    choice.setMarked(true);
-                }
-            });
-            radioButton.setWrapText(true);
-            radioButton.setSelected(choice.isMarked());
-            choiceBox.getChildren().add(radioButton);
-        }
-    }
-
-    private void drawMultiChoiceQuestion(MultiChoiceQuestion question) {
-        for (Choice choice : question.getChoices()) {
-            CheckBox checkBox = new CheckBox(choice.getText());
-            checkBox.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    choice.setMarked(checkBox.isSelected());
-                }
-            });
-            checkBox.setWrapText(true);
-            checkBox.setSelected(choice.isMarked());
-            choiceBox.getChildren().add(checkBox);
-        }
-    }
-
-    private void drawMissingWordQuestion(MissingWordQuestion question) {
-        TextField answerField = new TextField();
-        answerField.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                question.setAnswer(newValue);
-            }
-        });
-        answerField.setText(question.getAnswer());
-        choiceBox.getChildren().add(answerField);
-    }
-
-    private Class calculateQuestionClass(Question question) {
-        if (question instanceof SingleChoiceQuestion) return SingleChoiceQuestion.class;
-        if (question instanceof MultiChoiceQuestion) return MultiChoiceQuestion.class;
-        if (question instanceof MissingWordQuestion) return MissingWordQuestion.class;
-        return null;
-    }
-
 
     private void drawImage(Question question) {
         InputStream stream = new ByteArrayInputStream(question.getImage().getContent());

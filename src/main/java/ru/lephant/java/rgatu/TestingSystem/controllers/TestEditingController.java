@@ -17,6 +17,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
+import ru.lephant.java.rgatu.TestingSystem.drawers.QuestionDrawerFactory;
+import ru.lephant.java.rgatu.TestingSystem.drawers.questiondrawers.QuestionDrawer;
 import ru.lephant.java.rgatu.TestingSystem.entities.*;
 import ru.lephant.java.rgatu.TestingSystem.resolvers.ToggleGroupResolver;
 
@@ -66,6 +68,7 @@ public class TestEditingController implements Initializable {
     private Question currentQuestion;
 
     private ToggleGroupResolver toggleGroupResolver;
+    private QuestionDrawerFactory questionDrawerFactory;
 
 
     @Override
@@ -78,6 +81,7 @@ public class TestEditingController implements Initializable {
         teachers.setAll(DaoFacade.getTeacherDAOService().getList());
 
         toggleGroupResolver = new ToggleGroupResolver();
+        questionDrawerFactory = new QuestionDrawerFactory();
 
         questions.add("Добавить");
     }
@@ -134,66 +138,8 @@ public class TestEditingController implements Initializable {
         if (currentQuestion.getImage() != null) {
             drawImage(currentQuestion);
         }
-        Class questionClass = calculateQuestionClass(currentQuestion);
-        if (questionClass == SingleChoiceQuestion.class) {
-            drawSingleChoiceQuestion((SingleChoiceQuestion) currentQuestion);
-        } else if (questionClass == MultiChoiceQuestion.class) {
-            drawMultiChoiceQuestion((MultiChoiceQuestion) currentQuestion);
-        } else if (questionClass == MissingWordQuestion.class) {
-            drawMissingWordQuestion((MissingWordQuestion) currentQuestion);
-        }
-    }
-
-    private void drawSingleChoiceQuestion(SingleChoiceQuestion question) {
-        ToggleGroup toggleGroup = toggleGroupResolver.resolve(question);
-        for (Choice choice : question.getChoices()) {
-            RadioButton radioButton = new RadioButton(choice.getText());
-            radioButton.setToggleGroup(toggleGroup);
-            radioButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    for (Choice choice : question.getChoices()) {
-                        choice.setCorrectIt(false);
-                    }
-                    choice.setCorrectIt(true);
-                }
-            });
-            addContextMenuToOption(choice, radioButton);
-            radioButton.setWrapText(true);
-            radioButton.setSelected(choice.isCorrectIt());
-            choiceBox.getChildren().add(radioButton);
-        }
-    }
-
-    private void drawMultiChoiceQuestion(MultiChoiceQuestion question) {
-        for (Choice choice : question.getChoices()) {
-            CheckBox checkBox = new CheckBox(choice.getText());
-            checkBox.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    choice.setCorrectIt(checkBox.isSelected());
-                }
-            });
-            checkBox.setWrapText(true);
-            checkBox.setSelected(choice.isCorrectIt());
-            addContextMenuToOption(choice, checkBox);
-            choiceBox.getChildren().add(checkBox);
-        }
-    }
-
-    private void drawMissingWordQuestion(MissingWordQuestion question) {
-        for (MissingPossibleAnswer possibleAnswer : question.getPossibleAnswers()) {
-            TextField possibleAnswerField = new TextField();
-            possibleAnswerField.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    possibleAnswer.setText(newValue);
-                }
-            });
-            possibleAnswerField.setText(possibleAnswer.getText());
-            addContextMenuToOption(possibleAnswer, possibleAnswerField);
-            choiceBox.getChildren().add(possibleAnswerField);
-        }
+        QuestionDrawer questionDrawer = questionDrawerFactory.getQuestionDrawer(currentQuestion);
+        questionDrawer.draw(currentQuestion, choiceBox, true);
     }
 
     private Class calculateQuestionClass(Question question) {
