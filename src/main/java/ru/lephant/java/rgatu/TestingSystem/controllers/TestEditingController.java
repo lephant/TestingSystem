@@ -19,8 +19,10 @@ import ru.lephant.java.rgatu.TestingSystem.drawers.OptionDrawerFactory;
 import ru.lephant.java.rgatu.TestingSystem.drawers.QuestionDrawerFactory;
 import ru.lephant.java.rgatu.TestingSystem.drawers.optiondrawers.OptionDrawer;
 import ru.lephant.java.rgatu.TestingSystem.drawers.questiondrawers.QuestionDrawer;
-import ru.lephant.java.rgatu.TestingSystem.entities.*;
-import ru.lephant.java.rgatu.TestingSystem.resolvers.ToggleGroupResolver;
+import ru.lephant.java.rgatu.TestingSystem.entities.Question;
+import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
+import ru.lephant.java.rgatu.TestingSystem.entities.Teacher;
+import ru.lephant.java.rgatu.TestingSystem.entities.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -66,7 +68,6 @@ public class TestEditingController implements Initializable {
     private int questionNumber;
     private Question currentQuestion;
 
-    private ToggleGroupResolver toggleGroupResolver;
     private QuestionDrawerFactory questionDrawerFactory;
     private OptionDrawerFactory optionDrawerFactory;
 
@@ -80,7 +81,6 @@ public class TestEditingController implements Initializable {
         subjects.setAll(DaoFacade.getSubjectDAOService().getList());
         teachers.setAll(DaoFacade.getTeacherDAOService().getList());
 
-        toggleGroupResolver = new ToggleGroupResolver();
         questionDrawerFactory = new QuestionDrawerFactory();
         optionDrawerFactory = new OptionDrawerFactory();
 

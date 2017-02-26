@@ -15,8 +15,10 @@ import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.drawers.QuestionDrawerFactory;
 import ru.lephant.java.rgatu.TestingSystem.drawers.questiondrawers.QuestionDrawer;
-import ru.lephant.java.rgatu.TestingSystem.entities.*;
-import ru.lephant.java.rgatu.TestingSystem.resolvers.ToggleGroupResolver;
+import ru.lephant.java.rgatu.TestingSystem.entities.Question;
+import ru.lephant.java.rgatu.TestingSystem.entities.Student;
+import ru.lephant.java.rgatu.TestingSystem.entities.Test;
+import ru.lephant.java.rgatu.TestingSystem.entities.TestOfStudent;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -59,13 +61,11 @@ public class TestExecutionController implements Initializable {
 
     private int questionNumber;
 
-    private ToggleGroupResolver toggleGroupResolver;
     private QuestionDrawerFactory questionDrawerFactory;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        toggleGroupResolver = new ToggleGroupResolver();
         questionDrawerFactory = new QuestionDrawerFactory();
         questionList.setItems(questionListData);
     }
