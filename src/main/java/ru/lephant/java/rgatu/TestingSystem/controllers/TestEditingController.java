@@ -4,8 +4,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -17,7 +15,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
+import ru.lephant.java.rgatu.TestingSystem.drawers.OptionDrawerFactory;
 import ru.lephant.java.rgatu.TestingSystem.drawers.QuestionDrawerFactory;
+import ru.lephant.java.rgatu.TestingSystem.drawers.optiondrawers.OptionDrawer;
 import ru.lephant.java.rgatu.TestingSystem.drawers.questiondrawers.QuestionDrawer;
 import ru.lephant.java.rgatu.TestingSystem.entities.*;
 import ru.lephant.java.rgatu.TestingSystem.resolvers.ToggleGroupResolver;
@@ -26,7 +26,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class TestEditingController implements Initializable {
@@ -69,6 +68,7 @@ public class TestEditingController implements Initializable {
 
     private ToggleGroupResolver toggleGroupResolver;
     private QuestionDrawerFactory questionDrawerFactory;
+    private OptionDrawerFactory optionDrawerFactory;
 
 
     @Override
@@ -82,6 +82,7 @@ public class TestEditingController implements Initializable {
 
         toggleGroupResolver = new ToggleGroupResolver();
         questionDrawerFactory = new QuestionDrawerFactory();
+        optionDrawerFactory = new OptionDrawerFactory();
 
         questions.add("Добавить");
     }
@@ -140,13 +141,6 @@ public class TestEditingController implements Initializable {
         }
         QuestionDrawer questionDrawer = questionDrawerFactory.getQuestionDrawer(currentQuestion);
         questionDrawer.draw(currentQuestion, choiceBox, true);
-    }
-
-    private Class calculateQuestionClass(Question question) {
-        if (question instanceof SingleChoiceQuestion) return SingleChoiceQuestion.class;
-        if (question instanceof MultiChoiceQuestion) return MultiChoiceQuestion.class;
-        if (question instanceof MissingWordQuestion) return MissingWordQuestion.class;
-        return null;
     }
 
     private void drawImage(Question question) {
@@ -210,7 +204,6 @@ public class TestEditingController implements Initializable {
             } else {
                 showQuestion(questionNumber);
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -218,131 +211,8 @@ public class TestEditingController implements Initializable {
 
     @FXML
     public void onAddChoiceButtonClicked() {
-        Class clazz = calculateQuestionClass(currentQuestion);
-        if (clazz == SingleChoiceQuestion.class) {
-            SingleChoiceQuestion question = (SingleChoiceQuestion) currentQuestion;
-            ToggleGroup toggleGroup = toggleGroupResolver.resolve(question);
-            Choice choice = new Choice(question, "Новый вариант", false);
-            question.getChoices().add(choice);
-
-            RadioButton radioButton = new RadioButton();
-            radioButton.setToggleGroup(toggleGroup);
-            radioButton.setText("Новый вариант");
-            radioButton.setSelected(false);
-
-            radioButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    choice.setCorrectIt(radioButton.isSelected());
-                }
-            });
-
-            addContextMenuToOption(choice, radioButton);
-            choiceBox.getChildren().add(radioButton);
-        } else if (clazz == MultiChoiceQuestion.class) {
-            MultiChoiceQuestion question = (MultiChoiceQuestion) currentQuestion;
-            Choice choice = new Choice(question, "Новый вариант", false);
-            question.getChoices().add(choice);
-
-            CheckBox checkBox = new CheckBox();
-            checkBox.setText("Новый вариант");
-            checkBox.setSelected(false);
-
-            checkBox.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    choice.setCorrectIt(checkBox.isSelected());
-                }
-            });
-
-            addContextMenuToOption(choice, checkBox);
-            choiceBox.getChildren().add(checkBox);
-        } else if (clazz == MissingWordQuestion.class) {
-            MissingWordQuestion question = (MissingWordQuestion) currentQuestion;
-            MissingPossibleAnswer possibleAnswer = new MissingPossibleAnswer(question, "Новый вариант");
-            question.getPossibleAnswers().add(possibleAnswer);
-
-            TextField possibleAnswerField = new TextField();
-            possibleAnswerField.setText("Новый вариант");
-            possibleAnswerField.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    possibleAnswer.setText(newValue);
-                }
-            });
-
-            addContextMenuToOption(possibleAnswer, possibleAnswerField);
-            choiceBox.getChildren().add(possibleAnswerField);
-        }
-    }
-
-    private void addContextMenuToOption(MissingPossibleAnswer possibleAnswer, TextField possibleAnswerField) {
-        ContextMenu contextMenu = new ContextMenu();
-
-        MenuItem editMenuItem = new MenuItem("Редактировать");
-        editMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                TextInputDialog dialog = new TextInputDialog(possibleAnswer.getText());
-                dialog.setTitle("Редактирование");
-                dialog.setHeaderText(null);
-                dialog.setContentText("Введите текст варианта ответа:");
-
-                Optional<String> result = dialog.showAndWait();
-                if (result.isPresent()) {
-                    possibleAnswer.setText(result.get());
-                    possibleAnswerField.setText(result.get());
-                }
-            }
-        });
-
-        MenuItem deleteMenuItem = new MenuItem("Удалить");
-        deleteMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                ((MissingWordQuestion) currentQuestion).getPossibleAnswers().remove(possibleAnswer);
-                choiceBox.getChildren().remove(possibleAnswerField);
-            }
-        });
-
-        contextMenu.getItems().add(editMenuItem);
-        contextMenu.getItems().add(deleteMenuItem);
-        possibleAnswerField.setContextMenu(contextMenu);
-    }
-
-    //TODO: перегрузить
-    private void addContextMenuToOption(final Choice choice, final ButtonBase buttonBase) {
-        ContextMenu contextMenu = new ContextMenu();
-
-        MenuItem editMenuItem = new MenuItem("Редактировать");
-        editMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                TextInputDialog dialog = new TextInputDialog(choice.getText());
-                dialog.setTitle("Редактирование");
-                dialog.setHeaderText(null);
-                dialog.setContentText("Введите текст варианта ответа:");
-
-                Optional<String> result = dialog.showAndWait();
-                if (result.isPresent()) {
-                    choice.setText(result.get());
-                    buttonBase.setText(result.get());
-                }
-            }
-        });
-
-        MenuItem deleteMenuItem = new MenuItem("Удалить");
-        deleteMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                ((SingleChoiceQuestion) currentQuestion).getChoices().remove(choice);
-                choiceBox.getChildren().remove(buttonBase);
-            }
-        });
-
-        contextMenu.getItems().add(editMenuItem);
-        contextMenu.getItems().add(deleteMenuItem);
-        buttonBase.setContextMenu(contextMenu);
+        OptionDrawer optionDrawer = optionDrawerFactory.getOptionDrawer(currentQuestion);
+        optionDrawer.draw(currentQuestion, choiceBox);
     }
 
     @FXML
