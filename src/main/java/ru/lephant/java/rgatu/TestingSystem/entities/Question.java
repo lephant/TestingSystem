@@ -33,9 +33,6 @@ public abstract class Question implements Serializable {
     }
 
 
-    public abstract boolean checkAnswer();
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)

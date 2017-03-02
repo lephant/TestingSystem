@@ -26,17 +26,6 @@ public class MissingWordQuestion extends Question implements Serializable {
     }
 
 
-    @Override
-    public boolean checkAnswer() {
-        for (MissingPossibleAnswer missingPossibleAnswer : possibleAnswers) {
-            if (missingPossibleAnswer.getText().trim().toLowerCase().equals(answer.trim().toLowerCase())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
     @OneToMany(mappedBy = "missingWordQuestion", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     public List<MissingPossibleAnswer> getPossibleAnswers() {
         return possibleAnswers;

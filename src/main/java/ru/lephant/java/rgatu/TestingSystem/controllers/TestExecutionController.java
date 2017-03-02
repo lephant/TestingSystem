@@ -19,6 +19,8 @@ import ru.lephant.java.rgatu.TestingSystem.entities.Question;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
 import ru.lephant.java.rgatu.TestingSystem.entities.TestOfStudent;
+import ru.lephant.java.rgatu.TestingSystem.testcheckers.TestChecker;
+import ru.lephant.java.rgatu.TestingSystem.testcheckers.defaultchecker.DefaultTestChecker;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -62,11 +64,13 @@ public class TestExecutionController implements Initializable {
     private int questionNumber;
 
     private QuestionDrawerFactory questionDrawerFactory;
+    private TestChecker testChecker;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         questionDrawerFactory = new QuestionDrawerFactory();
+        testChecker = new DefaultTestChecker();
         questionList.setItems(questionListData);
     }
 
@@ -101,7 +105,7 @@ public class TestExecutionController implements Initializable {
             testOfStudent = new TestOfStudent();
             testOfStudent.setTest(test);
             testOfStudent.setStudent(student);
-            testOfStudent.setResult(BigDecimal.valueOf(test.calculateResult()));
+            testOfStudent.setResult(BigDecimal.valueOf(testChecker.check(test)));
             testOfStudent.setComputerName(InetAddress.getLocalHost().getHostName());
             testOfStudent.setDateAndTime(new Date());
         } catch (UnknownHostException e) {
