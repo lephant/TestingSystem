@@ -15,13 +15,14 @@ import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Teacher;
+import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class TeacherWindowController implements Initializable {
+public class TeacherWindowController implements Initializable, RefreshableController {
 
     @FXML
     private ListView<Teacher> teacherListView;
@@ -37,15 +38,16 @@ public class TeacherWindowController implements Initializable {
         teachers.setAll(DaoFacade.getTeacherDAOService().getList());
     }
 
+    @Override
+    public void refreshData() {
+        teachers.setAll(DaoFacade.getTeacherDAOService().getList());
+    }
+
 
     @FXML
     public void onAddButtonClicked() {
         Teacher teacher = new Teacher();
-        boolean needToSave = showTeacherChangingDialog("Добавление группы", teacher);
-        if (needToSave) {
-            DaoFacade.getTeacherDAOService().save(teacher);
-            teachers.add(teacher);
-        }
+        showTeacherChangingDialog("Добавление группы", teacher);
     }
 
     @FXML
@@ -56,11 +58,7 @@ public class TeacherWindowController implements Initializable {
             return;
         }
         Teacher teacher = teachers.get(index);
-        boolean needToSave = showTeacherChangingDialog("Редактирование преподавателя", teacher);
-        if (needToSave) {
-            DaoFacade.getTeacherDAOService().save(teacher);
-            teachers.set(index, teacher);
-        }
+        showTeacherChangingDialog("Редактирование преподавателя", teacher);
     }
 
     @FXML
@@ -86,7 +84,7 @@ public class TeacherWindowController implements Initializable {
     }
 
 
-    private boolean showTeacherChangingDialog(String title, Teacher teacher) {
+    private void showTeacherChangingDialog(String title, Teacher teacher) {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/fxml/teacher_save_window.fxml"));
@@ -101,14 +99,12 @@ public class TeacherWindowController implements Initializable {
             TeacherSaveWindowController teacherSaveWindowController = loader.getController();
             teacherSaveWindowController.setModalStage(dialogStage);
             teacherSaveWindowController.setTeacher(teacher);
-            teacherSaveWindowController.fillFields();
+            teacherSaveWindowController.setParentController(this);
+            teacherSaveWindowController.postInitialize();
 
-            dialogStage.showAndWait();
-
-            return teacherSaveWindowController.isNeedToSave();
+            dialogStage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
         }
     }
 
