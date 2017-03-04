@@ -16,13 +16,14 @@ import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
+import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class StudentWindowController implements Initializable {
+public class StudentWindowController implements Initializable, RefreshableController {
 
     @FXML
     private ListView<Student> studentListView;
@@ -38,6 +39,11 @@ public class StudentWindowController implements Initializable {
         students.setAll(DaoFacade.getStudentDAOService().getList());
     }
 
+    @Override
+    public void refreshData() {
+        students.setAll(DaoFacade.getStudentDAOService().getList());
+    }
+
 
     @FXML
     public void onShowStatisticsButtonClicked() {
@@ -47,17 +53,12 @@ public class StudentWindowController implements Initializable {
         } else {
             new NoSelectedItemAlert("Не выбран студент!");
         }
-
     }
 
     @FXML
     public void onAddButtonClicked() {
         Student student = new Student();
-        boolean needToSave = showStudentChangingDialog("Добавление студента", student);
-        if (needToSave) {
-            DaoFacade.getStudentDAOService().save(student);
-            students.add(student);
-        }
+        showStudentChangingDialog("Добавление студента", student);
     }
 
     @FXML
@@ -68,11 +69,7 @@ public class StudentWindowController implements Initializable {
             return;
         }
         Student student = students.get(index);
-        boolean needToSave = showStudentChangingDialog("Редактирование студента", student);
-        if (needToSave) {
-            DaoFacade.getStudentDAOService().save(student);
-            students.set(index, student);
-        }
+        showStudentChangingDialog("Редактирование студента", student);
     }
 
     @FXML
@@ -98,7 +95,7 @@ public class StudentWindowController implements Initializable {
     }
 
 
-    private boolean showStudentChangingDialog(String title, Student student) {
+    private void showStudentChangingDialog(String title, Student student) {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/fxml/student_save_window.fxml"));
@@ -113,14 +110,12 @@ public class StudentWindowController implements Initializable {
             StudentSaveWindowController studentSaveWindowController = loader.getController();
             studentSaveWindowController.setModalStage(dialogStage);
             studentSaveWindowController.setStudent(student);
-            studentSaveWindowController.fillFields();
+            studentSaveWindowController.setParentController(this);
+            studentSaveWindowController.postInitialize();
 
-            dialogStage.showAndWait();
-
-            return studentSaveWindowController.isNeedToSave();
+            dialogStage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
         }
     }
 
@@ -155,6 +150,7 @@ public class StudentWindowController implements Initializable {
             e.printStackTrace();
         }
     }
+
 
     public void setMainStage(Stage mainStage) {
         this.mainStage = mainStage;

@@ -10,11 +10,14 @@ import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.entities.Group;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
+import ru.lephant.java.rgatu.TestingSystem.interfaces.PostInitializable;
+import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
+import ru.lephant.java.rgatu.TestingSystem.validators.impl.StudentValidator;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class StudentSaveWindowController implements Initializable {
+public class StudentSaveWindowController implements Initializable, PostInitializable {
 
     @FXML
     private TextField fioField;
@@ -25,17 +28,21 @@ public class StudentSaveWindowController implements Initializable {
 
     private Stage modalStage;
     private Student student;
+    private RefreshableController parentController;
 
-    private boolean needToSave;
+    private StudentValidator studentValidator = new StudentValidator();
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         groups.setAll(DaoFacade.getGroupDAOService().getList());
         groupListView.setItems(groups);
+        fioField.textProperty().addListener((observable, oldValue, newValue) -> student.setFio(newValue));
     }
 
-    public void fillFields() {
+    @Override
+    public void postInitialize() {
+        modalStage.setOnCloseRequest(event -> parentController.refreshData());
         fioField.setText(student.getFio());
         if (student.getGroup() != null) {
             groupListView.getSelectionModel().select(student.getGroup());
@@ -45,31 +52,18 @@ public class StudentSaveWindowController implements Initializable {
 
     @FXML
     public void onSaveButtonClicked() {
-        if (validateGroup()) {
-            applyChanges();
-            needToSave = true;
+        student.setGroup(groupListView.getSelectionModel().getSelectedItem());
+        if (studentValidator.validate(student)) {
+            DaoFacade.getStudentDAOService().save(student);
+            parentController.refreshData();
             modalStage.close();
         }
     }
 
     @FXML
     public void onCancelButtonClicked() {
-        needToSave = false;
+        parentController.refreshData();
         modalStage.close();
-    }
-
-
-    private boolean validateGroup() {
-        String name = fioField.getText();
-        if (name.trim().length() < 1) return false;
-        if (name.length() > 255) return false;
-        if (groupListView.getSelectionModel().getSelectedIndex() == -1) return false;
-        return true;
-    }
-
-    private void applyChanges() {
-        student.setFio(fioField.getText());
-        student.setGroup(groupListView.getSelectionModel().getSelectedItem());
     }
 
 
@@ -81,11 +75,7 @@ public class StudentSaveWindowController implements Initializable {
         this.student = student;
     }
 
-    public boolean isNeedToSave() {
-        return needToSave;
-    }
-
-    public void setNeedToSave(boolean needToSave) {
-        this.needToSave = needToSave;
+    public void setParentController(RefreshableController parentController) {
+        this.parentController = parentController;
     }
 }
