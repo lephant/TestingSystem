@@ -15,13 +15,14 @@ import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
+import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class SubjectWindowController implements Initializable {
+public class SubjectWindowController implements Initializable, RefreshableController {
 
     @FXML
     private ListView<Subject> subjectListView;
@@ -37,15 +38,16 @@ public class SubjectWindowController implements Initializable {
         subjects.setAll(DaoFacade.getSubjectDAOService().getList());
     }
 
+    @Override
+    public void refreshData() {
+        subjects.setAll(DaoFacade.getSubjectDAOService().getList());
+    }
+
 
     @FXML
     public void onAddButtonClicked() {
         Subject subject = new Subject();
-        boolean needToSave = showSubjectChangingDialog("Добавление предмета", subject);
-        if (needToSave) {
-            DaoFacade.getSubjectDAOService().save(subject);
-            subjects.add(subject);
-        }
+        showSubjectChangingDialog("Добавление предмета", subject);
     }
 
     @FXML
@@ -56,11 +58,7 @@ public class SubjectWindowController implements Initializable {
             return;
         }
         Subject subject = subjects.get(index);
-        boolean needToSave = showSubjectChangingDialog("Редактирование предмета", subject);
-        if (needToSave) {
-            DaoFacade.getSubjectDAOService().save(subject);
-            subjects.set(index, subject);
-        }
+        showSubjectChangingDialog("Редактирование предмета", subject);
     }
 
     @FXML
@@ -86,7 +84,7 @@ public class SubjectWindowController implements Initializable {
     }
 
 
-    private boolean showSubjectChangingDialog(String title, Subject subject) {
+    private void showSubjectChangingDialog(String title, Subject subject) {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/fxml/subject_save_window.fxml"));
@@ -101,14 +99,12 @@ public class SubjectWindowController implements Initializable {
             SubjectSaveWindowController subjectSaveWindowController = loader.getController();
             subjectSaveWindowController.setModalStage(dialogStage);
             subjectSaveWindowController.setSubject(subject);
-            subjectSaveWindowController.fillFields();
+            subjectSaveWindowController.setParentController(this);
+            subjectSaveWindowController.postInitialize();
 
-            dialogStage.showAndWait();
-
-            return subjectSaveWindowController.isNeedToSave();
+            dialogStage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
         }
     }
 
