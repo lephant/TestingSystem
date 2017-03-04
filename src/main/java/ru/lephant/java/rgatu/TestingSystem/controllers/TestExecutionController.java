@@ -29,6 +29,7 @@ import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -75,6 +76,9 @@ public class TestExecutionController implements Initializable {
     }
 
     public void initializeQuestionList() {
+        if (test.isRandomOrder()) {
+            Collections.shuffle(test.getQuestions());
+        }
         for (int i = 1; i <= test.getQuestions().size(); i++) {
             questionListData.add("Вопрос " + i);
         }
