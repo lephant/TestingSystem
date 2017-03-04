@@ -15,13 +15,14 @@ import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Group;
+import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class GroupWindowController implements Initializable {
+public class GroupWindowController implements Initializable, RefreshableController {
 
     @FXML
     private ListView<Group> groupListView;
@@ -37,15 +38,16 @@ public class GroupWindowController implements Initializable {
         groups.setAll(DaoFacade.getGroupDAOService().getList());
     }
 
+    @Override
+    public void refreshData() {
+        groups.setAll(DaoFacade.getGroupDAOService().getList());
+    }
+
 
     @FXML
     public void onAddButtonClicked() {
         Group group = new Group();
-        boolean needToSave = showGroupChangingDialog("Добавление группы", group);
-        if (needToSave) {
-            DaoFacade.getGroupDAOService().save(group);
-            groups.add(group);
-        }
+        showGroupChangingDialog("Добавление группы", group);
     }
 
     @FXML
@@ -56,11 +58,7 @@ public class GroupWindowController implements Initializable {
             return;
         }
         Group group = groups.get(index);
-        boolean needToSave = showGroupChangingDialog("Редактирование группы", group);
-        if (needToSave) {
-            DaoFacade.getGroupDAOService().save(group);
-            groups.set(index, group);
-        }
+        showGroupChangingDialog("Редактирование группы", group);
     }
 
     @FXML
@@ -73,7 +71,7 @@ public class GroupWindowController implements Initializable {
             alert.setContentText(null);
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK){
+            if (result.get() == ButtonType.OK) {
                 DaoFacade.getGroupDAOService().delete(group);
                 groups.remove(group);
                 alert.close();
@@ -86,7 +84,7 @@ public class GroupWindowController implements Initializable {
     }
 
 
-    private boolean showGroupChangingDialog(String title, Group group) {
+    private void showGroupChangingDialog(String title, Group group) {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/fxml/group_save_window.fxml"));
@@ -101,14 +99,12 @@ public class GroupWindowController implements Initializable {
             GroupSaveWindowController groupSaveWindowController = loader.getController();
             groupSaveWindowController.setModalStage(dialogStage);
             groupSaveWindowController.setGroup(group);
-            groupSaveWindowController.fillFields();
+            groupSaveWindowController.setParentController(this);
+            groupSaveWindowController.postInitialize();
 
-            dialogStage.showAndWait();
-
-            return groupSaveWindowController.isNeedToSave();
+            dialogStage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
         }
     }
 
