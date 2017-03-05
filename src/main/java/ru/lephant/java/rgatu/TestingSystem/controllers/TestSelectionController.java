@@ -28,13 +28,14 @@ import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
 import ru.lephant.java.rgatu.TestingSystem.entities.User;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
+import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class TestSelectionController implements Initializable {
+public class TestSelectionController implements Initializable, RefreshableController {
 
 
     @FXML
@@ -85,6 +86,11 @@ public class TestSelectionController implements Initializable {
         subjectTableColumn.setCellValueFactory(new PropertyValueFactory<>("subject"));
 
         testTableView.setItems(tests);
+    }
+
+    @Override
+    public void refreshData() {
+        tests.setAll(DaoFacade.getTestDAOService().getList());
     }
 
 
@@ -431,15 +437,17 @@ public class TestSelectionController implements Initializable {
 
             TestEditingController testEditingController = loader.getController();
             testEditingController.setCurrentStage(stage);
+            testEditingController.setParentController(this);
 
             if (!isNew) {
                 test = DaoFacade.getTestDAOService().getByPK(test.getId());
                 testEditingController.setTest(test);
-                testEditingController.fillFields();
-                testEditingController.showQuestion(0);
+                testEditingController.postInitialize();
             } else {
                 testEditingController.setTest(test);
             }
+
+            testEditingController.showQuestion(0);
 
             stage.setScene(new Scene(root));
             stage.setTitle("Конструктор тестов");

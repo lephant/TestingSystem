@@ -1,7 +1,5 @@
 package ru.lephant.java.rgatu.TestingSystem.controllers;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -23,6 +21,9 @@ import ru.lephant.java.rgatu.TestingSystem.entities.Question;
 import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
 import ru.lephant.java.rgatu.TestingSystem.entities.Teacher;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
+import ru.lephant.java.rgatu.TestingSystem.interfaces.PostInitializable;
+import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
+import ru.lephant.java.rgatu.TestingSystem.validators.impl.TestValidator;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -30,7 +31,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class TestEditingController implements Initializable {
+public class TestEditingController implements Initializable, PostInitializable {
 
     private static final double IMAGE_VIEW_DEFAULT_WIDTH = 450D;
 
@@ -70,6 +71,9 @@ public class TestEditingController implements Initializable {
 
     private QuestionDrawerFactory questionDrawerFactory;
     private OptionDrawerFactory optionDrawerFactory;
+    private TestValidator testValidator;
+
+    private RefreshableController parentController;
 
 
     @Override
@@ -83,11 +87,15 @@ public class TestEditingController implements Initializable {
 
         questionDrawerFactory = new QuestionDrawerFactory();
         optionDrawerFactory = new OptionDrawerFactory();
+        testValidator = new TestValidator();
 
         questions.add("Добавить");
     }
 
-    public void fillFields() {
+    @Override
+    public void postInitialize() {
+        currentStage.setOnCloseRequest(event -> parentController.refreshData());
+
         testNameField.setText(test.getName());
         teacherComboBox.getSelectionModel().select(test.getTeacher());
         subjectComboBox.getSelectionModel().select(test.getSubject());
@@ -102,6 +110,7 @@ public class TestEditingController implements Initializable {
     public void showQuestion(int questionNumber) {
         if (questionNumber > test.getQuestions().size() - 1 || questionNumber < 0) {
             clearFields();
+            setLock(true);
             return;
         }
         setLock(false);
@@ -111,18 +120,12 @@ public class TestEditingController implements Initializable {
         changeFields();
         drawQuestion();
 
-        questionTextField.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                currentQuestion.setText(newValue);
-            }
-        });
+        questionTextField.textProperty().addListener((observable, oldValue, newValue) -> currentQuestion.setText(newValue));
     }
 
     private void clearFields() {
         questionTextField.setText("");
         choiceBox.getChildren().clear();
-        setLock(true);
     }
 
     private void setLock(boolean isLock) {
@@ -161,13 +164,12 @@ public class TestEditingController implements Initializable {
     @FXML
     public void onQuestionListClicked() {
         int index = questionList.getSelectionModel().getSelectedIndex();
-        if (index != questionNumber || questions.size() == 1) {
-            if (index == questions.size() - 1) {
-                showQuestionAddingDialog();
-            } else {
-                questionNumber = index;
-                showQuestion(questionNumber);
-            }
+        if (index == questions.size() - 1) {
+            showQuestionAddingDialog();
+        }
+        if (index != questionNumber) {
+            questionNumber = index;
+            showQuestion(questionNumber);
         }
     }
 
@@ -222,9 +224,11 @@ public class TestEditingController implements Initializable {
         test.setSubject(subjectComboBox.getSelectionModel().getSelectedItem());
         test.setRandomOrder(randomOrderCheckBox.isSelected());
 
-        DaoFacade.getTestDAOService().save(test);
-
-        currentStage.close();
+        if (testValidator.validate(test)) {
+            DaoFacade.getTestDAOService().save(test);
+            currentStage.setOnCloseRequest(event -> parentController.refreshData());
+            currentStage.close();
+        }
     }
 
     @FXML
@@ -246,5 +250,9 @@ public class TestEditingController implements Initializable {
 
     public void setCurrentStage(Stage currentStage) {
         this.currentStage = currentStage;
+    }
+
+    public void setParentController(RefreshableController parentController) {
+        this.parentController = parentController;
     }
 }
