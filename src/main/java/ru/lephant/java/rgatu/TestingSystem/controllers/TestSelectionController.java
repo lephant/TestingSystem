@@ -28,6 +28,7 @@ import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
 import ru.lephant.java.rgatu.TestingSystem.entities.User;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
+import ru.lephant.java.rgatu.TestingSystem.interfaces.PostInitializable;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
 
 import java.io.IOException;
@@ -35,7 +36,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class TestSelectionController implements Initializable, RefreshableController {
+public class TestSelectionController implements Initializable, RefreshableController, PostInitializable {
 
 
     @FXML
@@ -72,7 +73,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
     @FXML
     private Menu createTestMenuItem;
 
-    private Stage mainStage;
+    private Stage currentStage;
 
 
     @Override
@@ -86,6 +87,11 @@ public class TestSelectionController implements Initializable, RefreshableContro
         subjectTableColumn.setCellValueFactory(new PropertyValueFactory<>("subject"));
 
         testTableView.setItems(tests);
+    }
+
+    @Override
+    public void postInitialize() {
+        currentStage.setOnCloseRequest(event -> HibernateUtil.closeSessionFactory());
     }
 
     @Override
@@ -109,7 +115,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
 
     @FXML
     public void onExitMenuItemClicked() {
-        mainStage.close();
+        currentStage.close();
         HibernateUtil.closeSessionFactory();
     }
 
@@ -285,8 +291,8 @@ public class TestSelectionController implements Initializable, RefreshableContro
             Parent root = loader.load();
 
             StudentSelectionController studentSelectionController = loader.getController();
-            studentSelectionController.setMainStage(mainStage);
-            studentSelectionController.setModalStage(stage);
+            studentSelectionController.setMainStage(currentStage);
+            studentSelectionController.setCurrentStage(stage);
             studentSelectionController.setTest(test);
 
             stage.setScene(new Scene(root));
@@ -300,7 +306,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
             stage.setMinHeight(314D);
 
             stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(mainStage.getScene().getWindow());
+            stage.initOwner(currentStage);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -316,7 +322,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
             Parent root = loader.load();
 
             GroupWindowController groupWindowController = loader.getController();
-            groupWindowController.setMainStage(mainStage);
+            groupWindowController.setMainStage(currentStage);
             groupWindowController.setModalStage(stage);
 
             stage.setScene(new Scene(root));
@@ -330,7 +336,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
             stage.setMinHeight(360D);
 
             stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(mainStage.getScene().getWindow());
+            stage.initOwner(currentStage.getScene().getWindow());
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -346,7 +352,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
             Parent root = loader.load();
 
             SubjectWindowController subjectWindowController = loader.getController();
-            subjectWindowController.setMainStage(mainStage);
+            subjectWindowController.setMainStage(currentStage);
             subjectWindowController.setModalStage(stage);
 
             stage.setScene(new Scene(root));
@@ -360,7 +366,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
             stage.setMinHeight(360D);
 
             stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(mainStage.getScene().getWindow());
+            stage.initOwner(currentStage.getScene().getWindow());
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -376,7 +382,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
             Parent root = loader.load();
 
             TeacherWindowController teacherWindowController = loader.getController();
-            teacherWindowController.setMainStage(mainStage);
+            teacherWindowController.setMainStage(currentStage);
             teacherWindowController.setModalStage(stage);
 
             stage.setScene(new Scene(root));
@@ -390,7 +396,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
             stage.setMinHeight(360D);
 
             stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(mainStage.getScene().getWindow());
+            stage.initOwner(currentStage.getScene().getWindow());
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -406,7 +412,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
             Parent root = loader.load();
 
             StudentWindowController studentWindowController = loader.getController();
-            studentWindowController.setMainStage(mainStage);
+            studentWindowController.setMainStage(currentStage);
             studentWindowController.setModalStage(stage);
 
             stage.setScene(new Scene(root));
@@ -420,7 +426,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
             stage.setMinHeight(360D);
 
             stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(mainStage.getScene().getWindow());
+            stage.initOwner(currentStage.getScene().getWindow());
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -460,7 +466,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
             stage.setMinHeight(620D);
 
             stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(mainStage.getScene().getWindow());
+            stage.initOwner(currentStage.getScene().getWindow());
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -468,7 +474,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
     }
 
 
-    public void setMainStage(Stage mainStage) {
-        this.mainStage = mainStage;
+    public void setCurrentStage(Stage currentStage) {
+        this.currentStage = currentStage;
     }
 }

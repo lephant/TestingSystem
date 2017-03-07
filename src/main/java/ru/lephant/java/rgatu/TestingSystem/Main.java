@@ -21,11 +21,6 @@ public class Main extends Application {
         mainStage.setTitle("Система тестирования \"Degress\"");
         mainStage.getIcons().add(new Image("/test.png"));
 
-        mainStage.setOnCloseRequest(event -> {
-            HibernateUtil.closeSessionFactory();
-            mainStage.close();
-        });
-
         if (HibernateUtil.checkConnection()) {
             showTestSelectionScene(mainStage);
         } else {
@@ -38,7 +33,7 @@ public class Main extends Application {
         fxmlLoader.setLocation(getClass().getResource("/fxml/connection_setting.fxml"));
         Parent root = fxmlLoader.load();
         ConnectionSettingController connectionSettingController = fxmlLoader.getController();
-        connectionSettingController.setMainStage(mainStage);
+        connectionSettingController.setCurrentStage(mainStage);
         mainStage.setScene(new Scene(root));
         mainStage.setResizable(false);
         mainStage.show();
@@ -49,7 +44,8 @@ public class Main extends Application {
         fxmlLoader.setLocation(getClass().getResource("/fxml/test_selection.fxml"));
         Parent root = fxmlLoader.load();
         TestSelectionController testSelectionController = fxmlLoader.getController();
-        testSelectionController.setMainStage(mainStage);
+        testSelectionController.setCurrentStage(mainStage);
+        testSelectionController.postInitialize();
         mainStage.setScene(new Scene(root));
         mainStage.setResizable(true);
         mainStage.setHeight(400D);

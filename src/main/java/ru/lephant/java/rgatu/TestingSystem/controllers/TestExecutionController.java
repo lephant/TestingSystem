@@ -3,10 +3,7 @@ package ru.lephant.java.rgatu.TestingSystem.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -19,11 +16,11 @@ import ru.lephant.java.rgatu.TestingSystem.entities.Question;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
 import ru.lephant.java.rgatu.TestingSystem.entities.TestOfStudent;
+import ru.lephant.java.rgatu.TestingSystem.interfaces.PostInitializable;
 import ru.lephant.java.rgatu.TestingSystem.testcheckers.TestChecker;
 import ru.lephant.java.rgatu.TestingSystem.testcheckers.defaultchecker.DefaultTestChecker;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.InetAddress;
@@ -34,7 +31,7 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class TestExecutionController implements Initializable {
+public class TestExecutionController implements Initializable, PostInitializable {
 
     private static final double IMAGE_VIEW_DEFAULT_WIDTH = 450D;
 
@@ -59,6 +56,8 @@ public class TestExecutionController implements Initializable {
     private VBox choiceBox;
 
     private Stage mainStage;
+    private Stage currentStage;
+
     private Test test;
     private Student student;
 
@@ -75,7 +74,8 @@ public class TestExecutionController implements Initializable {
         questionList.setItems(questionListData);
     }
 
-    public void initializeQuestionList() {
+    @Override
+    public void postInitialize() {
         if (test.isRandomOrder()) {
             Collections.shuffle(test.getQuestions());
         }
@@ -97,7 +97,7 @@ public class TestExecutionController implements Initializable {
             TestOfStudent testOfStudent = composeTestOfStudent();
             DaoFacade.getStudentResultsDAOService().save(testOfStudent);
             showResult(testOfStudent);
-            doTransitionToTestSelectionScene();
+            currentStage.close();
         } else {
             alert.close();
         }
@@ -134,24 +134,6 @@ public class TestExecutionController implements Initializable {
         alert.show();
     }
 
-    private void doTransitionToTestSelectionScene() {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource("/fxml/test_selection.fxml"));
-            Parent root = fxmlLoader.load();
-            TestSelectionController testSelectionController = fxmlLoader.getController();
-            testSelectionController.setMainStage(mainStage);
-            mainStage.setScene(new Scene(root));
-            mainStage.setResizable(true);
-            mainStage.setHeight(400D);
-            mainStage.setWidth(420D);
-            mainStage.setMinWidth(420D);
-            mainStage.setMinHeight(400D);
-            mainStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void showQuestion(int questionNumber) {
         this.questionNumber = questionNumber;
@@ -215,6 +197,10 @@ public class TestExecutionController implements Initializable {
 
     public void setMainStage(Stage mainStage) {
         this.mainStage = mainStage;
+    }
+
+    public void setCurrentStage(Stage currentStage) {
+        this.currentStage = currentStage;
     }
 
     public void setTest(Test test) {

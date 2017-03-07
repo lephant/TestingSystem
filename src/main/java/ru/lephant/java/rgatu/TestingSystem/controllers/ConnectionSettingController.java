@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 
@@ -27,7 +28,7 @@ public class ConnectionSettingController {
     @FXML
     Button connectButton;
 
-    private Stage mainStage;
+    private Stage currentStage;
 
 
     @FXML
@@ -50,15 +51,26 @@ public class ConnectionSettingController {
 
     private void doTransitionToTestSelectionStage() {
         try {
+            Stage stage = new Stage();
+
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(getClass().getResource("/fxml/test_selection.fxml"));
-            Parent fxmlMain = fxmlLoader.load();
+            Parent root = fxmlLoader.load();
+
             TestSelectionController testSelectionController = fxmlLoader.getController();
-            testSelectionController.setMainStage(mainStage);
-            mainStage.setResizable(true);
-            mainStage.setMinWidth(420D);
-            mainStage.setMinHeight(400D);
-            mainStage.setScene(new Scene(fxmlMain));
+            testSelectionController.setCurrentStage(stage);
+            testSelectionController.postInitialize();
+
+            stage.setScene(new Scene(root));
+            stage.setTitle("Система тестирования \"Degress\"");
+            stage.getIcons().add(new Image("/test.png"));
+
+            stage.setResizable(true);
+            stage.setMinWidth(420D);
+            stage.setMinHeight(400D);
+
+            stage.show();
+            currentStage.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -72,7 +84,7 @@ public class ConnectionSettingController {
         alert.show();
     }
 
-    public void setMainStage(Stage mainStage) {
-        this.mainStage = mainStage;
+    public void setCurrentStage(Stage currentStage) {
+        this.currentStage = currentStage;
     }
 }

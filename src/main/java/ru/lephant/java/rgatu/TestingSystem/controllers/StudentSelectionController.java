@@ -11,9 +11,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
@@ -38,7 +40,7 @@ public class StudentSelectionController implements Initializable {
     private List<Student> allStudents;
 
     private Stage mainStage;
-    private Stage modalStage;
+    private Stage currentStage;
     private Test test;
 
 
@@ -78,22 +80,31 @@ public class StudentSelectionController implements Initializable {
 
     private void doTransitionToStudentRegistrationScene() {
         try {
+            Stage stage = new Stage();
+
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/fxml/student_registration.fxml"));
             Parent root = loader.load();
 
             StudentRegistrationController studentRegistrationController = loader.getController();
-            studentRegistrationController.setModalStage(modalStage);
+            studentRegistrationController.setCurrentStage(stage);
             studentRegistrationController.setMainStage(mainStage);
             studentRegistrationController.setTest(test);
 
-            modalStage.setTitle("Регистрация студента");
-            modalStage.setMinWidth(251D);
-            modalStage.setMinHeight(162D);
-            modalStage.setWidth(300D);
-            modalStage.setHeight(190D);
-            modalStage.setResizable(false);
-            modalStage.setScene(new Scene(root));
+            stage.setTitle("Регистрация студента");
+            stage.setScene(new Scene(root));
+            stage.getIcons().add(new Image("/test.png"));
+
+            stage.setMinWidth(251D);
+            stage.setMinHeight(162D);
+            stage.setWidth(300D);
+            stage.setHeight(190D);
+            stage.setResizable(false);
+
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(mainStage);
+            stage.show();
+            currentStage.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -110,23 +121,35 @@ public class StudentSelectionController implements Initializable {
 
     private void doTransitionToTestExecution(Student student) {
         try {
+            Stage stage = new Stage();
+
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(getClass().getResource("/fxml/test_execution.fxml"));
             Parent root = fxmlLoader.load();
+
             TestExecutionController testExecutionController = fxmlLoader.getController();
             testExecutionController.setMainStage(mainStage);
+            testExecutionController.setCurrentStage(stage);
             test = DaoFacade.getTestDAOService().getByPK(test.getId());
             testExecutionController.setTest(test);
             testExecutionController.setStudent(student);
-            testExecutionController.initializeQuestionList();
+            testExecutionController.postInitialize();
             testExecutionController.showQuestion(0);
-            mainStage.setScene(new Scene(root));
-            mainStage.setResizable(true);
-            mainStage.setWidth(700D);
-            mainStage.setHeight(500D);
-            mainStage.setMinWidth(700D);
-            mainStage.setMinHeight(500D);
-            modalStage.close();
+
+            stage.setScene(new Scene(root));
+            stage.setTitle("Система тестирования \"Degress\"");
+            stage.getIcons().add(new Image("/test.png"));
+
+            stage.setResizable(true);
+            stage.setWidth(700D);
+            stage.setHeight(500D);
+            stage.setMinWidth(700D);
+            stage.setMinHeight(500D);
+
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(mainStage);
+            stage.show();
+            currentStage.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -161,8 +184,8 @@ public class StudentSelectionController implements Initializable {
         this.mainStage = mainStage;
     }
 
-    public void setModalStage(Stage modalStage) {
-        this.modalStage = modalStage;
+    public void setCurrentStage(Stage currentStage) {
+        this.currentStage = currentStage;
     }
 
     public void setTest(Test test) {
