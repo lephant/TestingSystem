@@ -9,11 +9,12 @@ import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
 import ru.lephant.java.rgatu.TestingSystem.entities.TestOfStudent;
+import ru.lephant.java.rgatu.TestingSystem.interfaces.PostInitializable;
 
 import java.util.Date;
 import java.util.List;
 
-public class StudentStatisticsChartWindowController {
+public class StudentStatisticsChartWindowController implements PostInitializable {
 
     @FXML
     private AreaChart<String, Double> areaChart;
@@ -24,9 +25,10 @@ public class StudentStatisticsChartWindowController {
     private Subject subject;
 
 
-    public void fillChart() {
+    @Override
+    public void postInitialize() {
         List<TestOfStudent> testsOfStudent = DaoFacade.getStudentResultsDAOService()
-                .getResultsOfStudentBySubject(student,subject);
+                .getResultsOfStudentBySubject(student, subject);
         testsOfStudent.sort(new DateComparatorForTestOfStudent());
         XYChart.Series<String, Double> series = new XYChart.Series<>();
 
@@ -41,6 +43,8 @@ public class StudentStatisticsChartWindowController {
         areaChart.getData().add(series);
     }
 
+
+    @FXML
     public void onReturnButtonClicked() {
         currentStage.close();
     }

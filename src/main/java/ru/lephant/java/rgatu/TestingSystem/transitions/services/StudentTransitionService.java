@@ -183,7 +183,7 @@ public class StudentTransitionService {
             statisticsChartWindowController.setCurrentStage(stage);
             statisticsChartWindowController.setStudent(student);
             statisticsChartWindowController.setSubject(subject);
-            statisticsChartWindowController.fillChart();
+            statisticsChartWindowController.postInitialize();
 
             stage.setScene(new Scene(root));
             stage.setTitle("Статистика студента");
