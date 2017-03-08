@@ -92,7 +92,10 @@ public class TestEditingController implements Initializable, PostInitializable {
 
     @Override
     public void postInitialize() {
-        currentStage.setOnCloseRequest(event -> parentController.refreshData());
+        currentStage.setOnCloseRequest(event -> {
+            parentController.refreshData();
+            mainStage.show();
+        });
 
         if (test.getId() > 0) {
             test = DaoFacade.getTestDAOService().getByPK(test.getId());
@@ -204,6 +207,7 @@ public class TestEditingController implements Initializable, PostInitializable {
             DaoFacade.getTestDAOService().save(test);
             parentController.refreshData();
             currentStage.close();
+            mainStage.show();
         }
     }
 

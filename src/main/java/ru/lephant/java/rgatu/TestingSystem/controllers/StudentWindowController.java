@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
+import ru.lephant.java.rgatu.TestingSystem.interfaces.PostInitializable;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
 import ru.lephant.java.rgatu.TestingSystem.transitions.TransitionFacade;
 
@@ -18,7 +19,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class StudentWindowController implements Initializable, RefreshableController {
+public class StudentWindowController implements Initializable, RefreshableController, PostInitializable {
 
     @FXML
     private ListView<Student> studentListView;
@@ -32,6 +33,11 @@ public class StudentWindowController implements Initializable, RefreshableContro
     public void initialize(URL location, ResourceBundle resources) {
         studentListView.setItems(students);
         students.setAll(DaoFacade.getStudentDAOService().getList());
+    }
+
+    @Override
+    public void postInitialize() {
+        currentStage.setOnCloseRequest(event -> mainStage.show());
     }
 
     @Override

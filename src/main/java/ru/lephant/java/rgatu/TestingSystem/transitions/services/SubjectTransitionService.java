@@ -26,6 +26,7 @@ public class SubjectTransitionService {
             SubjectWindowController subjectWindowController = loader.getController();
             subjectWindowController.setMainStage(mainStage);
             subjectWindowController.setCurrentStage(stage);
+            subjectWindowController.postInitialize();
 
             stage.setScene(new Scene(root));
             stage.setTitle("Список предметов");

@@ -56,6 +56,7 @@ public class TestTransitionService {
 
             TestEditingController testEditingController = loader.getController();
             testEditingController.setCurrentStage(stage);
+            testEditingController.setMainStage(mainStage);
             testEditingController.setParentController(parentController);
             testEditingController.setTest(test);
             testEditingController.postInitialize();

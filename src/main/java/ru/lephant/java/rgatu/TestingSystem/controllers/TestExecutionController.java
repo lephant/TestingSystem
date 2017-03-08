@@ -76,6 +76,7 @@ public class TestExecutionController implements Initializable, PostInitializable
 
     @Override
     public void postInitialize() {
+        currentStage.setOnCloseRequest(event -> mainStage.show());
         test = DaoFacade.getTestDAOService().getByPK(test.getId());
         if (test.isRandomOrder()) {
             Collections.shuffle(test.getQuestions());
@@ -94,11 +95,12 @@ public class TestExecutionController implements Initializable, PostInitializable
         alert.setContentText("Вы действительно хотите завершить тест?");
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
+        if (result.isPresent() && result.get() == ButtonType.OK) {
             TestOfStudent testOfStudent = composeTestOfStudent();
             DaoFacade.getStudentResultsDAOService().save(testOfStudent);
             showResult(testOfStudent);
             currentStage.close();
+            mainStage.show();
         } else {
             alert.close();
         }
@@ -132,7 +134,7 @@ public class TestExecutionController implements Initializable, PostInitializable
                 "\n \n" +
                 "Результат успешно сохранен на сервер!"
         );
-        alert.show();
+        alert.showAndWait(); // TODO: костыль, исправить вывод диалогов! сделать их создание в одном классе через метод create и выводить сюда для вызова show()!
     }
 
 

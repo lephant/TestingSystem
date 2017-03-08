@@ -47,7 +47,9 @@ public class StudentRegistrationController implements Initializable {
         Student student = createStudent();
         if (studentValidator.validate(student)) {
             DaoFacade.getStudentDAOService().save(student);
-            TransitionFacade.getTestTransitionService().createTestExecutionStage(mainStage, test, student);
+            Stage testExecutionStage = TransitionFacade.getTestTransitionService().createTestExecutionStage(mainStage, test, student);
+            mainStage.hide();
+            testExecutionStage.show();
         } else {
             showAlertAboutWrongData();
         }

@@ -26,6 +26,7 @@ public class TeacherTransitionService {
             TeacherWindowController teacherWindowController = loader.getController();
             teacherWindowController.setMainStage(mainStage);
             teacherWindowController.setCurrentStage(stage);
+            teacherWindowController.postInitialize();
 
             stage.setScene(new Scene(root));
             stage.setTitle("Список преподавателей");

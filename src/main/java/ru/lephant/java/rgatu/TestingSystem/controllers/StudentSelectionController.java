@@ -80,6 +80,7 @@ public class StudentSelectionController implements Initializable {
         if (student != null) {
             Stage testExecutionStage = TransitionFacade.getTestTransitionService().createTestExecutionStage(mainStage, test, student);
             currentStage.close();
+            mainStage.hide();
             testExecutionStage.show();
         } else {
             new NoSelectedItemAlert("Студент не выбран!");

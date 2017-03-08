@@ -26,6 +26,7 @@ public class GroupTransitionService {
             GroupWindowController groupWindowController = loader.getController();
             groupWindowController.setMainStage(mainStage);
             groupWindowController.setCurrentStage(stage);
+            groupWindowController.postInitialize();
 
             stage.setScene(new Scene(root));
             stage.setTitle("Список групп");

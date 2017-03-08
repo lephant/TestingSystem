@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
+import ru.lephant.java.rgatu.TestingSystem.interfaces.PostInitializable;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
 import ru.lephant.java.rgatu.TestingSystem.transitions.TransitionFacade;
 
@@ -18,7 +19,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class SubjectWindowController implements Initializable, RefreshableController {
+public class SubjectWindowController implements Initializable, RefreshableController, PostInitializable {
 
     @FXML
     private ListView<Subject> subjectListView;
@@ -32,6 +33,11 @@ public class SubjectWindowController implements Initializable, RefreshableContro
     public void initialize(URL location, ResourceBundle resources) {
         subjectListView.setItems(subjects);
         subjects.setAll(DaoFacade.getSubjectDAOService().getList());
+    }
+
+    @Override
+    public void postInitialize() {
+        currentStage.setOnCloseRequest(event -> mainStage.show());
     }
 
     @Override
@@ -69,7 +75,7 @@ public class SubjectWindowController implements Initializable, RefreshableContro
             alert.setContentText(null);
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
+            if (result.isPresent() && result.get() == ButtonType.OK) {
                 DaoFacade.getSubjectDAOService().delete(subject);
                 subjects.remove(subject);
                 alert.close();

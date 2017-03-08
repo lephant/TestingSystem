@@ -91,6 +91,7 @@ public class StudentTransitionService {
             StudentWindowController studentWindowController = loader.getController();
             studentWindowController.setMainStage(mainStage);
             studentWindowController.setCurrentStage(stage);
+            studentWindowController.postInitialize();
 
             stage.setScene(new Scene(root));
             stage.setTitle("Список студентов");

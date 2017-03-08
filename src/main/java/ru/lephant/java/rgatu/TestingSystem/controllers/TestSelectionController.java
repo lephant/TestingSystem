@@ -117,24 +117,28 @@ public class TestSelectionController implements Initializable, RefreshableContro
     @FXML
     public void onShowStudentsMenuItemClicked() {
         Stage studentListStage = TransitionFacade.getStudentTransitionService().createStudentListStage(currentStage);
+        currentStage.hide();
         studentListStage.show();
     }
 
     @FXML
     public void onShowTeachersMenuItemClicked() {
         Stage teacherStage = TransitionFacade.getTeacherTransitionService().createTeacherListStage(currentStage);
+        currentStage.hide();
         teacherStage.show();
     }
 
     @FXML
     public void onShowSubjectsMenuItemClicked() {
         Stage subjectStage = TransitionFacade.getSubjectTransitionService().createSubjectListStage(currentStage);
+        currentStage.hide();
         subjectStage.show();
     }
 
     @FXML
     public void onShowGroupsMenuItemClicked() {
         Stage groupStage = TransitionFacade.getGroupTransitionService().createGroupListStage(currentStage);
+        currentStage.hide();
         groupStage.show();
     }
 
@@ -160,6 +164,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
     @FXML
     public void onCreateTestMenuItemClicked() {
         Stage testEditingStage = TransitionFacade.getTestTransitionService().createTestEditingStage(currentStage, new Test(), this);
+        currentStage.hide();
         testEditingStage.show();
     }
 
@@ -168,6 +173,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
         Test test = testTableView.getSelectionModel().getSelectedItem();
         if (test != null) {
             Stage testEditingStage = TransitionFacade.getTestTransitionService().createTestEditingStage(currentStage, test, this);
+            currentStage.hide();
             testEditingStage.show();
         }
     }
