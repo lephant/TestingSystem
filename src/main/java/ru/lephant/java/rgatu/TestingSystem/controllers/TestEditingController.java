@@ -202,7 +202,7 @@ public class TestEditingController implements Initializable, PostInitializable {
 
         if (testValidator.validate(test)) {
             DaoFacade.getTestDAOService().save(test);
-            currentStage.setOnCloseRequest(event -> parentController.refreshData());
+            parentController.refreshData();
             currentStage.close();
         }
     }
