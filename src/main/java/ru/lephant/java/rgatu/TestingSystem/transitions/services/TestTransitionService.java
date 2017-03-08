@@ -3,7 +3,6 @@ package ru.lephant.java.rgatu.TestingSystem.transitions.services;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
@@ -14,7 +13,7 @@ import ru.lephant.java.rgatu.TestingSystem.controllers.TestSelectionController;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
-
+import ru.lephant.java.rgatu.TestingSystem.reference.ReferenceData;
 import java.io.IOException;
 
 public class TestTransitionService {
@@ -33,7 +32,7 @@ public class TestTransitionService {
 
             stage.setScene(new Scene(root));
             stage.setTitle("Система тестирования \"Degress\"");
-            stage.getIcons().add(new Image("/test.png"));
+            stage.getIcons().add(ReferenceData.getLogoImage());
 
             stage.setResizable(true);
             stage.setHeight(400D);
@@ -64,7 +63,7 @@ public class TestTransitionService {
 
             stage.setScene(new Scene(root));
             stage.setTitle("Конструктор тестов");
-            stage.getIcons().add(new Image("/test.png"));
+            stage.getIcons().add(ReferenceData.getLogoImage());
 
             stage.setResizable(true);
             stage.setWidth(720D);
@@ -99,7 +98,7 @@ public class TestTransitionService {
 
             stage.setScene(new Scene(root));
             stage.setTitle("Система тестирования \"Degress\"");
-            stage.getIcons().add(new Image("/test.png"));
+            stage.getIcons().add(ReferenceData.getLogoImage());
 
             stage.setResizable(true);
             stage.setWidth(700D);
@@ -129,7 +128,7 @@ public class TestTransitionService {
 
             stage.setScene(new Scene(root));
             stage.setTitle("Создание вопроса");
-            stage.getIcons().add(new javafx.scene.image.Image("/test.png"));
+            stage.getIcons().add(ReferenceData.getLogoImage());
 
             stage.setHeight(180D);
             stage.setWidth(300D);

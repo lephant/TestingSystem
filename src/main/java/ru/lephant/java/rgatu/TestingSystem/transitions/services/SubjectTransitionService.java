@@ -3,13 +3,14 @@ package ru.lephant.java.rgatu.TestingSystem.transitions.services;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.controllers.SubjectSaveWindowController;
 import ru.lephant.java.rgatu.TestingSystem.controllers.SubjectWindowController;
 import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
+import ru.lephant.java.rgatu.TestingSystem.reference.ReferenceData;
+
 import java.io.IOException;
 
 public class SubjectTransitionService {
@@ -28,7 +29,7 @@ public class SubjectTransitionService {
 
             stage.setScene(new Scene(root));
             stage.setTitle("Список предметов");
-            stage.getIcons().add(new Image("/test.png"));
+            stage.getIcons().add(ReferenceData.getLogoImage());
 
             stage.setResizable(true);
             stage.setWidth(380D);
@@ -60,7 +61,7 @@ public class SubjectTransitionService {
             subjectSaveWindowController.postInitialize();
 
             dialogStage.setScene(new Scene(root));
-            dialogStage.getIcons().add(new Image("/test.png"));
+            dialogStage.getIcons().add(ReferenceData.getLogoImage());
             dialogStage.setTitle(title);
             dialogStage.setResizable(false);
 

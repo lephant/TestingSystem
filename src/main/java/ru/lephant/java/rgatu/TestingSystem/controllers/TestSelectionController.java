@@ -25,6 +25,7 @@ import ru.lephant.java.rgatu.TestingSystem.entities.User;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.PostInitializable;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
+import ru.lephant.java.rgatu.TestingSystem.reference.ReferenceData;
 import ru.lephant.java.rgatu.TestingSystem.transitions.TransitionFacade;
 
 import java.net.URL;
@@ -185,7 +186,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
         Dialog<Pair<String, String>> dialog = new Dialog<>();
         dialog.setTitle("Авторизация");
         dialog.setHeaderText("Введите ваши данные:");
-        dialog.setGraphic(new ImageView(this.getClass().getResource("/login.png").toString()));
+        dialog.setGraphic(new ImageView(ReferenceData.getLoginImage()));
 
         ButtonType loginButtonType = new ButtonType("Войти", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancelButtonType = new ButtonType("Отмена", ButtonBar.ButtonData.CANCEL_CLOSE);

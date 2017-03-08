@@ -3,7 +3,6 @@ package ru.lephant.java.rgatu.TestingSystem.transitions.services;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.controllers.*;
@@ -11,6 +10,7 @@ import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
+import ru.lephant.java.rgatu.TestingSystem.reference.ReferenceData;
 
 import java.io.IOException;
 
@@ -31,7 +31,7 @@ public class StudentTransitionService {
 
             stage.setScene(new Scene(root));
             stage.setTitle("Выбор студента");
-            stage.getIcons().add(new Image("/test.png"));
+            stage.getIcons().add(ReferenceData.getLogoImage());
 
             stage.setResizable(true);
             stage.setWidth(438D);
@@ -63,7 +63,7 @@ public class StudentTransitionService {
 
             stage.setTitle("Регистрация студента");
             stage.setScene(new Scene(root));
-            stage.getIcons().add(new Image("/test.png"));
+            stage.getIcons().add(ReferenceData.getLogoImage());
 
             stage.setMinWidth(251D);
             stage.setMinHeight(162D);
@@ -94,7 +94,7 @@ public class StudentTransitionService {
 
             stage.setScene(new Scene(root));
             stage.setTitle("Список студентов");
-            stage.getIcons().add(new Image("/test.png"));
+            stage.getIcons().add(ReferenceData.getLogoImage());
 
             stage.setResizable(true);
             stage.setWidth(380D);
@@ -126,7 +126,7 @@ public class StudentTransitionService {
             studentSaveWindowController.postInitialize();
 
             dialogStage.setScene(new Scene(root));
-            dialogStage.getIcons().add(new Image("/test.png"));
+            dialogStage.getIcons().add(ReferenceData.getLogoImage());
             dialogStage.setTitle(title);
             dialogStage.setResizable(false);
 
@@ -154,7 +154,7 @@ public class StudentTransitionService {
 
             stage.setScene(new Scene(root));
             stage.setTitle("Статистика студента");
-            stage.getIcons().add(new Image("/test.png"));
+            stage.getIcons().add(ReferenceData.getLogoImage());
 
             stage.setResizable(true);
             stage.setWidth(400D);
@@ -187,7 +187,7 @@ public class StudentTransitionService {
 
             stage.setScene(new Scene(root));
             stage.setTitle("Статистика студента");
-            stage.getIcons().add(new Image("/test.png"));
+            stage.getIcons().add(ReferenceData.getLogoImage());
 
             stage.setResizable(true);
             stage.setWidth(600D);

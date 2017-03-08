@@ -3,9 +3,10 @@ package ru.lephant.java.rgatu.TestingSystem.transitions.services;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.controllers.ConnectionSettingController;
+import ru.lephant.java.rgatu.TestingSystem.reference.ReferenceData;
+
 import java.io.IOException;
 
 public class ConnectionTransitionService {
@@ -14,7 +15,7 @@ public class ConnectionTransitionService {
         try {
             Stage stage = new Stage();
             stage.setTitle("Система тестирования \"Degress\"");
-            stage.getIcons().add(new Image("/test.png"));
+            stage.getIcons().add(ReferenceData.getLogoImage());
 
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(getClass().getResource("/fxml/connection_setting.fxml"));

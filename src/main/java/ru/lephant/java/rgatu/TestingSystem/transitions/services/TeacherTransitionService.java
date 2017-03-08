@@ -3,13 +3,14 @@ package ru.lephant.java.rgatu.TestingSystem.transitions.services;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.controllers.TeacherSaveWindowController;
 import ru.lephant.java.rgatu.TestingSystem.controllers.TeacherWindowController;
 import ru.lephant.java.rgatu.TestingSystem.entities.Teacher;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
+import ru.lephant.java.rgatu.TestingSystem.reference.ReferenceData;
+
 import java.io.IOException;
 
 public class TeacherTransitionService {
@@ -28,7 +29,7 @@ public class TeacherTransitionService {
 
             stage.setScene(new Scene(root));
             stage.setTitle("Список преподавателей");
-            stage.getIcons().add(new Image("/test.png"));
+            stage.getIcons().add(ReferenceData.getLogoImage());
 
             stage.setResizable(true);
             stage.setWidth(380D);
@@ -60,7 +61,7 @@ public class TeacherTransitionService {
             teacherSaveWindowController.postInitialize();
 
             dialogStage.setScene(new Scene(root));
-            dialogStage.getIcons().add(new Image("/test.png"));
+            dialogStage.getIcons().add(ReferenceData.getLogoImage());
             dialogStage.setTitle(title);
             dialogStage.setResizable(false);
 
