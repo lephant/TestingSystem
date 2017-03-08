@@ -3,21 +3,17 @@ package ru.lephant.java.rgatu.TestingSystem.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Group;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
+import ru.lephant.java.rgatu.TestingSystem.transitions.TransitionFacade;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -29,7 +25,7 @@ public class GroupWindowController implements Initializable, RefreshableControll
     private ObservableList<Group> groups = FXCollections.observableArrayList();
 
     private Stage mainStage;
-    private Stage modalStage;
+    private Stage currentStage;
 
 
     @Override
@@ -47,7 +43,8 @@ public class GroupWindowController implements Initializable, RefreshableControll
     @FXML
     public void onAddButtonClicked() {
         Group group = new Group();
-        showGroupChangingDialog("Добавление группы", group);
+        Stage groupSaveStage = TransitionFacade.getGroupTransitionService().createGroupSaveStage(currentStage, "Добавление группы", group, this);
+        groupSaveStage.show();
     }
 
     @FXML
@@ -58,7 +55,8 @@ public class GroupWindowController implements Initializable, RefreshableControll
             return;
         }
         Group group = groups.get(index);
-        showGroupChangingDialog("Редактирование группы", group);
+        Stage groupSaveStage = TransitionFacade.getGroupTransitionService().createGroupSaveStage(currentStage, "Редактирование группы", group, this);
+        groupSaveStage.show();
     }
 
     @FXML
@@ -84,36 +82,11 @@ public class GroupWindowController implements Initializable, RefreshableControll
     }
 
 
-    private void showGroupChangingDialog(String title, Group group) {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/fxml/group_save_window.fxml"));
-            Parent root = loader.load();
-
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle(title);
-            dialogStage.initModality(Modality.WINDOW_MODAL);
-            dialogStage.initOwner(modalStage);
-            dialogStage.setScene(new Scene(root));
-
-            GroupSaveWindowController groupSaveWindowController = loader.getController();
-            groupSaveWindowController.setModalStage(dialogStage);
-            groupSaveWindowController.setGroup(group);
-            groupSaveWindowController.setParentController(this);
-            groupSaveWindowController.postInitialize();
-
-            dialogStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
     public void setMainStage(Stage mainStage) {
         this.mainStage = mainStage;
     }
 
-    public void setModalStage(Stage modalStage) {
-        this.modalStage = modalStage;
+    public void setCurrentStage(Stage currentStage) {
+        this.currentStage = currentStage;
     }
 }

@@ -1,14 +1,9 @@
 package ru.lephant.java.rgatu.TestingSystem;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import ru.lephant.java.rgatu.TestingSystem.controllers.ConnectionSettingController;
-import ru.lephant.java.rgatu.TestingSystem.controllers.TestSelectionController;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
+import ru.lephant.java.rgatu.TestingSystem.transitions.TransitionFacade;
 
 public class Main extends Application {
 
@@ -17,42 +12,14 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage mainStage) throws Exception {
-        mainStage.setTitle("Система тестирования \"Degress\"");
-        mainStage.getIcons().add(new Image("/test.png"));
-
+    public void start(Stage unusedStage) throws Exception {
         if (HibernateUtil.checkConnection()) {
-            showTestSelectionScene(mainStage);
+            Stage testSelectionStage = TransitionFacade.getTestTransitionService().createTestSelectionStage();
+            testSelectionStage.show();
         } else {
-            showConnectionSettingScene(mainStage);
+            Stage connectionSettingStage = TransitionFacade.getConnectionTransitionService().createConnectionSettingStage();
+            connectionSettingStage.show();
         }
-    }
-
-    private void showConnectionSettingScene(Stage mainStage) throws java.io.IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(getClass().getResource("/fxml/connection_setting.fxml"));
-        Parent root = fxmlLoader.load();
-        ConnectionSettingController connectionSettingController = fxmlLoader.getController();
-        connectionSettingController.setCurrentStage(mainStage);
-        mainStage.setScene(new Scene(root));
-        mainStage.setResizable(false);
-        mainStage.show();
-    }
-
-    private void showTestSelectionScene(Stage mainStage) throws java.io.IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(getClass().getResource("/fxml/test_selection.fxml"));
-        Parent root = fxmlLoader.load();
-        TestSelectionController testSelectionController = fxmlLoader.getController();
-        testSelectionController.setCurrentStage(mainStage);
-        testSelectionController.postInitialize();
-        mainStage.setScene(new Scene(root));
-        mainStage.setResizable(true);
-        mainStage.setHeight(400D);
-        mainStage.setWidth(420D);
-        mainStage.setMinWidth(420D);
-        mainStage.setMinHeight(400D);
-        mainStage.show();
     }
 
 }

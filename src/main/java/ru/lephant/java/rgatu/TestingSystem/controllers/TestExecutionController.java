@@ -76,6 +76,7 @@ public class TestExecutionController implements Initializable, PostInitializable
 
     @Override
     public void postInitialize() {
+        test = DaoFacade.getTestDAOService().getByPK(test.getId());
         if (test.isRandomOrder()) {
             Collections.shuffle(test.getQuestions());
         }

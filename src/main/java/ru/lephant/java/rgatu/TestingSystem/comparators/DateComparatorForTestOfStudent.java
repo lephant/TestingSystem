@@ -4,7 +4,7 @@ import ru.lephant.java.rgatu.TestingSystem.entities.TestOfStudent;
 
 import java.util.Comparator;
 
-public class DateComporatorForTestOfStudent implements Comparator<TestOfStudent> {
+public class DateComparatorForTestOfStudent implements Comparator<TestOfStudent> {
 
     @Override
     public int compare(TestOfStudent o1, TestOfStudent o2) {

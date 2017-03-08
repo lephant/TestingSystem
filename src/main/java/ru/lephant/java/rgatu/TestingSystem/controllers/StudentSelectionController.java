@@ -5,24 +5,19 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
+import ru.lephant.java.rgatu.TestingSystem.transitions.TransitionFacade;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,84 +69,20 @@ public class StudentSelectionController implements Initializable {
 
     @FXML
     public void registrationButtonClicked() {
-        doTransitionToStudentRegistrationScene();
+        Stage studentRegistrationStage = TransitionFacade.getStudentTransitionService().createStudentRegistrationStage(mainStage, test);
+        currentStage.close();
+        studentRegistrationStage.show();
     }
 
-
-    private void doTransitionToStudentRegistrationScene() {
-        try {
-            Stage stage = new Stage();
-
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/fxml/student_registration.fxml"));
-            Parent root = loader.load();
-
-            StudentRegistrationController studentRegistrationController = loader.getController();
-            studentRegistrationController.setCurrentStage(stage);
-            studentRegistrationController.setMainStage(mainStage);
-            studentRegistrationController.setTest(test);
-
-            stage.setTitle("Регистрация студента");
-            stage.setScene(new Scene(root));
-            stage.getIcons().add(new Image("/test.png"));
-
-            stage.setMinWidth(251D);
-            stage.setMinHeight(162D);
-            stage.setWidth(300D);
-            stage.setHeight(190D);
-            stage.setResizable(false);
-
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(mainStage);
-            stage.show();
-            currentStage.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     private void studentSelected() {
         Student student = studentsList.getSelectionModel().getSelectedItem();
         if (student != null) {
-            doTransitionToTestExecution(student);
+            Stage testExecutionStage = TransitionFacade.getTestTransitionService().createTestExecutionStage(mainStage, test, student);
+            currentStage.close();
+            testExecutionStage.show();
         } else {
             new NoSelectedItemAlert("Студент не выбран!");
-        }
-    }
-
-    private void doTransitionToTestExecution(Student student) {
-        try {
-            Stage stage = new Stage();
-
-            FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource("/fxml/test_execution.fxml"));
-            Parent root = fxmlLoader.load();
-
-            TestExecutionController testExecutionController = fxmlLoader.getController();
-            testExecutionController.setMainStage(mainStage);
-            testExecutionController.setCurrentStage(stage);
-            test = DaoFacade.getTestDAOService().getByPK(test.getId());
-            testExecutionController.setTest(test);
-            testExecutionController.setStudent(student);
-            testExecutionController.postInitialize();
-            testExecutionController.showQuestion(0);
-
-            stage.setScene(new Scene(root));
-            stage.setTitle("Система тестирования \"Degress\"");
-            stage.getIcons().add(new Image("/test.png"));
-
-            stage.setResizable(true);
-            stage.setWidth(700D);
-            stage.setHeight(500D);
-            stage.setMinWidth(700D);
-            stage.setMinHeight(500D);
-
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(mainStage);
-            stage.show();
-            currentStage.close();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

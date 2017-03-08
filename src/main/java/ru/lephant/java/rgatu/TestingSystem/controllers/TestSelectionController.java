@@ -4,21 +4,16 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import org.hibernate.Session;
@@ -30,14 +25,13 @@ import ru.lephant.java.rgatu.TestingSystem.entities.User;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.PostInitializable;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
+import ru.lephant.java.rgatu.TestingSystem.transitions.TransitionFacade;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class TestSelectionController implements Initializable, RefreshableController, PostInitializable {
-
 
     @FXML
     private TableView<Test> testTableView;
@@ -121,22 +115,26 @@ public class TestSelectionController implements Initializable, RefreshableContro
 
     @FXML
     public void onShowStudentsMenuItemClicked() {
-        showStudentStage();
+        Stage studentListStage = TransitionFacade.getStudentTransitionService().createStudentListStage(currentStage);
+        studentListStage.show();
     }
 
     @FXML
     public void onShowTeachersMenuItemClicked() {
-        showTeacherStage();
+        Stage teacherStage = TransitionFacade.getTeacherTransitionService().createTeacherListStage(currentStage);
+        teacherStage.show();
     }
 
     @FXML
     public void onShowSubjectsMenuItemClicked() {
-        showSubjectStage();
+        Stage subjectStage = TransitionFacade.getSubjectTransitionService().createSubjectListStage(currentStage);
+        subjectStage.show();
     }
 
     @FXML
     public void onShowGroupsMenuItemClicked() {
-        showGroupStage();
+        Stage groupStage = TransitionFacade.getGroupTransitionService().createGroupListStage(currentStage);
+        groupStage.show();
     }
 
     @FXML
@@ -160,14 +158,16 @@ public class TestSelectionController implements Initializable, RefreshableContro
 
     @FXML
     public void onCreateTestMenuItemClicked() {
-        showTestEditingStage(new Test(), true);
+        Stage testEditingStage = TransitionFacade.getTestTransitionService().createTestEditingStage(currentStage, new Test(), this);
+        testEditingStage.show();
     }
 
     @FXML
     public void onTestEditMenuItemClicked() {
         Test test = testTableView.getSelectionModel().getSelectedItem();
         if (test != null) {
-            showTestEditingStage(test, false);
+            Stage testEditingStage = TransitionFacade.getTestTransitionService().createTestEditingStage(currentStage, test, this);
+            testEditingStage.show();
         }
     }
 
@@ -179,6 +179,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
             tests.remove(test);
         }
     }
+
 
     private Optional<Pair<String, String>> showLogInDialog() {
         Dialog<Pair<String, String>> dialog = new Dialog<>();
@@ -251,7 +252,6 @@ public class TestSelectionController implements Initializable, RefreshableContro
         return noteInDB != null;
     }
 
-
     private void authorize(boolean isAuthorized) {
         if (isAuthorized) {
             testTableContextMenu.setOpacity(1D);
@@ -276,200 +276,10 @@ public class TestSelectionController implements Initializable, RefreshableContro
     private void testSelected() {
         Test test = testTableView.getSelectionModel().getSelectedItem();
         if (test != null) {
-            openStudentSelectionModalStage(test);
+            Stage studentSelectionStage = TransitionFacade.getStudentTransitionService().createStudentSelectionStage(currentStage, test);
+            studentSelectionStage.show();
         } else {
             new NoSelectedItemAlert("Не выбран тест для выполнения!");
-        }
-    }
-
-    private void openStudentSelectionModalStage(Test test) {
-        try {
-            Stage stage = new Stage();
-
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/fxml/student_selection.fxml"));
-            Parent root = loader.load();
-
-            StudentSelectionController studentSelectionController = loader.getController();
-            studentSelectionController.setMainStage(currentStage);
-            studentSelectionController.setCurrentStage(stage);
-            studentSelectionController.setTest(test);
-
-            stage.setScene(new Scene(root));
-            stage.setTitle("Выбор студента");
-            stage.getIcons().add(new Image("/test.png"));
-
-            stage.setResizable(true);
-            stage.setWidth(438D);
-            stage.setHeight(314D);
-            stage.setMinWidth(438D);
-            stage.setMinHeight(314D);
-
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(currentStage);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void showGroupStage() {
-        try {
-            Stage stage = new Stage();
-
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/fxml/group_window.fxml"));
-            Parent root = loader.load();
-
-            GroupWindowController groupWindowController = loader.getController();
-            groupWindowController.setMainStage(currentStage);
-            groupWindowController.setModalStage(stage);
-
-            stage.setScene(new Scene(root));
-            stage.setTitle("Список групп");
-            stage.getIcons().add(new Image("/test.png"));
-
-            stage.setResizable(true);
-            stage.setWidth(380D);
-            stage.setHeight(360D);
-            stage.setMinWidth(380D);
-            stage.setMinHeight(360D);
-
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(currentStage.getScene().getWindow());
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void showSubjectStage() {
-        try {
-            Stage stage = new Stage();
-
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/fxml/subject_window.fxml"));
-            Parent root = loader.load();
-
-            SubjectWindowController subjectWindowController = loader.getController();
-            subjectWindowController.setMainStage(currentStage);
-            subjectWindowController.setModalStage(stage);
-
-            stage.setScene(new Scene(root));
-            stage.setTitle("Список предметов");
-            stage.getIcons().add(new Image("/test.png"));
-
-            stage.setResizable(true);
-            stage.setWidth(380D);
-            stage.setHeight(360D);
-            stage.setMinWidth(380D);
-            stage.setMinHeight(360D);
-
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(currentStage.getScene().getWindow());
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void showTeacherStage() {
-        try {
-            Stage stage = new Stage();
-
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/fxml/teacher_window.fxml"));
-            Parent root = loader.load();
-
-            TeacherWindowController teacherWindowController = loader.getController();
-            teacherWindowController.setMainStage(currentStage);
-            teacherWindowController.setModalStage(stage);
-
-            stage.setScene(new Scene(root));
-            stage.setTitle("Список преподавателей");
-            stage.getIcons().add(new Image("/test.png"));
-
-            stage.setResizable(true);
-            stage.setWidth(380D);
-            stage.setHeight(360D);
-            stage.setMinWidth(380D);
-            stage.setMinHeight(360D);
-
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(currentStage.getScene().getWindow());
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void showStudentStage() {
-        try {
-            Stage stage = new Stage();
-
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/fxml/student_window.fxml"));
-            Parent root = loader.load();
-
-            StudentWindowController studentWindowController = loader.getController();
-            studentWindowController.setMainStage(currentStage);
-            studentWindowController.setModalStage(stage);
-
-            stage.setScene(new Scene(root));
-            stage.setTitle("Список студентов");
-            stage.getIcons().add(new Image("/test.png"));
-
-            stage.setResizable(true);
-            stage.setWidth(380D);
-            stage.setHeight(360D);
-            stage.setMinWidth(380D);
-            stage.setMinHeight(360D);
-
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(currentStage.getScene().getWindow());
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void showTestEditingStage(Test test, boolean isNew) {
-        try {
-            Stage stage = new Stage();
-
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/fxml/test_editing.fxml"));
-            Parent root = loader.load();
-
-            TestEditingController testEditingController = loader.getController();
-            testEditingController.setCurrentStage(stage);
-            testEditingController.setParentController(this);
-
-            if (!isNew) {
-                test = DaoFacade.getTestDAOService().getByPK(test.getId());
-                testEditingController.setTest(test);
-                testEditingController.postInitialize();
-            } else {
-                testEditingController.setTest(test);
-            }
-
-            testEditingController.showQuestion(0);
-
-            stage.setScene(new Scene(root));
-            stage.setTitle("Конструктор тестов");
-            stage.getIcons().add(new Image("/test.png"));
-
-            stage.setResizable(true);
-            stage.setWidth(720D);
-            stage.setHeight(620D);
-            stage.setMinWidth(720D);
-            stage.setMinHeight(620D);
-
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(currentStage.getScene().getWindow());
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

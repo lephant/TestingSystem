@@ -3,35 +3,33 @@ package ru.lephant.java.rgatu.TestingSystem.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.MapValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
+import ru.lephant.java.rgatu.TestingSystem.interfaces.PostInitializable;
+import ru.lephant.java.rgatu.TestingSystem.transitions.TransitionFacade;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public class StudentStatisticsWindowController implements Initializable {
+public class StudentStatisticsWindowController implements Initializable, PostInitializable {
 
     private static final String SUBJECT_KEY = "subject";
     private static final String RESULT_KEY = "result";
+
+
     @FXML
     private TableView<Map> statisticsTableView;
     private ObservableList<Map> statistics = FXCollections.observableArrayList();
@@ -42,8 +40,7 @@ public class StudentStatisticsWindowController implements Initializable {
     @FXML
     private TableColumn<Map, String> averageResultColumn;
 
-    private Stage mainStage;
-    private Stage modalStage;
+    private Stage currentStage;
 
     private Student student;
 
@@ -56,8 +53,8 @@ public class StudentStatisticsWindowController implements Initializable {
         statisticsTableView.setItems(statistics);
     }
 
-
-    public void fillContent() {
+    @Override
+    public void postInitialize() {
         fillStatisticsList(DaoFacade.getStudentResultsDAOService().getAllResultsOfStudent(student));
     }
 
@@ -84,37 +81,9 @@ public class StudentStatisticsWindowController implements Initializable {
     private void showStudentStatisticsChartStage() {
         Map currentMap = statisticsTableView.getSelectionModel().getSelectedItem();
         if (currentMap != null) {
-            try {
-                Subject subject = (Subject) currentMap.get(SUBJECT_KEY);
-
-                Stage stage = new Stage();
-
-                FXMLLoader loader = new FXMLLoader();
-                loader.setLocation(getClass().getResource("/fxml/student_statistics_chart_window.fxml"));
-                Parent root = loader.load();
-
-                StudentStatisticsChartWindowController statisticsChartWindowController = loader.getController();
-                statisticsChartWindowController.setModalStage(stage);
-                statisticsChartWindowController.setStudent(student);
-                statisticsChartWindowController.setSubject(subject);
-                statisticsChartWindowController.fillChart();
-
-                stage.setScene(new Scene(root));
-                stage.setTitle("Статистика студента");
-                stage.getIcons().add(new Image("/test.png"));
-
-                stage.setResizable(true);
-                stage.setWidth(600D);
-                stage.setHeight(600D);
-                stage.setMinWidth(500D);
-                stage.setMinHeight(500D);
-
-                stage.initModality(Modality.WINDOW_MODAL);
-                stage.initOwner(modalStage);
-                stage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Subject subject = (Subject) currentMap.get(SUBJECT_KEY);
+            Stage studentStatisticsChartStage = TransitionFacade.getStudentTransitionService().createStudentStatisticsChartStage(currentStage, student, subject);
+            studentStatisticsChartStage.show();
         } else {
             new NoSelectedItemAlert("Не выбрана запись!");
         }
@@ -122,7 +91,7 @@ public class StudentStatisticsWindowController implements Initializable {
 
     @FXML
     public void onReturnButtonClicked() {
-        modalStage.close();
+        currentStage.close();
     }
 
 
@@ -140,12 +109,8 @@ public class StudentStatisticsWindowController implements Initializable {
     }
 
 
-    public void setMainStage(Stage mainStage) {
-        this.mainStage = mainStage;
-    }
-
-    public void setModalStage(Stage modalStage) {
-        this.modalStage = modalStage;
+    public void setCurrentStage(Stage currentStage) {
+        this.currentStage = currentStage;
     }
 
     public void setStudent(Student student) {

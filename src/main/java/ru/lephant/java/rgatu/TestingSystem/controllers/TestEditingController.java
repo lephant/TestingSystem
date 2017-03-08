@@ -3,15 +3,12 @@ package ru.lephant.java.rgatu.TestingSystem.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.drawers.OptionDrawerFactory;
 import ru.lephant.java.rgatu.TestingSystem.drawers.QuestionDrawerFactory;
@@ -23,10 +20,10 @@ import ru.lephant.java.rgatu.TestingSystem.entities.Teacher;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.PostInitializable;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
+import ru.lephant.java.rgatu.TestingSystem.transitions.TransitionFacade;
 import ru.lephant.java.rgatu.TestingSystem.validators.impl.TestValidator;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -65,6 +62,7 @@ public class TestEditingController implements Initializable, PostInitializable {
 
     private Test test;
     private Stage currentStage;
+    private Stage mainStage;
 
     private int questionNumber;
     private Question currentQuestion;
@@ -96,6 +94,9 @@ public class TestEditingController implements Initializable, PostInitializable {
     public void postInitialize() {
         currentStage.setOnCloseRequest(event -> parentController.refreshData());
 
+        if (test.getId() > 0) {
+            test = DaoFacade.getTestDAOService().getByPK(test.getId());
+        }
         testNameField.setText(test.getName());
         teacherComboBox.getSelectionModel().select(test.getTeacher());
         subjectComboBox.getSelectionModel().select(test.getSubject());
@@ -165,39 +166,12 @@ public class TestEditingController implements Initializable, PostInitializable {
     public void onQuestionListClicked() {
         int index = questionList.getSelectionModel().getSelectedIndex();
         if (index == questions.size() - 1) {
-            showQuestionAddingDialog();
-        }
-        if (index != questionNumber) {
-            questionNumber = index;
-            showQuestion(questionNumber);
-        }
-    }
-
-    private void showQuestionAddingDialog() {
-        try {
-            Stage stage = new Stage();
-
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/fxml/question_creation_window.fxml"));
-            Parent root = loader.load();
-
-            QuestionCreationController questionCreationController = loader.getController();
-            questionCreationController.setCurrentStage(stage);
-
-            stage.setScene(new Scene(root));
-            stage.setTitle("Создание вопроса");
-            stage.getIcons().add(new javafx.scene.image.Image("/test.png"));
-
-            stage.setHeight(180D);
-            stage.setWidth(300D);
-            stage.setResizable(false);
-
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(currentStage.getScene().getWindow());
-            stage.showAndWait();
+            Pair<Stage, QuestionCreationController> stageAndController = TransitionFacade.getTestTransitionService().createQuestionAddingStage(currentStage);
+            Stage questionAddingStage = stageAndController.getKey();
+            QuestionCreationController questionCreationController = stageAndController.getValue();
+            questionAddingStage.showAndWait();
 
             Question createdQuestion = questionCreationController.getCreatedQuestion();
-
             if (createdQuestion != null) {
                 createdQuestion.setTest(test);
                 test.getQuestions().add(createdQuestion);
@@ -206,8 +180,10 @@ public class TestEditingController implements Initializable, PostInitializable {
             } else {
                 showQuestion(questionNumber);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        }
+        if (index != questionNumber) {
+            questionNumber = index;
+            showQuestion(questionNumber);
         }
     }
 
@@ -250,6 +226,10 @@ public class TestEditingController implements Initializable, PostInitializable {
 
     public void setCurrentStage(Stage currentStage) {
         this.currentStage = currentStage;
+    }
+
+    public void setMainStage(Stage mainStage) {
+        this.mainStage = mainStage;
     }
 
     public void setParentController(RefreshableController parentController) {

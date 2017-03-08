@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
-import ru.lephant.java.rgatu.TestingSystem.comparators.DateComporatorForTestOfStudent;
+import ru.lephant.java.rgatu.TestingSystem.comparators.DateComparatorForTestOfStudent;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
@@ -18,7 +18,7 @@ public class StudentStatisticsChartWindowController {
     @FXML
     private AreaChart<String, Double> areaChart;
 
-    private Stage modalStage;
+    private Stage currentStage;
 
     private Student student;
     private Subject subject;
@@ -27,7 +27,7 @@ public class StudentStatisticsChartWindowController {
     public void fillChart() {
         List<TestOfStudent> testsOfStudent = DaoFacade.getStudentResultsDAOService()
                 .getResultsOfStudentBySubject(student,subject);
-        testsOfStudent.sort(new DateComporatorForTestOfStudent());
+        testsOfStudent.sort(new DateComparatorForTestOfStudent());
         XYChart.Series<String, Double> series = new XYChart.Series<>();
 
         for (TestOfStudent testOfStudent : testsOfStudent) {
@@ -42,12 +42,12 @@ public class StudentStatisticsChartWindowController {
     }
 
     public void onReturnButtonClicked() {
-        modalStage.close();
+        currentStage.close();
     }
 
 
-    public void setModalStage(Stage modalStage) {
-        this.modalStage = modalStage;
+    public void setCurrentStage(Stage currentStage) {
+        this.currentStage = currentStage;
     }
 
     public void setStudent(Student student) {
