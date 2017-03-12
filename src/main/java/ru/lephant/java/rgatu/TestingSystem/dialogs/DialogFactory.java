@@ -84,6 +84,16 @@ public class DialogFactory {
         return dialog;
     }
 
+    public static TextInputDialog createOptionEditDialog(String startValue) {
+        TextInputDialog dialog = new TextInputDialog(startValue);
+        dialog.setTitle("Редактирование");
+        dialog.setHeaderText(null);
+        dialog.setContentText("Введите текст варианта ответа:");
+        Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(ReferenceData.getLogoImage());
+        return dialog;
+    }
+
     public static Alert createAuthorizationErrorAlert() {
         Alert alert = createDefaultAlert(Alert.AlertType.ERROR, ERROR_TITLE);
         alert.setHeaderText("Ошибка авторизации!");

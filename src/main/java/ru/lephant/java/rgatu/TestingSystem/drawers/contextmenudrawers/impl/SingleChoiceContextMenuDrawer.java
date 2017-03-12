@@ -7,6 +7,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.VBox;
+import ru.lephant.java.rgatu.TestingSystem.dialogs.DialogFactory;
 import ru.lephant.java.rgatu.TestingSystem.drawers.contextmenudrawers.ContextMenuDrawer;
 import ru.lephant.java.rgatu.TestingSystem.entities.Choice;
 import ru.lephant.java.rgatu.TestingSystem.entities.Question;
@@ -23,11 +24,7 @@ public class SingleChoiceContextMenuDrawer implements ContextMenuDrawer<Choice, 
         editMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                TextInputDialog dialog = new TextInputDialog(choice.getText());
-                dialog.setTitle("Редактирование");
-                dialog.setHeaderText(null);
-                dialog.setContentText("Введите текст варианта ответа:");
-
+                TextInputDialog dialog = DialogFactory.createOptionEditDialog(choice.getText());
                 Optional<String> result = dialog.showAndWait();
                 if (result.isPresent()) {
                     choice.setText(result.get());
