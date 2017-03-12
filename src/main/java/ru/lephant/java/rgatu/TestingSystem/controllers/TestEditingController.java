@@ -5,13 +5,13 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.drawers.OptionDrawerFactory;
 import ru.lephant.java.rgatu.TestingSystem.drawers.QuestionDrawerFactory;
+import ru.lephant.java.rgatu.TestingSystem.drawers.imagedrawers.ImageDrawer;
 import ru.lephant.java.rgatu.TestingSystem.drawers.optiondrawers.OptionDrawer;
 import ru.lephant.java.rgatu.TestingSystem.drawers.questiondrawers.QuestionDrawer;
 import ru.lephant.java.rgatu.TestingSystem.entities.Question;
@@ -23,15 +23,10 @@ import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
 import ru.lephant.java.rgatu.TestingSystem.transitions.TransitionFacade;
 import ru.lephant.java.rgatu.TestingSystem.validators.impl.TestValidator;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class TestEditingController implements Initializable, PostInitializable {
-
-    private static final double IMAGE_VIEW_DEFAULT_WIDTH = 450D;
-
 
     @FXML
     private TextField testNameField;
@@ -76,6 +71,7 @@ public class TestEditingController implements Initializable, PostInitializable {
     private int questionNumber;
     private Question currentQuestion;
 
+    private ImageDrawer imageDrawer;
     private QuestionDrawerFactory questionDrawerFactory;
     private OptionDrawerFactory optionDrawerFactory;
     private TestValidator testValidator;
@@ -92,6 +88,7 @@ public class TestEditingController implements Initializable, PostInitializable {
         subjects.setAll(DaoFacade.getSubjectDAOService().getList());
         teachers.setAll(DaoFacade.getTeacherDAOService().getList());
 
+        imageDrawer = new ImageDrawer();
         questionDrawerFactory = new QuestionDrawerFactory();
         optionDrawerFactory = new OptionDrawerFactory();
         testValidator = new TestValidator();
@@ -157,24 +154,10 @@ public class TestEditingController implements Initializable, PostInitializable {
     private void drawQuestion() {
         choiceBox.getChildren().clear();
         if (currentQuestion.getImage() != null) {
-            drawImage(currentQuestion);
+            imageDrawer.drawImage(currentQuestion.getImage(), choiceBox, 0);
         }
         QuestionDrawer questionDrawer = questionDrawerFactory.getQuestionDrawer(currentQuestion);
         questionDrawer.draw(currentQuestion, choiceBox, true);
-    }
-
-    private void drawImage(Question question) {
-        InputStream stream = new ByteArrayInputStream(question.getImage().getContent());
-        javafx.scene.image.Image image = new javafx.scene.image.Image(stream);
-        double imageWidth = image.getWidth();
-        double imageHeight = image.getHeight();
-        double imageViewHeight = (IMAGE_VIEW_DEFAULT_WIDTH * imageHeight) / imageWidth;
-
-        ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(IMAGE_VIEW_DEFAULT_WIDTH);
-        imageView.setFitHeight(imageViewHeight);
-
-        choiceBox.getChildren().add(imageView);
     }
 
 

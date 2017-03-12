@@ -5,13 +5,12 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.DialogFactory;
 import ru.lephant.java.rgatu.TestingSystem.drawers.QuestionDrawerFactory;
+import ru.lephant.java.rgatu.TestingSystem.drawers.imagedrawers.ImageDrawer;
 import ru.lephant.java.rgatu.TestingSystem.drawers.questiondrawers.QuestionDrawer;
 import ru.lephant.java.rgatu.TestingSystem.entities.Question;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
@@ -21,8 +20,6 @@ import ru.lephant.java.rgatu.TestingSystem.interfaces.PostInitializable;
 import ru.lephant.java.rgatu.TestingSystem.testcheckers.TestChecker;
 import ru.lephant.java.rgatu.TestingSystem.testcheckers.defaultchecker.DefaultTestChecker;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.URL;
@@ -33,9 +30,6 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class TestExecutionController implements Initializable, PostInitializable {
-
-    private static final double IMAGE_VIEW_DEFAULT_WIDTH = 450D;
-
 
     @FXML
     private ListView<String> questionList;
@@ -64,12 +58,14 @@ public class TestExecutionController implements Initializable, PostInitializable
 
     private int questionNumber;
 
+    private ImageDrawer imageDrawer;
     private QuestionDrawerFactory questionDrawerFactory;
     private TestChecker testChecker;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        imageDrawer = new ImageDrawer();
         questionDrawerFactory = new QuestionDrawerFactory();
         testChecker = new DefaultTestChecker();
         questionList.setItems(questionListData);
@@ -170,25 +166,12 @@ public class TestExecutionController implements Initializable, PostInitializable
     private void drawQuestion(Question question) {
         choiceBox.getChildren().clear();
         if (question.getImage() != null) {
-            drawImage(question);
+            imageDrawer.drawImage(question.getImage(), choiceBox, 0);
         }
         QuestionDrawer questionDrawer = questionDrawerFactory.getQuestionDrawer(question);
         questionDrawer.draw(question, choiceBox, false);
     }
 
-    private void drawImage(Question question) {
-        InputStream stream = new ByteArrayInputStream(question.getImage().getContent());
-        Image image = new Image(stream);
-        double imageWidth = image.getWidth();
-        double imageHeight = image.getHeight();
-        double imageViewHeight = (IMAGE_VIEW_DEFAULT_WIDTH * imageHeight) / imageWidth;
-
-        ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(IMAGE_VIEW_DEFAULT_WIDTH);
-        imageView.setFitHeight(imageViewHeight);
-
-        choiceBox.getChildren().add(imageView);
-    }
 
     public void setMainStage(Stage mainStage) {
         this.mainStage = mainStage;
