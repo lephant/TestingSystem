@@ -117,19 +117,16 @@ public class TestExecutionController implements Initializable, PostInitializable
     }
 
     private void showResult(TestOfStudent testOfStudent) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Результаты");
-        alert.setHeaderText(null);
-        alert.setContentText("Ваши результаты по тесту:\n" +
+        Alert alert = DialogFactory.createResultInformationAlert("Ваши результаты по тесту:\n" +
                 "Название теста: " + testOfStudent.getTest().getName() + "\n" +
                 "Предмет: " + testOfStudent.getTest().getSubject().getName() + "\n" +
                 "Преподаватель: " + testOfStudent.getTest().getTeacher().getFio() + "\n" +
                 "Вы: " + testOfStudent.getStudent().getFio() + " (" + testOfStudent.getStudent().getGroup().getName() + ")\n" +
                 "Результат: " + ((double) ((int) (testOfStudent.getResult().doubleValue() * 10000)) / 100.0) + "%" +
-                "\n \n" +
+                "\n\n" +
                 "Результат успешно сохранен на сервер!"
         );
-        alert.showAndWait(); // TODO: костыль, исправить вывод диалогов! сделать их создание в одном классе через метод create и выводить сюда для вызова show()!
+        alert.showAndWait();
     }
 
 

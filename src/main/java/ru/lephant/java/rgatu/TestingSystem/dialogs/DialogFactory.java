@@ -16,6 +16,7 @@ public class DialogFactory {
     private static final String VALIDATION_ERROR_HEADER_TEXT = "Ошибка валидации!";
     private static final String AUTHORIZATION_TITLE = "Авторизация";
     private static final String AUTHORIZATION_HEADER_TEXT = "Введите ваши данные:";
+    private static final String RESULT_TITLE = "Результаты";
 
 
     public static Alert createNoSelectedItemAlert(String headerText) {
@@ -98,6 +99,12 @@ public class DialogFactory {
         Alert alert = createDefaultAlert(Alert.AlertType.ERROR, ERROR_TITLE);
         alert.setHeaderText("Ошибка авторизации!");
         alert.setContentText("Пользователя с такими данными не существует или он заблокирован!");
+        return alert;
+    }
+
+    public static Alert createResultInformationAlert(String contentText) {
+        Alert alert = createDefaultAlert(Alert.AlertType.INFORMATION, RESULT_TITLE);
+        alert.setContentText(contentText);
         return alert;
     }
 
