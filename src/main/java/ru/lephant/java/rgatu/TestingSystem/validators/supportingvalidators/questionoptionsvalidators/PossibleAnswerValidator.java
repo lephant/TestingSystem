@@ -8,11 +8,21 @@ public class PossibleAnswerValidator implements Validator<MissingPossibleAnswer>
 
     private PossibleAnswerTextValidator possibleAnswerTextValidator = new PossibleAnswerTextValidator();
 
+    private String message;
+
 
     @Override
     public boolean validate(MissingPossibleAnswer missingPossibleAnswer) {
-        if (!possibleAnswerTextValidator.validate(missingPossibleAnswer)) return false;
+        if (!possibleAnswerTextValidator.validate(missingPossibleAnswer)) {
+            message = possibleAnswerTextValidator.getMessage();
+            return false;
+        }
         return true;
+    }
+
+    @Override
+    public String getMessage() {
+        return message;
     }
 
 }

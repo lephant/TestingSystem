@@ -14,14 +14,23 @@ public class SingleChoiceQuestionValidator extends AbstractQuestionValidator<Sin
     public boolean validate(SingleChoiceQuestion question) {
         if (!super.validate(question)) return false;
 
-        if (question.getChoices().size() < 1) return false;
+        if (question.getChoices().size() < 2) {
+            message = "Вопрос N%d должен содержать минимум 2 варианта ответа!";
+            return false;
+        }
 
         int isCorrectChoiceCount = 0;
         for (Choice choice : question.getChoices()) {
-            if (!choiceValidator.validate(choice)) return false;
+            if (!choiceValidator.validate(choice)) {
+                message = choiceValidator.getMessage();
+                return false;
+            }
             if (choice.isCorrectIt()) isCorrectChoiceCount++;
         }
-        if (isCorrectChoiceCount != 1) return false;
+        if (isCorrectChoiceCount != 1) {
+            message = "Вопрос N%d должен содержать 1 правильный ответ!";
+            return false;
+        }
 
         return true;
     }

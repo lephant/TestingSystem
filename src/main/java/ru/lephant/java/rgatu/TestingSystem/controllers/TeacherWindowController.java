@@ -9,7 +9,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
-import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
+import ru.lephant.java.rgatu.TestingSystem.dialogs.DialogFactory;
 import ru.lephant.java.rgatu.TestingSystem.entities.Teacher;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.PostInitializable;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
@@ -57,7 +57,8 @@ public class TeacherWindowController implements Initializable, RefreshableContro
     public void onEditButtonClicked() {
         int index = teacherListView.getSelectionModel().getSelectedIndex();
         if (index < 0) {
-            new NoSelectedItemAlert("Не выбран преподаватель для редактирования!");
+            Alert noSelectedItemAlert = DialogFactory.createNoSelectedItemAlert("Не выбран преподаватель для редактирования!");
+            noSelectedItemAlert.show();
             return;
         }
         Teacher teacher = teachers.get(index);
@@ -69,21 +70,19 @@ public class TeacherWindowController implements Initializable, RefreshableContro
     public void onDeleteButtonClicked() {
         Teacher teacher = teacherListView.getSelectionModel().getSelectedItem();
         if (teacher != null) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Подтверждение");
-            alert.setHeaderText("Вы уверены, что хотите удалить данного преподавателя?");
-            alert.setContentText(null);
-
-            Optional<ButtonType> result = alert.showAndWait();
+            Alert confirmationAlert = DialogFactory.createConfirmationAlert("Вы уверены, что хотите удалить данного преподавателя?");
+            Optional<ButtonType> result = confirmationAlert.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.OK) {
-                DaoFacade.getTeacherDAOService().delete(teacher);
-                teachers.remove(teacher);
-                alert.close();
-            } else {
-                alert.close();
+                if (DaoFacade.getTeacherDAOService().delete(teacher)) {
+                    teachers.remove(teacher);
+                } else {
+                    Alert deletingErrorAlert = DialogFactory.createDeletingErrorAlert("Невозможно удалить этого преподавателя!");
+                    deletingErrorAlert.show();
+                }
             }
         } else {
-            new NoSelectedItemAlert("Не выбран преподаватель для удаления!");
+            Alert noSelectedItemAlert = DialogFactory.createNoSelectedItemAlert("Не выбран преподаватель для удаления!");
+            noSelectedItemAlert.show();
         }
     }
 

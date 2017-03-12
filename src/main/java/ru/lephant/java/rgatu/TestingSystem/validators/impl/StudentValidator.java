@@ -1,5 +1,6 @@
 package ru.lephant.java.rgatu.TestingSystem.validators.impl;
 
+import ru.lephant.java.rgatu.TestingSystem.dialogs.DialogFactory;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.validators.Validator;
 import ru.lephant.java.rgatu.TestingSystem.validators.supportingvalidators.studentvalidators.StudentFioValidator;
@@ -13,9 +14,20 @@ public class StudentValidator implements Validator<Student> {
 
     @Override
     public boolean validate(Student student) {
-        if (!studentFioValidator.validate(student)) return false;
-        if (!studentGroupValidator.validate(student)) return false;
+        if (!studentFioValidator.validate(student)) {
+            DialogFactory.createValidationErrorAlert(studentFioValidator.getMessage()).show();
+            return false;
+        }
+        if (!studentGroupValidator.validate(student)) {
+            DialogFactory.createValidationErrorAlert(studentGroupValidator.getMessage()).show();
+            return false;
+        }
         return true;
+    }
+
+    @Override
+    public String getMessage() {
+        return "Ошибка валидации студента!";
     }
 
 }

@@ -9,7 +9,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
-import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
+import ru.lephant.java.rgatu.TestingSystem.dialogs.DialogFactory;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.PostInitializable;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
@@ -53,7 +53,8 @@ public class StudentWindowController implements Initializable, RefreshableContro
             Stage studentStatisticsStage = TransitionFacade.getStudentTransitionService().createStudentStatisticsStage(currentStage, student);
             studentStatisticsStage.show();
         } else {
-            new NoSelectedItemAlert("Не выбран студент!");
+            Alert noSelectedItemAlert = DialogFactory.createNoSelectedItemAlert("Не выбран студент!");
+            noSelectedItemAlert.show();
         }
     }
 
@@ -68,7 +69,8 @@ public class StudentWindowController implements Initializable, RefreshableContro
     public void onEditButtonClicked() {
         int index = studentListView.getSelectionModel().getSelectedIndex();
         if (index < 0) {
-            new NoSelectedItemAlert("Не выбран студент для редактирования!");
+            Alert noSelectedItemAlert = DialogFactory.createNoSelectedItemAlert("Не выбран студент для редактирования!");
+            noSelectedItemAlert.show();
             return;
         }
         Student student = students.get(index);
@@ -80,21 +82,19 @@ public class StudentWindowController implements Initializable, RefreshableContro
     public void onDeleteButtonClicked() {
         Student student = studentListView.getSelectionModel().getSelectedItem();
         if (student != null) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Подтверждение");
-            alert.setHeaderText("Вы уверены, что хотите удалить выбранного студента?");
-            alert.setContentText(null);
-
-            Optional<ButtonType> result = alert.showAndWait();
+            Alert confirmationAlert = DialogFactory.createConfirmationAlert("Вы уверены, что хотите удалить выбранного студента?");
+            Optional<ButtonType> result = confirmationAlert.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.OK) {
-                DaoFacade.getStudentDAOService().delete(student);
-                students.remove(student);
-                alert.close();
-            } else {
-                alert.close();
+                if (DaoFacade.getStudentDAOService().delete(student)) {
+                    students.remove(student);
+                } else {
+                    Alert deletingErrorAlert = DialogFactory.createDeletingErrorAlert("Невозможно удалить этого студента!");
+                    deletingErrorAlert.show();
+                }
             }
         } else {
-            new NoSelectedItemAlert("Не выбран студент для удаления!");
+            Alert noSelectedItemAlert = DialogFactory.createNoSelectedItemAlert("Не выбран студент для удаления!");
+            noSelectedItemAlert.show();
         }
     }
 

@@ -9,7 +9,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
-import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
+import ru.lephant.java.rgatu.TestingSystem.dialogs.DialogFactory;
 import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.PostInitializable;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
@@ -57,7 +57,8 @@ public class SubjectWindowController implements Initializable, RefreshableContro
     public void onEditButtonClicked() {
         int index = subjectListView.getSelectionModel().getSelectedIndex();
         if (index < 0) {
-            new NoSelectedItemAlert("Не выбран предмет для редактирования!");
+            Alert noSelectedItemAlert = DialogFactory.createNoSelectedItemAlert("Не выбран предмет для редактирования!");
+            noSelectedItemAlert.show();
             return;
         }
         Subject subject = subjects.get(index);
@@ -69,21 +70,19 @@ public class SubjectWindowController implements Initializable, RefreshableContro
     public void onDeleteButtonClicked() {
         Subject subject = subjectListView.getSelectionModel().getSelectedItem();
         if (subject != null) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Подтверждение");
-            alert.setHeaderText("Вы уверены, что хотите удалить выбранный предмет?");
-            alert.setContentText(null);
-
-            Optional<ButtonType> result = alert.showAndWait();
+            Alert confirmationAlert = DialogFactory.createConfirmationAlert("Вы уверены, что хотите удалить выбранный предмет?");
+            Optional<ButtonType> result = confirmationAlert.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.OK) {
-                DaoFacade.getSubjectDAOService().delete(subject);
-                subjects.remove(subject);
-                alert.close();
-            } else {
-                alert.close();
+                if (DaoFacade.getSubjectDAOService().delete(subject)) {
+                    subjects.remove(subject);
+                } else {
+                    Alert deletingErrorAlert = DialogFactory.createDeletingErrorAlert("Невозможно удалить этот предмет!");
+                    deletingErrorAlert.show();
+                }
             }
         } else {
-            new NoSelectedItemAlert("Не выбран предмет для удаления!");
+            Alert noSelectedItemAlert = DialogFactory.createNoSelectedItemAlert("Не выбран предмет для удаления!");
+            noSelectedItemAlert.show();
         }
     }
 

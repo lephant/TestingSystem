@@ -2,10 +2,11 @@ package ru.lephant.java.rgatu.TestingSystem.controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
-import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
+import ru.lephant.java.rgatu.TestingSystem.dialogs.DialogFactory;
 import ru.lephant.java.rgatu.TestingSystem.entities.Question;
 import ru.lephant.java.rgatu.TestingSystem.resolvers.CreationQuestionResolver;
 
@@ -48,7 +49,8 @@ public class QuestionCreationController implements Initializable {
             createdQuestion = question;
             currentStage.close();
         } else {
-            new NoSelectedItemAlert("Не выбран ни один тип вопроса!");
+            Alert noSelectedItemAlert = DialogFactory.createNoSelectedItemAlert("Не выбран ни один тип вопроса!");
+            noSelectedItemAlert.show();
             createdQuestion = null;
         }
     }

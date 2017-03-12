@@ -8,9 +8,15 @@ public class SubjectNameValidator implements Validator<Subject> {
     @Override
     public boolean validate(Subject subject) {
         String subjectName = subject.getName();
+        if (subjectName == null) return false;
         if (subjectName.trim().length() < 1) return false;
         if (subjectName.length() > 128) return false;
         return true;
+    }
+
+    @Override
+    public String getMessage() {
+        return "Название предмета должно быть от 1 до 128 символов!";
     }
 
 }

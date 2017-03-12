@@ -9,7 +9,7 @@ public interface CRUDDaoService<T> {
 
     List<T> getList();
 
-    void delete(T object);
+    boolean delete(T object);
 
     void save(T object);
 

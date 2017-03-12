@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
+import ru.lephant.java.rgatu.TestingSystem.dialogs.DialogFactory;
 import ru.lephant.java.rgatu.TestingSystem.drawers.QuestionDrawerFactory;
 import ru.lephant.java.rgatu.TestingSystem.drawers.questiondrawers.QuestionDrawer;
 import ru.lephant.java.rgatu.TestingSystem.entities.Question;
@@ -89,20 +90,14 @@ public class TestExecutionController implements Initializable, PostInitializable
 
     @FXML
     public void onTestCompletion() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Завершение теста");
-        alert.setHeaderText(null);
-        alert.setContentText("Вы действительно хотите завершить тест?");
-
-        Optional<ButtonType> result = alert.showAndWait();
+        Alert confirmationAlert = DialogFactory.createConfirmationAlert("Вы действительно хотите завершить тест?");
+        Optional<ButtonType> result = confirmationAlert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             TestOfStudent testOfStudent = composeTestOfStudent();
             DaoFacade.getStudentResultsDAOService().save(testOfStudent);
             showResult(testOfStudent);
             currentStage.close();
             mainStage.show();
-        } else {
-            alert.close();
         }
     }
 

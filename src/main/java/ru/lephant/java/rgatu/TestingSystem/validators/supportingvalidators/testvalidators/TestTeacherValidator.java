@@ -11,4 +11,9 @@ public class TestTeacherValidator implements Validator<Test> {
         return true;
     }
 
+    @Override
+    public String getMessage() {
+        return "У теста должен быть указан преподаватель!";
+    }
+
 }

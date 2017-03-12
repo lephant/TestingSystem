@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -13,7 +14,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
-import ru.lephant.java.rgatu.TestingSystem.dialogs.NoSelectedItemAlert;
+import ru.lephant.java.rgatu.TestingSystem.dialogs.DialogFactory;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
 import ru.lephant.java.rgatu.TestingSystem.transitions.TransitionFacade;
@@ -83,7 +84,8 @@ public class StudentSelectionController implements Initializable {
             mainStage.hide();
             testExecutionStage.show();
         } else {
-            new NoSelectedItemAlert("Студент не выбран!");
+            Alert noSelectedItemAlert = DialogFactory.createNoSelectedItemAlert("Студент не выбран!");
+            noSelectedItemAlert.show();
         }
     }
 

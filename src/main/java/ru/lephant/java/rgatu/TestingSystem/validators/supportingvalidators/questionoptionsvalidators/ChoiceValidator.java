@@ -8,11 +8,21 @@ public class ChoiceValidator implements Validator<Choice> {
 
     private ChoiceTextValidator choiceTextValidator = new ChoiceTextValidator();
 
+    private String message;
+
 
     @Override
     public boolean validate(Choice choice) {
-        if (!choiceTextValidator.validate(choice)) return false;
+        if (!choiceTextValidator.validate(choice)) {
+            message = choiceTextValidator.getMessage();
+            return false;
+        }
         return true;
+    }
+
+    @Override
+    public String getMessage() {
+        return message;
     }
 
 }

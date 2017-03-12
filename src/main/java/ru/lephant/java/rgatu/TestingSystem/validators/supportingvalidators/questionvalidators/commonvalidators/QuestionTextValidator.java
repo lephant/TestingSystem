@@ -14,4 +14,9 @@ public class QuestionTextValidator implements Validator<Question> {
         return true;
     }
 
+    @Override
+    public String getMessage() {
+        return "У вопроса N%d должен быть указан текст!";
+    }
+
 }

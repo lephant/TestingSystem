@@ -7,7 +7,7 @@ import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 public abstract class AbstractCRUDDAOService<T> implements CRUDDaoService<T> {
 
     @Override
-    public void delete(T object) {
+    public boolean delete(T object) {
         Session session = null;
         Transaction transaction = null;
         try {
@@ -15,10 +15,12 @@ public abstract class AbstractCRUDDAOService<T> implements CRUDDaoService<T> {
             transaction = session.beginTransaction();
             session.delete(object);
             transaction.commit();
+            return true;
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
+            return false;
         } finally {
             if (session != null) {
                 session.close();

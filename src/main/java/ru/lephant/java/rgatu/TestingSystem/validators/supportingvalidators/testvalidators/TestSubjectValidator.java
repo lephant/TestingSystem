@@ -11,4 +11,9 @@ public class TestSubjectValidator implements Validator<Test> {
         return true;
     }
 
+    @Override
+    public String getMessage() {
+        return "У теста должен быть указан предмет!";
+    }
+
 }

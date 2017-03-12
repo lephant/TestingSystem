@@ -16,6 +16,8 @@ public class DaoFacade {
 
     private static TestDAOService testDAOService;
 
+    private static UserDAOService userDAOService;
+
 
     private DaoFacade() {
     }
@@ -61,5 +63,12 @@ public class DaoFacade {
             testDAOService = new TestDAOService();
         }
         return testDAOService;
+    }
+
+    public static UserDAOService getUserDAOService() {
+        if (userDAOService == null) {
+            userDAOService = new UserDAOService();
+        }
+        return userDAOService;
     }
 }
