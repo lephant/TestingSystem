@@ -60,6 +60,15 @@ public class TestEditingController implements Initializable, PostInitializable {
     @FXML
     private VBox choiceBox;
 
+    @FXML
+    private TextField questionValueField;
+
+    @FXML
+    private Button addImageButton;
+
+    @FXML
+    private Button deleteImageButton;
+
     private Test test;
     private Stage currentStage;
     private Stage mainStage;
@@ -125,20 +134,24 @@ public class TestEditingController implements Initializable, PostInitializable {
         drawQuestion();
 
         questionTextField.textProperty().addListener((observable, oldValue, newValue) -> currentQuestion.setText(newValue));
+        questionValueField.textProperty().addListener(((observable, oldValue, newValue) -> currentQuestion.setValue(Integer.parseInt(newValue))));
     }
 
     private void clearFields() {
         questionTextField.setText("");
+        questionValueField.setText("");
         choiceBox.getChildren().clear();
     }
 
     private void setLock(boolean isLock) {
         questionTextField.setDisable(isLock);
+        questionValueField.setDisable(isLock);
         addChoiceButton.setDisable(isLock);
     }
 
     private void changeFields() {
         questionTextField.setText(currentQuestion.getText());
+        questionValueField.setText(String.valueOf(currentQuestion.getValue()));
     }
 
     private void drawQuestion() {
