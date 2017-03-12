@@ -5,9 +5,12 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import ru.lephant.java.rgatu.TestingSystem.reference.ReferenceData;
+
+import java.io.File;
 
 public class DialogFactory {
 
@@ -106,6 +109,20 @@ public class DialogFactory {
         Alert alert = createDefaultAlert(Alert.AlertType.INFORMATION, RESULT_TITLE);
         alert.setContentText(contentText);
         return alert;
+    }
+
+    public static FileChooser createImageFileChooser() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Загрузить картинку");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("All", "*.*"),
+                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+                new FileChooser.ExtensionFilter("GIF", "*.gif"),
+                new FileChooser.ExtensionFilter("BMP", "*.bmp"),
+                new FileChooser.ExtensionFilter("PNG", "*.png")
+        );
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        return fileChooser;
     }
 
 

@@ -20,7 +20,7 @@ public class MultiChoiceQuestion extends Question implements Serializable {
         super(test, text, value);
     }
 
-    public MultiChoiceQuestion(Test test, String text, int value, Image image) {
+    public MultiChoiceQuestion(Test test, String text, int value, byte[] image) {
         super(test, text, value, image);
     }
 

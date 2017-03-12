@@ -13,7 +13,6 @@
 
         <mapping class="ru.lephant.java.rgatu.TestingSystem.entities.Choice"/>
         <mapping class="ru.lephant.java.rgatu.TestingSystem.entities.Group"/>
-        <mapping class="ru.lephant.java.rgatu.TestingSystem.entities.Image"/>
         <mapping class="ru.lephant.java.rgatu.TestingSystem.entities.MissingWordQuestion"/>
         <mapping class="ru.lephant.java.rgatu.TestingSystem.entities.MultiChoiceQuestion"/>
         <mapping class="ru.lephant.java.rgatu.TestingSystem.entities.Question"/>

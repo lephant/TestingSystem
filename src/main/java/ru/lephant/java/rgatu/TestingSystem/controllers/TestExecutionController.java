@@ -166,7 +166,7 @@ public class TestExecutionController implements Initializable, PostInitializable
     private void drawQuestion(Question question) {
         choiceBox.getChildren().clear();
         if (question.getImage() != null) {
-            imageDrawer.drawImage(question.getImage(), choiceBox, 0);
+            imageDrawer.drawImage(question, choiceBox, 0);
         }
         QuestionDrawer questionDrawer = questionDrawerFactory.getQuestionDrawer(question);
         questionDrawer.draw(question, choiceBox, false);

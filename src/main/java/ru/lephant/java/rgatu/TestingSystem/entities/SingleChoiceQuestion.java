@@ -24,7 +24,7 @@ public class SingleChoiceQuestion extends Question implements Serializable {
         super(test, text, value);
     }
 
-    public SingleChoiceQuestion(Test test, String text, int value, Image image) {
+    public SingleChoiceQuestion(Test test, String text, int value, byte[] image) {
         super(test, text, value, image);
     }
 

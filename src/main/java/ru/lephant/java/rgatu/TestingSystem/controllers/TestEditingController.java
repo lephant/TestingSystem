@@ -4,11 +4,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
+import ru.lephant.java.rgatu.TestingSystem.dialogs.DialogFactory;
 import ru.lephant.java.rgatu.TestingSystem.drawers.OptionDrawerFactory;
 import ru.lephant.java.rgatu.TestingSystem.drawers.QuestionDrawerFactory;
 import ru.lephant.java.rgatu.TestingSystem.drawers.imagedrawers.ImageDrawer;
@@ -23,6 +27,7 @@ import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
 import ru.lephant.java.rgatu.TestingSystem.transitions.TransitionFacade;
 import ru.lephant.java.rgatu.TestingSystem.validators.impl.TestValidator;
 
+import java.io.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -128,8 +133,37 @@ public class TestEditingController implements Initializable, PostInitializable {
         questionList.getSelectionModel().select(questionNumber);
         currentQuestion = test.getQuestions().get(questionNumber);
         changeFields();
+        changeImageButtons();
         drawQuestion();
 
+        addImageButton.setOnAction(event -> {
+            FileChooser fileChooser = DialogFactory.createImageFileChooser();
+            File file = fileChooser.showOpenDialog(currentStage);
+            if (file != null) {
+                try (
+                        ByteArrayOutputStream out = new ByteArrayOutputStream();
+                        InputStream input = new BufferedInputStream(new FileInputStream(file), 1024)
+                ) {
+                    byte[] data = new byte[1024];
+                    while (input.read(data) != -1) {
+                        out.write(data);
+                    }
+                    currentQuestion.setImage(out.toByteArray());
+                    imageDrawer.drawImage(currentQuestion, choiceBox, 0);
+                    changeImageButtons();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        deleteImageButton.setOnAction(event -> {
+            Node node = choiceBox.getChildren().get(0);
+            if (node instanceof ImageView) {
+                currentQuestion.setImage(null);
+                choiceBox.getChildren().remove(0);
+                changeImageButtons();
+            }
+        });
         questionTextField.textProperty().addListener((observable, oldValue, newValue) -> currentQuestion.setText(newValue));
         questionValueField.textProperty().addListener(((observable, oldValue, newValue) -> currentQuestion.setValue(Integer.parseInt(newValue))));
     }
@@ -144,6 +178,8 @@ public class TestEditingController implements Initializable, PostInitializable {
         questionTextField.setDisable(isLock);
         questionValueField.setDisable(isLock);
         addChoiceButton.setDisable(isLock);
+        addImageButton.setDisable(isLock);
+        deleteImageButton.setDisable(isLock);
     }
 
     private void changeFields() {
@@ -154,10 +190,16 @@ public class TestEditingController implements Initializable, PostInitializable {
     private void drawQuestion() {
         choiceBox.getChildren().clear();
         if (currentQuestion.getImage() != null) {
-            imageDrawer.drawImage(currentQuestion.getImage(), choiceBox, 0);
+            imageDrawer.drawImage(currentQuestion, choiceBox, 0);
         }
         QuestionDrawer questionDrawer = questionDrawerFactory.getQuestionDrawer(currentQuestion);
         questionDrawer.draw(currentQuestion, choiceBox, true);
+    }
+
+    private void changeImageButtons() {
+        boolean imageExists = currentQuestion.getImage() != null;
+        addImageButton.setVisible(!imageExists);
+        deleteImageButton.setVisible(imageExists);
     }
 
 

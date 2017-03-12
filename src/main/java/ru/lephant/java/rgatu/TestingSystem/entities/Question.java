@@ -2,6 +2,7 @@ package ru.lephant.java.rgatu.TestingSystem.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Arrays;
 
 @Entity
 @Table(name = "questions")
@@ -11,7 +12,7 @@ public abstract class Question implements Serializable {
     private long id;
     private Test test;
     private String text;
-    private Image image;
+    private byte[] image;
     private int value;
 
 
@@ -25,7 +26,7 @@ public abstract class Question implements Serializable {
         this.value = value;
     }
 
-    public Question(Test test, String text, int value, Image image) {
+    public Question(Test test, String text, int value, byte[] image) {
         this.test = test;
         this.text = text;
         this.image = image;
@@ -64,13 +65,14 @@ public abstract class Question implements Serializable {
         this.text = text;
     }
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "image_id", referencedColumnName = "id")
-    public Image getImage() {
+    @Lob
+    @Basic(fetch = FetchType.EAGER)
+    @Column(name = "image")
+    public byte[] getImage() {
         return image;
     }
 
-    public void setImage(Image image) {
+    public void setImage(byte[] image) {
         this.image = image;
     }
 
@@ -94,17 +96,17 @@ public abstract class Question implements Serializable {
 
         if (id != question.id) return false;
         if (value != question.value) return false;
-        if (!test.equals(question.test)) return false;
-        if (!text.equals(question.text)) return false;
-        return image != null ? image.equals(question.image) : question.image == null;
+        if (test != null ? !test.equals(question.test) : question.test != null) return false;
+        if (text != null ? !text.equals(question.text) : question.text != null) return false;
+        return Arrays.equals(image, question.image);
     }
 
     @Override
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + test.hashCode();
-        result = 31 * result + text.hashCode();
-        result = 31 * result + (image != null ? image.hashCode() : 0);
+        result = 31 * result + (test != null ? test.hashCode() : 0);
+        result = 31 * result + (text != null ? text.hashCode() : 0);
+        result = 31 * result + Arrays.hashCode(image);
         result = 31 * result + value;
         return result;
     }

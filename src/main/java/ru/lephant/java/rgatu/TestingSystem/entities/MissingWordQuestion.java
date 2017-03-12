@@ -21,7 +21,7 @@ public class MissingWordQuestion extends Question implements Serializable {
         super(test, text, value);
     }
 
-    public MissingWordQuestion(Test test, String text, int value, Image image) {
+    public MissingWordQuestion(Test test, String text, int value, byte[] image) {
         super(test, text, value, image);
     }
 
