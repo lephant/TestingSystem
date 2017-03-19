@@ -29,6 +29,7 @@ public class SingleChoiceContextMenuDrawer implements ContextMenuDrawer<Choice, 
                 if (result.isPresent()) {
                     choice.setText(result.get());
                     radioButton.setText(result.get());
+                    radioButton.autosize();
                 }
             }
         });

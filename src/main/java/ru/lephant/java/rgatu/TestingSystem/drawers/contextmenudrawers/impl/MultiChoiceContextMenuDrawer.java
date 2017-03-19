@@ -29,6 +29,7 @@ public class MultiChoiceContextMenuDrawer implements ContextMenuDrawer<Choice, C
                 if (result.isPresent()) {
                     choice.setText(result.get());
                     checkBox.setText(result.get());
+                    checkBox.autosize();
                 }
             }
         });

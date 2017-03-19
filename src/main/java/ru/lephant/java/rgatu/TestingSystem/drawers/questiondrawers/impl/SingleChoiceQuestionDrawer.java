@@ -33,7 +33,7 @@ public class SingleChoiceQuestionDrawer implements QuestionDrawer {
             RadioButton radioButton = new RadioButton(choice.getText());
             radioButton.setToggleGroup(toggleGroup);
             radioButton.setWrapText(true);
-
+            radioButton.autosize();
             if (isEditMode) {
                 radioButton.setOnAction(new EventHandler<ActionEvent>() {
                     @Override

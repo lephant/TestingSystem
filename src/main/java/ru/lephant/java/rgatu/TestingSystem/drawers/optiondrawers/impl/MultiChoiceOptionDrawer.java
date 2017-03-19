@@ -30,6 +30,8 @@ public class MultiChoiceOptionDrawer implements OptionDrawer {
         CheckBox checkBox = new CheckBox();
         checkBox.setText("Новый вариант");
         checkBox.setSelected(false);
+        checkBox.setWrapText(true);
+        checkBox.autosize();
 
         checkBox.setOnAction(new EventHandler<ActionEvent>() {
             @Override

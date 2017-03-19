@@ -36,6 +36,8 @@ public class SingleChoiceOptionDrawer implements OptionDrawer {
         radioButton.setToggleGroup(toggleGroup);
         radioButton.setText("Новый вариант");
         radioButton.setSelected(false);
+        radioButton.setWrapText(true);
+        radioButton.autosize();
 
         radioButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override

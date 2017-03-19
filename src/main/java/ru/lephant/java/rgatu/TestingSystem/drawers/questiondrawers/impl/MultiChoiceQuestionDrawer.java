@@ -27,6 +27,7 @@ public class MultiChoiceQuestionDrawer implements QuestionDrawer {
         for (Choice choice : multiChoiceQuestion.getChoices()) {
             CheckBox checkBox = new CheckBox(choice.getText());
             checkBox.setWrapText(true);
+            checkBox.autosize();
             if (isEditMode) {
                 checkBox.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
