@@ -46,6 +46,9 @@ public class TestSelectionController extends AbstractController implements Refre
     private MenuItem testDeleteMenuItem;
 
     @FXML
+    private MenuItem showSettingMenuItem;
+
+    @FXML
     private MenuItem logInMenuItem;
 
     @FXML
@@ -83,6 +86,15 @@ public class TestSelectionController extends AbstractController implements Refre
         tests.setAll(DaoFacade.getTestDAOService().getList());
     }
 
+
+    @FXML
+    public void onShowSettingMenuItemClicked() {
+        Stage connectionSettingStage = TransitionFacade.getConnectionTransitionService().createConnectionSettingStage();
+        changePositionOfStage(currentStage, connectionSettingStage);
+        HibernateUtil.closeSessionFactory();
+        currentStage.close();
+        connectionSettingStage.show();
+    }
 
     @FXML
     public void onLogInMenuItemClicked() {
@@ -216,6 +228,8 @@ public class TestSelectionController extends AbstractController implements Refre
 
         testDeleteMenuItem.setDisable(!isAuthorized);
         testDeleteMenuItem.setVisible(isAuthorized);
+
+        showSettingMenuItem.setVisible(isAuthorized);
 
         logInMenuItem.setVisible(!isAuthorized);
         logOutMenuItem.setVisible(isAuthorized);

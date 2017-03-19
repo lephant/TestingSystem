@@ -60,6 +60,8 @@
             <menus>
                 <Menu mnemonicParsing="false" text="Degress">
                     <items>
+                        <MenuItem fx:id="showSettingMenuItem" mnemonicParsing="false"
+                                  onAction="#onShowSettingMenuItemClicked" text="Настройки"/>
                         <MenuItem fx:id="logInMenuItem" mnemonicParsing="false" onAction="#onLogInMenuItemClicked"
                                   text="Авторизоваться"/>
                         <MenuItem fx:id="logOutMenuItem" mnemonicParsing="false" onAction="#onLogOffMenuItemClicked"
