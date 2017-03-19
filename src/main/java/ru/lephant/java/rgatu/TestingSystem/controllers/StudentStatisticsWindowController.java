@@ -3,7 +3,6 @@ package ru.lephant.java.rgatu.TestingSystem.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -16,7 +15,6 @@ import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.DialogFactory;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
-import ru.lephant.java.rgatu.TestingSystem.interfaces.PostInitializable;
 import ru.lephant.java.rgatu.TestingSystem.transitions.TransitionFacade;
 
 import java.net.URL;
@@ -25,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public class StudentStatisticsWindowController implements Initializable, PostInitializable {
+public class StudentStatisticsWindowController extends AbstractController {
 
     private static final String SUBJECT_KEY = "subject";
     private static final String RESULT_KEY = "result";
@@ -84,6 +82,7 @@ public class StudentStatisticsWindowController implements Initializable, PostIni
         if (currentMap != null) {
             Subject subject = (Subject) currentMap.get(SUBJECT_KEY);
             Stage studentStatisticsChartStage = TransitionFacade.getStudentTransitionService().createStudentStatisticsChartStage(currentStage, student, subject);
+            changePositionOfStage(currentStage, studentStatisticsChartStage);
             studentStatisticsChartStage.show();
         } else {
             Alert noSelectedItemAlert = DialogFactory.createNoSelectedItemAlert("Не выбрана запись!");

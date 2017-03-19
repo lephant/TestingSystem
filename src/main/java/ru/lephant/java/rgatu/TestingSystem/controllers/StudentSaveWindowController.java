@@ -3,21 +3,19 @@ package ru.lephant.java.rgatu.TestingSystem.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.entities.Group;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
-import ru.lephant.java.rgatu.TestingSystem.interfaces.PostInitializable;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
 import ru.lephant.java.rgatu.TestingSystem.validators.impl.StudentValidator;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class StudentSaveWindowController implements Initializable, PostInitializable {
+public class StudentSaveWindowController extends AbstractController {
 
     @FXML
     private TextField fioField;

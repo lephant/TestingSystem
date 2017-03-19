@@ -64,6 +64,9 @@ public class GroupTransitionService {
             dialogStage.setScene(new Scene(root));
             dialogStage.getIcons().add(ReferenceData.getLogoImage());
             dialogStage.setTitle(title);
+
+            dialogStage.setWidth(350D);
+            dialogStage.setHeight(140D);
             dialogStage.setResizable(false);
 
             dialogStage.initModality(Modality.WINDOW_MODAL);

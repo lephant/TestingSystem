@@ -3,7 +3,6 @@ package ru.lephant.java.rgatu.TestingSystem.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -22,7 +21,6 @@ import ru.lephant.java.rgatu.TestingSystem.entities.Question;
 import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
 import ru.lephant.java.rgatu.TestingSystem.entities.Teacher;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
-import ru.lephant.java.rgatu.TestingSystem.interfaces.PostInitializable;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
 import ru.lephant.java.rgatu.TestingSystem.transitions.TransitionFacade;
 import ru.lephant.java.rgatu.TestingSystem.validators.impl.TestValidator;
@@ -31,7 +29,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class TestEditingController implements Initializable, PostInitializable {
+public class TestEditingController extends AbstractController {
 
     @FXML
     private TextField testNameField;
@@ -105,6 +103,7 @@ public class TestEditingController implements Initializable, PostInitializable {
     public void postInitialize() {
         currentStage.setOnCloseRequest(event -> {
             parentController.refreshData();
+            changePositionOfStage(currentStage, mainStage);
             mainStage.show();
         });
 
@@ -210,6 +209,7 @@ public class TestEditingController implements Initializable, PostInitializable {
             Pair<Stage, QuestionCreationController> stageAndController = TransitionFacade.getTestTransitionService().createQuestionAddingStage(currentStage);
             Stage questionAddingStage = stageAndController.getKey();
             QuestionCreationController questionCreationController = stageAndController.getValue();
+            changePositionOfStage(currentStage, questionAddingStage);
             questionAddingStage.showAndWait();
 
             Question createdQuestion = questionCreationController.getCreatedQuestion();
@@ -244,6 +244,7 @@ public class TestEditingController implements Initializable, PostInitializable {
         if (testValidator.validate(test)) {
             DaoFacade.getTestDAOService().save(test);
             parentController.refreshData();
+            changePositionOfStage(currentStage, mainStage);
             currentStage.close();
             mainStage.show();
         }

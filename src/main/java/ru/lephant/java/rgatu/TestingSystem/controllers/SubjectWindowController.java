@@ -3,7 +3,6 @@ package ru.lephant.java.rgatu.TestingSystem.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
@@ -11,7 +10,6 @@ import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.DialogFactory;
 import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
-import ru.lephant.java.rgatu.TestingSystem.interfaces.PostInitializable;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
 import ru.lephant.java.rgatu.TestingSystem.transitions.TransitionFacade;
 
@@ -19,7 +17,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class SubjectWindowController implements Initializable, RefreshableController, PostInitializable {
+public class SubjectWindowController extends AbstractController implements RefreshableController {
 
     @FXML
     private ListView<Subject> subjectListView;
@@ -37,7 +35,10 @@ public class SubjectWindowController implements Initializable, RefreshableContro
 
     @Override
     public void postInitialize() {
-        currentStage.setOnCloseRequest(event -> mainStage.show());
+        currentStage.setOnCloseRequest(event -> {
+            changePositionOfStage(currentStage, mainStage);
+            mainStage.show();
+        });
     }
 
     @Override
@@ -50,6 +51,7 @@ public class SubjectWindowController implements Initializable, RefreshableContro
     public void onAddButtonClicked() {
         Subject subject = new Subject();
         Stage subjectSaveStage = TransitionFacade.getSubjectTransitionService().createSubjectSaveStage(currentStage, "Добавление предмета", subject, this);
+        changePositionOfStage(currentStage, subjectSaveStage);
         subjectSaveStage.show();
     }
 
@@ -63,6 +65,7 @@ public class SubjectWindowController implements Initializable, RefreshableContro
         }
         Subject subject = subjects.get(index);
         Stage subjectSaveStage = TransitionFacade.getSubjectTransitionService().createSubjectSaveStage(currentStage, "Редактирование предмета", subject, this);
+        changePositionOfStage(currentStage, subjectSaveStage);
         subjectSaveStage.show();
     }
 

@@ -111,6 +111,13 @@ public class DialogFactory {
         return alert;
     }
 
+    public static Alert createConnectionErrorAlert() {
+        Alert alert = createDefaultAlert(Alert.AlertType.ERROR, "Ошибка");
+        alert.setHeaderText("Не удалось соединиться с базой данных!");
+        alert.setContentText("Проверьте введенные данные и попробуйте снова.");
+        return alert;
+    }
+
     public static FileChooser createImageFileChooser() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Загрузить картинку");

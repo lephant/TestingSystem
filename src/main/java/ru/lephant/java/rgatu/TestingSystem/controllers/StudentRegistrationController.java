@@ -3,7 +3,6 @@ package ru.lephant.java.rgatu.TestingSystem.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
@@ -18,7 +17,7 @@ import ru.lephant.java.rgatu.TestingSystem.validators.impl.StudentValidator;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class StudentRegistrationController implements Initializable {
+public class StudentRegistrationController extends AbstractController {
 
     @FXML
     private TextField fioField;
@@ -48,6 +47,7 @@ public class StudentRegistrationController implements Initializable {
         if (studentValidator.validate(student)) {
             DaoFacade.getStudentDAOService().save(student);
             Stage testExecutionStage = TransitionFacade.getTestTransitionService().createTestExecutionStage(mainStage, test, student);
+            changePositionOfStage(mainStage, testExecutionStage);
             mainStage.hide();
             testExecutionStage.show();
         } else {
@@ -57,7 +57,8 @@ public class StudentRegistrationController implements Initializable {
 
     @FXML
     public void onCancelClick() {
-        Stage studentSelectionStage = TransitionFacade.getStudentTransitionService().createStudentSelectionStage(currentStage, test);
+        Stage studentSelectionStage = TransitionFacade.getStudentTransitionService().createStudentSelectionStage(mainStage, test);
+        changePositionOfStage(currentStage, studentSelectionStage);
         currentStage.close();
         studentSelectionStage.show();
     }

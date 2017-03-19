@@ -1,7 +1,6 @@
 package ru.lephant.java.rgatu.TestingSystem.controllers;
 
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
@@ -13,7 +12,7 @@ import ru.lephant.java.rgatu.TestingSystem.resolvers.CreationQuestionResolver;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class QuestionCreationController implements Initializable {
+public class QuestionCreationController extends AbstractController {
 
     @FXML
     public ToggleGroup toggleGroup;

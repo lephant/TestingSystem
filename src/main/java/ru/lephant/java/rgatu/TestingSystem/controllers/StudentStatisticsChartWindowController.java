@@ -9,12 +9,11 @@ import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
 import ru.lephant.java.rgatu.TestingSystem.entities.TestOfStudent;
-import ru.lephant.java.rgatu.TestingSystem.interfaces.PostInitializable;
 
 import java.util.Date;
 import java.util.List;
 
-public class StudentStatisticsChartWindowController implements PostInitializable {
+public class StudentStatisticsChartWindowController extends AbstractController {
 
     @FXML
     private AreaChart<String, Double> areaChart;

@@ -3,7 +3,6 @@ package ru.lephant.java.rgatu.TestingSystem.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -16,7 +15,6 @@ import ru.lephant.java.rgatu.TestingSystem.entities.Question;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
 import ru.lephant.java.rgatu.TestingSystem.entities.TestOfStudent;
-import ru.lephant.java.rgatu.TestingSystem.interfaces.PostInitializable;
 import ru.lephant.java.rgatu.TestingSystem.testcheckers.TestChecker;
 import ru.lephant.java.rgatu.TestingSystem.testcheckers.defaultchecker.DefaultTestChecker;
 
@@ -29,7 +27,7 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class TestExecutionController implements Initializable, PostInitializable {
+public class TestExecutionController extends AbstractController {
 
     @FXML
     private ListView<String> questionList;
@@ -73,7 +71,10 @@ public class TestExecutionController implements Initializable, PostInitializable
 
     @Override
     public void postInitialize() {
-        currentStage.setOnCloseRequest(event -> mainStage.show());
+        currentStage.setOnCloseRequest(event -> {
+            changePositionOfStage(currentStage, mainStage);
+            mainStage.show();
+        });
         test = DaoFacade.getTestDAOService().getByPK(test.getId());
         if (test.isRandomOrder()) {
             Collections.shuffle(test.getQuestions());

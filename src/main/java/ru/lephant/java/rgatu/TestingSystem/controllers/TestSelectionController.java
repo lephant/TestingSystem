@@ -3,7 +3,6 @@ package ru.lephant.java.rgatu.TestingSystem.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
@@ -15,7 +14,6 @@ import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.DialogFactory;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
-import ru.lephant.java.rgatu.TestingSystem.interfaces.PostInitializable;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
 import ru.lephant.java.rgatu.TestingSystem.transitions.TransitionFacade;
 
@@ -23,7 +21,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class TestSelectionController implements Initializable, RefreshableController, PostInitializable {
+public class TestSelectionController extends AbstractController implements RefreshableController {
 
     @FXML
     private TableView<Test> testTableView;
@@ -64,7 +62,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        authorize(false);
+        authorize(true);
 
         tests.setAll(DaoFacade.getTestDAOService().getList());
 
@@ -115,6 +113,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
     @FXML
     public void onShowStudentsMenuItemClicked() {
         Stage studentListStage = TransitionFacade.getStudentTransitionService().createStudentListStage(currentStage);
+        changePositionOfStage(currentStage, studentListStage);
         currentStage.hide();
         studentListStage.show();
     }
@@ -122,6 +121,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
     @FXML
     public void onShowTeachersMenuItemClicked() {
         Stage teacherStage = TransitionFacade.getTeacherTransitionService().createTeacherListStage(currentStage);
+        changePositionOfStage(currentStage, teacherStage);
         currentStage.hide();
         teacherStage.show();
     }
@@ -129,6 +129,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
     @FXML
     public void onShowSubjectsMenuItemClicked() {
         Stage subjectStage = TransitionFacade.getSubjectTransitionService().createSubjectListStage(currentStage);
+        changePositionOfStage(currentStage, subjectStage);
         currentStage.hide();
         subjectStage.show();
     }
@@ -136,6 +137,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
     @FXML
     public void onShowGroupsMenuItemClicked() {
         Stage groupStage = TransitionFacade.getGroupTransitionService().createGroupListStage(currentStage);
+        changePositionOfStage(currentStage, groupStage);
         currentStage.hide();
         groupStage.show();
     }
@@ -162,6 +164,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
     @FXML
     public void onCreateTestMenuItemClicked() {
         Stage testEditingStage = TransitionFacade.getTestTransitionService().createTestEditingStage(currentStage, new Test(), this);
+        changePositionOfStage(currentStage, testEditingStage);
         currentStage.hide();
         testEditingStage.show();
     }
@@ -171,6 +174,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
         Test test = testTableView.getSelectionModel().getSelectedItem();
         if (test != null) {
             Stage testEditingStage = TransitionFacade.getTestTransitionService().createTestEditingStage(currentStage, test, this);
+            changePositionOfStage(currentStage, testEditingStage);
             currentStage.hide();
             testEditingStage.show();
         } else {
@@ -225,6 +229,7 @@ public class TestSelectionController implements Initializable, RefreshableContro
         Test test = testTableView.getSelectionModel().getSelectedItem();
         if (test != null) {
             Stage studentSelectionStage = TransitionFacade.getStudentTransitionService().createStudentSelectionStage(currentStage, test);
+            changePositionOfStage(currentStage, studentSelectionStage);
             studentSelectionStage.show();
         } else {
             Alert noSelectedItemAlert = DialogFactory.createNoSelectedItemAlert("Не выбран тест для выполнения!");

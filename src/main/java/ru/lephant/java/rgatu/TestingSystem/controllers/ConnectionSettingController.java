@@ -5,12 +5,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import ru.lephant.java.rgatu.TestingSystem.dialogs.DialogFactory;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
 import ru.lephant.java.rgatu.TestingSystem.transitions.TransitionFacade;
 
 import java.util.Properties;
 
-public class ConnectionSettingController {
+public class ConnectionSettingController extends AbstractController {
 
     @FXML
     TextField urlField;
@@ -40,21 +41,15 @@ public class ConnectionSettingController {
 
         if (HibernateUtil.checkConnection(properties)) {
             Stage testSelectionStage = TransitionFacade.getTestTransitionService().createTestSelectionStage();
+            changePositionOfStage(currentStage, testSelectionStage);
             currentStage.close();
             testSelectionStage.show();
         } else {
-            showConnectionErrorAlert();
+            Alert connectionErrorAlert = DialogFactory.createConnectionErrorAlert();
+            connectionErrorAlert.show();
         }
     }
 
-
-    private void showConnectionErrorAlert() {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Ошибка");
-        alert.setHeaderText("Не удалось соединиться с базой данных!");
-        alert.setContentText("Проверьте введенные данные и попробуйте снова.");
-        alert.show();
-    }
 
     public void setCurrentStage(Stage currentStage) {
         this.currentStage = currentStage;
