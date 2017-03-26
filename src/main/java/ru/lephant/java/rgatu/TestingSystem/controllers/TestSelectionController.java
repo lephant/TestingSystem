@@ -65,7 +65,7 @@ public class TestSelectionController extends AbstractController implements Refre
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        authorize(true);
+        authorize(false);
 
         tests.setAll(DaoFacade.getTestDAOService().getList());
 
