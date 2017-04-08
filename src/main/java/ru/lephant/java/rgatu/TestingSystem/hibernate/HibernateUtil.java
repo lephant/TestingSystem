@@ -14,7 +14,8 @@ public class HibernateUtil {
     private static final String HIBERNATE_CONNECTION_USERNAME = "hibernate.connection.username";
     private static final String HIBERNATE_CONNECTION_PASSWORD = "hibernate.connection.password";
 
-    private static final String PROPERTIES_FILE_PATH = "src/main/resources/hibernate.properties";
+    private static final String PROPERTIES_FILE_PATH = "hibernate.properties";
+    private static final String HIBERNATE_CFG_XML_PATH = "hibernate.cfg.xml";
 
     private static SessionFactory sessionFactory;
 
@@ -55,7 +56,7 @@ public class HibernateUtil {
 
     private static SessionFactory buildSessionFactory() {
         try {
-            Configuration configuration = new Configuration().configure("hibernate.cfg.xml");
+            Configuration configuration = new Configuration().configure(HIBERNATE_CFG_XML_PATH);
             Properties properties = configuration.getProperties();
 
             setChangeableProperties(properties);
@@ -71,7 +72,7 @@ public class HibernateUtil {
 
     private static SessionFactory buildSessionFactory(Properties prop) {
         try {
-            Configuration configuration = new Configuration().configure("hibernate.cfg.xml");
+            Configuration configuration = new Configuration().configure(HIBERNATE_CFG_XML_PATH);
             Properties properties = configuration.getProperties();
 
             properties.putAll(prop);
@@ -99,7 +100,8 @@ public class HibernateUtil {
     private static void loadProperties(Properties prop) {
         InputStream input = null;
         try {
-            input = new FileInputStream(PROPERTIES_FILE_PATH);
+            File file = new File(PROPERTIES_FILE_PATH);
+            input = new FileInputStream(file);
             prop.load(input);
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -117,7 +119,8 @@ public class HibernateUtil {
     private static void saveNewProperties(Properties prop) {
         OutputStream output = null;
         try {
-            output = new FileOutputStream(PROPERTIES_FILE_PATH);
+            File file = new File(PROPERTIES_FILE_PATH);
+            output = new FileOutputStream(file);
             prop.store(output, null);
         } catch (IOException ex) {
             ex.printStackTrace();

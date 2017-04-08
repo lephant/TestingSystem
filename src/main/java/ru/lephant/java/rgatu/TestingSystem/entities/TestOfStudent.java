@@ -13,6 +13,7 @@ public class TestOfStudent implements Serializable {
     private Student student;
     private Test test;
     private BigDecimal result;
+    private int mark;
     private String computerName;
     private Date dateAndTime;
 
@@ -96,6 +97,16 @@ public class TestOfStudent implements Serializable {
     }
 
     @Basic
+    @Column(name = "mark", nullable = false)
+    public int getMark() {
+        return mark;
+    }
+
+    public void setMark(int mark) {
+        this.mark = mark;
+    }
+
+    @Basic
     @Column(name = "computer_name", nullable = false, length = 255)
     public String getComputerName() {
         return computerName;
@@ -124,6 +135,7 @@ public class TestOfStudent implements Serializable {
         TestOfStudent that = (TestOfStudent) o;
 
         if (id != that.id) return false;
+        if (mark != that.mark) return false;
         if (!student.equals(that.student)) return false;
         if (!test.equals(that.test)) return false;
         if (!result.equals(that.result)) return false;
@@ -137,6 +149,7 @@ public class TestOfStudent implements Serializable {
         result1 = 31 * result1 + student.hashCode();
         result1 = 31 * result1 + test.hashCode();
         result1 = 31 * result1 + result.hashCode();
+        result1 = 31 * result1 + mark;
         result1 = 31 * result1 + computerName.hashCode();
         result1 = 31 * result1 + dateAndTime.hashCode();
         return result1;

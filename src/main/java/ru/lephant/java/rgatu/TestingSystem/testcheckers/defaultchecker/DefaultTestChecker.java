@@ -1,5 +1,6 @@
 package ru.lephant.java.rgatu.TestingSystem.testcheckers.defaultchecker;
 
+import javafx.util.Pair;
 import ru.lephant.java.rgatu.TestingSystem.entities.Question;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
 import ru.lephant.java.rgatu.TestingSystem.testcheckers.TestChecker;
@@ -16,7 +17,7 @@ public class DefaultTestChecker implements TestChecker {
     }
 
     @Override
-    public double check(Test test) {
+    public Pair<Double, Integer> check(Test test) {
         int receivedScores = 0;
         int totalScores = 0;
 
@@ -28,6 +29,14 @@ public class DefaultTestChecker implements TestChecker {
             }
         }
 
-        return (double) receivedScores / (double) totalScores;
+        double percent = (double) receivedScores / (double) totalScores;
+
+        int mark;
+        if (percent >= 91) mark = 5;
+        else if (percent >= 76) mark = 4;
+        else if (percent >= 60) mark = 3;
+        else mark = 2;
+
+        return new Pair<>(percent, mark);
     }
 }

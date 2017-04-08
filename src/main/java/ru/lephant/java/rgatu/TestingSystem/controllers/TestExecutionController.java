@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.DialogFactory;
 import ru.lephant.java.rgatu.TestingSystem.drawers.QuestionDrawerFactory;
@@ -104,7 +105,9 @@ public class TestExecutionController extends AbstractController {
             testOfStudent = new TestOfStudent();
             testOfStudent.setTest(test);
             testOfStudent.setStudent(student);
-            testOfStudent.setResult(BigDecimal.valueOf(testChecker.check(test)));
+            Pair<Double, Integer> results = testChecker.check(test);
+            testOfStudent.setResult(BigDecimal.valueOf(results.getKey()));
+            testOfStudent.setMark(results.getValue());
             testOfStudent.setComputerName(InetAddress.getLocalHost().getHostName());
             testOfStudent.setDateAndTime(new Date());
         } catch (UnknownHostException e) {
@@ -119,7 +122,8 @@ public class TestExecutionController extends AbstractController {
                 "Предмет: " + testOfStudent.getTest().getSubject().getName() + "\n" +
                 "Преподаватель: " + testOfStudent.getTest().getTeacher().getFio() + "\n" +
                 "Вы: " + testOfStudent.getStudent().getFio() + " (" + testOfStudent.getStudent().getGroup().getName() + ")\n" +
-                "Результат: " + ((double) ((int) (testOfStudent.getResult().doubleValue() * 10000)) / 100.0) + "%" +
+                "Результат: " + ((double) ((int) (testOfStudent.getResult().doubleValue() * 10000)) / 100.0) + "%\n\n" +
+                "Оценка: " + testOfStudent.getMark() +
                 "\n\n" +
                 "Результат успешно сохранен на сервер!"
         );
