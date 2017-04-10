@@ -10,8 +10,10 @@ import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
 import ru.lephant.java.rgatu.TestingSystem.entities.TestOfStudent;
 import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
+import ru.lephant.java.rgatu.TestingSystem.searchcriteries.StudentResultsSearchCriteria;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.List;
 
 public class StudentResultsDAOService extends AbstractCRUDDAOService<TestOfStudent> {
@@ -59,5 +61,32 @@ public class StudentResultsDAOService extends AbstractCRUDDAOService<TestOfStude
         projectionList.add(Projections.avg("result"));
         criteria.setProjection(projectionList);
         return criteria.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<TestOfStudent> getResultsByCriteria(StudentResultsSearchCriteria searchCriteria) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Criteria criteria = session.createCriteria(TestOfStudent.class);
+        if (searchCriteria.getGroups() != null && !searchCriteria.getGroups().isEmpty()) {
+            criteria.createAlias("student", "student");
+            criteria.createAlias("student.group", "group");
+            criteria.add(Restrictions.in("student.group", searchCriteria.getGroups()));
+        }
+        if (searchCriteria.getDate() != null) {
+            Calendar from = Calendar.getInstance();
+            from.setTime(searchCriteria.getDate());
+            Calendar to = Calendar.getInstance();
+            to.setTime(searchCriteria.getDate());
+            to.add(Calendar.HOUR, 24);
+            criteria.add(
+                    Restrictions.and(
+                            Restrictions.ge("dateAndTime", from.getTime()),
+                            Restrictions.le("dateAndTime", to.getTime())
+                    )
+            );
+        }
+        List<TestOfStudent> testOfStudentList = criteria.list();
+        session.close();
+        return testOfStudentList;
     }
 }

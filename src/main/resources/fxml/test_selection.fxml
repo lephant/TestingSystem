@@ -80,6 +80,7 @@
                                   text="Показать предметы"/>
                         <MenuItem mnemonicParsing="false" onAction="#onShowGroupsMenuItemClicked"
                                   text="Показать группы"/>
+                        <MenuItem mnemonicParsing="false" onAction="#onShowResultsMenuItemClicked" text="Результаты"/>
                     </items>
                 </Menu>
                 <Menu fx:id="createTestMenuItem" mnemonicParsing="false" text="Тест">

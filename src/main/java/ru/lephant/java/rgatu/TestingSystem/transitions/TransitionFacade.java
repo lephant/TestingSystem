@@ -16,6 +16,8 @@ public class TransitionFacade {
 
     private static TeacherTransitionService teacherTransitionService;
 
+    private static StudentResultsTransitionService studentResultsTransitionService;
+
 
     private TransitionFacade() {
     }
@@ -63,4 +65,10 @@ public class TransitionFacade {
         return teacherTransitionService;
     }
 
+    public static StudentResultsTransitionService getStudentResultsTransitionService() {
+        if (studentResultsTransitionService == null) {
+            studentResultsTransitionService = new StudentResultsTransitionService();
+        }
+        return studentResultsTransitionService;
+    }
 }

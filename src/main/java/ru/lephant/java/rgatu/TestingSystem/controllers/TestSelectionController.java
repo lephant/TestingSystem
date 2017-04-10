@@ -155,6 +155,14 @@ public class TestSelectionController extends AbstractController implements Refre
     }
 
     @FXML
+    public void onShowResultsMenuItemClicked() {
+        Stage studentResultsListStage = TransitionFacade.getStudentResultsTransitionService().createStudentResultsListStage(currentStage);
+        changePositionOfStage(currentStage, studentResultsListStage);
+        currentStage.hide();
+        studentResultsListStage.show();
+    }
+
+    @FXML
     public void onKeyPressed(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
             testSelected();

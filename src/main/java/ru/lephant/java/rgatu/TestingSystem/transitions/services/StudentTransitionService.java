@@ -129,7 +129,12 @@ public class StudentTransitionService {
             dialogStage.setScene(new Scene(root));
             dialogStage.getIcons().add(ReferenceData.getLogoImage());
             dialogStage.setTitle(title);
-            dialogStage.setResizable(false);
+
+            dialogStage.setWidth(350D);
+            dialogStage.setHeight(400D);
+            dialogStage.setMinWidth(300D);
+            dialogStage.setMinHeight(300D);
+            dialogStage.setResizable(true);
 
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(parentStage);

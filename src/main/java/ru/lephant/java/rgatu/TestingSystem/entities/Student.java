@@ -2,6 +2,7 @@ package ru.lephant.java.rgatu.TestingSystem.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "students")
@@ -10,6 +11,7 @@ public class Student implements Serializable {
     private long id;
     private String fio;
     private Group group;
+    private List<TestOfStudent> testOfStudentList;
 
 
     public Student() {
@@ -54,6 +56,15 @@ public class Student implements Serializable {
 
     public void setGroup(Group group) {
         this.group = group;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "student", orphanRemoval = true, cascade = CascadeType.ALL)
+    public List<TestOfStudent> getTestOfStudentList() {
+        return testOfStudentList;
+    }
+
+    public void setTestOfStudentList(List<TestOfStudent> testOfStudentList) {
+        this.testOfStudentList = testOfStudentList;
     }
 
 
