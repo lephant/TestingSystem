@@ -117,7 +117,7 @@ public class TestExecutionController extends AbstractController {
     }
 
     private void showResult(TestOfStudent testOfStudent) {
-        Alert alert = DialogFactory.createResultInformationAlert("Ваши результаты по тесту:\n" +
+        Alert alert = DialogFactory.createInformationAlert("Результаты", "Ваши результаты по тесту:\n" +
                 "Название теста: " + testOfStudent.getTest().getName() + "\n" +
                 "Предмет: " + testOfStudent.getTest().getSubject().getName() + "\n" +
                 "Преподаватель: " + testOfStudent.getTest().getTeacher().getFio() + "\n" +

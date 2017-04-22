@@ -6,7 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.DialogFactory;
-import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
+import ru.lephant.java.rgatu.TestingSystem.util.HibernateUtil;
 import ru.lephant.java.rgatu.TestingSystem.transitions.TransitionFacade;
 
 import java.util.Properties;

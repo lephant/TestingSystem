@@ -9,7 +9,7 @@ import ru.lephant.java.rgatu.TestingSystem.dao.services.AbstractCRUDDAOService;
 import ru.lephant.java.rgatu.TestingSystem.entities.Student;
 import ru.lephant.java.rgatu.TestingSystem.entities.Subject;
 import ru.lephant.java.rgatu.TestingSystem.entities.TestOfStudent;
-import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
+import ru.lephant.java.rgatu.TestingSystem.util.HibernateUtil;
 import ru.lephant.java.rgatu.TestingSystem.searchcriteries.StudentResultsSearchCriteria;
 
 import java.io.Serializable;

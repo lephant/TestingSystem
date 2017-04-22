@@ -5,7 +5,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import ru.lephant.java.rgatu.TestingSystem.dao.services.AbstractCRUDDAOService;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
-import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
+import ru.lephant.java.rgatu.TestingSystem.util.HibernateUtil;
 import java.io.Serializable;
 import java.util.List;
 

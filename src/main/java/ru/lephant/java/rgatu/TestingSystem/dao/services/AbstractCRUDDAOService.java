@@ -2,7 +2,7 @@ package ru.lephant.java.rgatu.TestingSystem.dao.services;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
+import ru.lephant.java.rgatu.TestingSystem.util.HibernateUtil;
 
 public abstract class AbstractCRUDDAOService<T> implements CRUDDaoService<T> {
 

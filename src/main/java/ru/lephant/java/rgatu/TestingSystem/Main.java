@@ -2,7 +2,7 @@ package ru.lephant.java.rgatu.TestingSystem;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
+import ru.lephant.java.rgatu.TestingSystem.util.HibernateUtil;
 import ru.lephant.java.rgatu.TestingSystem.transitions.TransitionFacade;
 
 public class Main extends Application {

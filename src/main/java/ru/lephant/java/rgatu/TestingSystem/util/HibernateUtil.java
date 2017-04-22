@@ -1,4 +1,4 @@
-package ru.lephant.java.rgatu.TestingSystem.hibernate;
+package ru.lephant.java.rgatu.TestingSystem.util;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistry;

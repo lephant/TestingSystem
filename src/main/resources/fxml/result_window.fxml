@@ -53,7 +53,12 @@
                                 <TableView fx:id="resultsTableView" prefHeight="200.0" prefWidth="200.0">
                                     <columns>
                                         <TableColumn fx:id="fioTableColumn" minWidth="80.0" text="ФИО"/>
-                                        <TableColumn fx:id="groupTableColumn" minWidth="80.0" text="Группа"/>
+                                        <TableColumn fx:id="groupTableColumn" minWidth="50.0" prefWidth="50.0"
+                                                     text="Группа"/>
+                                        <TableColumn fx:id="computerTableColumn" minWidth="50.0" prefWidth="50.0"
+                                                     text="Компьютер"/>
+                                        <TableColumn fx:id="dateAndTimeTableColumn" minWidth="50.0" prefWidth="50.0"
+                                                     text="Дата"/>
                                         <TableColumn fx:id="markTableColumn" maxWidth="200.0" minWidth="50.0"
                                                      prefWidth="70.0" text="Оценка"/>
                                     </columns>
@@ -70,6 +75,14 @@
                                     </contextMenu>
                                 </TableView>
                             </center>
+                            <bottom>
+                                <Button mnemonicParsing="false" onAction="#onReportComposeButtonClicked"
+                                        text="Составить отчет" BorderPane.alignment="CENTER">
+                                    <BorderPane.margin>
+                                        <Insets top="10.0"/>
+                                    </BorderPane.margin>
+                                </Button>
+                            </bottom>
                         </BorderPane>
                     </content>
                 </TitledPane>

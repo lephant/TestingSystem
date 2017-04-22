@@ -13,7 +13,7 @@ import javafx.util.Pair;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.DialogFactory;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
-import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
+import ru.lephant.java.rgatu.TestingSystem.util.HibernateUtil;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
 import ru.lephant.java.rgatu.TestingSystem.transitions.TransitionFacade;
 

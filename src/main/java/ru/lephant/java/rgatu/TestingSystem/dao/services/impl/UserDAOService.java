@@ -3,7 +3,7 @@ package ru.lephant.java.rgatu.TestingSystem.dao.services.impl;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import ru.lephant.java.rgatu.TestingSystem.entities.User;
-import ru.lephant.java.rgatu.TestingSystem.hibernate.HibernateUtil;
+import ru.lephant.java.rgatu.TestingSystem.util.HibernateUtil;
 
 public class UserDAOService {
 

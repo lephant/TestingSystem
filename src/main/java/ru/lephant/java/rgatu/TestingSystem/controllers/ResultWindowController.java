@@ -1,23 +1,29 @@
 package ru.lephant.java.rgatu.TestingSystem.controllers;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import ru.lephant.java.rgatu.TestingSystem.dao.DaoFacade;
 import ru.lephant.java.rgatu.TestingSystem.dialogs.DialogFactory;
 import ru.lephant.java.rgatu.TestingSystem.entities.Group;
 import ru.lephant.java.rgatu.TestingSystem.entities.TestOfStudent;
 import ru.lephant.java.rgatu.TestingSystem.searchcriteries.StudentResultsSearchCriteria;
+import ru.lephant.java.rgatu.TestingSystem.writers.ReportBuilder;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class ResultWindowController extends AbstractController {
 
@@ -51,24 +57,39 @@ public class ResultWindowController extends AbstractController {
     private TableColumn<TestOfStudent, String> groupTableColumn;
 
     @FXML
+    private TableColumn<TestOfStudent, String> computerTableColumn;
+
+    @FXML
+    private TableColumn<TestOfStudent, String> dateAndTimeTableColumn;
+
+    @FXML
     private TableColumn<TestOfStudent, Integer> markTableColumn;
 
     private Stage mainStage;
     private Stage currentStage;
 
     private StudentResultsSearchCriteria searchCriteria;
+    private ReportBuilder reportBuilder;
+    private DateFormat dateFormat;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         searchCriteria = new StudentResultsSearchCriteria();
+        reportBuilder = new ReportBuilder();
+        dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
         groups.setAll(DaoFacade.getGroupDAOService().getList());
         groupListView.setItems(groups);
         groupListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-        fioTableColumn.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getStudent().getFio()));
-        groupTableColumn.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getStudent().getGroup().getName()));
+        fioTableColumn.setCellValueFactory(param ->
+                new ReadOnlyObjectWrapper<>(param.getValue().getStudent().getFio()));
+        groupTableColumn.setCellValueFactory(param ->
+                new ReadOnlyObjectWrapper<>(param.getValue().getStudent().getGroup().getName()));
+        computerTableColumn.setCellValueFactory(new PropertyValueFactory<>("computerName"));
+        dateAndTimeTableColumn.setCellValueFactory(param ->
+                new ReadOnlyStringWrapper(dateFormat.format(param.getValue().getDateAndTime())));
         markTableColumn.setCellValueFactory(new PropertyValueFactory<>("mark"));
 
         resultsTableView.setItems(results);
@@ -96,17 +117,37 @@ public class ResultWindowController extends AbstractController {
 
 
     @FXML
+    public void onSearchButtonClicked() {
+        configureSearchCriteria();
+        List<TestOfStudent> resultList = DaoFacade.getStudentResultsDAOService().getResultsByCriteria(searchCriteria);
+        results.setAll(resultList);
+        accordion.setExpandedPane(resultsTab);
+    }
+
+    @FXML
     public void onResetButtonClicked() {
         groupListView.getSelectionModel().clearSelection();
         datePicker.setValue(null);
     }
 
     @FXML
-    public void onSearchButtonClicked() {
-        configureSearchCriteria();
-        List<TestOfStudent> resultList = DaoFacade.getStudentResultsDAOService().getResultsByCriteria(searchCriteria);
-        results.setAll(resultList);
-        accordion.setExpandedPane(resultsTab);
+    public void onReportComposeButtonClicked() {
+        if (results.size() > 0) {
+            String fileName = generateFileName();
+            try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
+                Map<String, Integer> commonData = fillCommonData();
+                XWPFDocument document = reportBuilder.createReport(commonData, results);
+                document.write(outputStream);
+                Alert informationAlert = DialogFactory.createInformationAlert("Сообщение", "Отчет составлен успешно и сохранен в папку /reports.");
+                informationAlert.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Alert noSelectedItemAlert = DialogFactory.createNoSelectedItemAlert(
+                    "Отчет можно составить только в том случае, если найден хотя бы 1 студент!");
+            noSelectedItemAlert.show();
+        }
     }
 
     @FXML
@@ -118,6 +159,33 @@ public class ResultWindowController extends AbstractController {
             Alert deletingErrorAlert = DialogFactory.createDeletingErrorAlert("Не выбрана запись для удаления из списка!");
             deletingErrorAlert.showAndWait();
         }
+    }
+
+
+    private Map<String, Integer> fillCommonData() {
+        int countOfA = 0, countOfB = 0, countOfC = 0, countOfD = 0;
+        for (TestOfStudent testOfStudent : results) {
+            switch (testOfStudent.getMark()) {
+                case 5:
+                    countOfA++;
+                    break;
+                case 4:
+                    countOfB++;
+                    break;
+                case 3:
+                    countOfC++;
+                    break;
+                case 2:
+                    countOfD++;
+                    break;
+            }
+        }
+        Map<String, Integer> commonData = new LinkedHashMap<>();
+        commonData.put("Количество оценок \"5\": ", countOfA);
+        commonData.put("Количество оценок \"4\": ", countOfB);
+        commonData.put("Количество оценок \"3\": ", countOfC);
+        commonData.put("Количество оценок \"2\": ", countOfD);
+        return commonData;
     }
 
     private void configureSearchCriteria() {
@@ -132,6 +200,19 @@ public class ResultWindowController extends AbstractController {
         } else {
             searchCriteria.setGroups(null);
         }
+    }
+
+    private String generateFileName() {
+        Calendar calendar = Calendar.getInstance();
+        String stringDate = calendar.get(Calendar.YEAR)
+                + "-" + calendar.get(Calendar.MONTH)
+                + "-" + calendar.get(Calendar.DAY_OF_MONTH)
+                + "-" + calendar.get(Calendar.HOUR_OF_DAY)
+                + "-" + calendar.get(Calendar.MINUTE)
+                + "-" + calendar.get(Calendar.SECOND);
+        File file = new File("reports");
+        if (!file.exists() || !file.isDirectory()) file.mkdir();
+        return "reports/report-" + stringDate + ".doc";
     }
 
 
