@@ -23,6 +23,7 @@ import ru.lephant.java.rgatu.TestingSystem.entities.Teacher;
 import ru.lephant.java.rgatu.TestingSystem.entities.Test;
 import ru.lephant.java.rgatu.TestingSystem.interfaces.RefreshableController;
 import ru.lephant.java.rgatu.TestingSystem.transitions.TransitionFacade;
+import ru.lephant.java.rgatu.TestingSystem.validators.impl.ImageFileValidator;
 import ru.lephant.java.rgatu.TestingSystem.validators.impl.TestValidator;
 
 import java.io.*;
@@ -78,6 +79,7 @@ public class TestEditingController extends AbstractController {
     private QuestionDrawerFactory questionDrawerFactory;
     private OptionDrawerFactory optionDrawerFactory;
     private TestValidator testValidator;
+    private ImageFileValidator imageFileValidator;
 
     private RefreshableController parentController;
 
@@ -95,6 +97,7 @@ public class TestEditingController extends AbstractController {
         questionDrawerFactory = new QuestionDrawerFactory();
         optionDrawerFactory = new OptionDrawerFactory();
         testValidator = new TestValidator();
+        imageFileValidator = new ImageFileValidator();
 
         questions.add("Добавить");
     }
@@ -139,6 +142,11 @@ public class TestEditingController extends AbstractController {
             FileChooser fileChooser = DialogFactory.createImageFileChooser();
             File file = fileChooser.showOpenDialog(currentStage);
             if (file != null) {
+                if (!imageFileValidator.validate(file)) {
+                    Alert validationErrorAlert = DialogFactory.createValidationErrorAlert(imageFileValidator.getMessage());
+                    validationErrorAlert.show();
+                    return;
+                }
                 try (
                         ByteArrayOutputStream out = new ByteArrayOutputStream();
                         InputStream input = new BufferedInputStream(new FileInputStream(file), 1024)
