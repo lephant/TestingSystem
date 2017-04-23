@@ -141,12 +141,7 @@ public class TestEditingController extends AbstractController {
         addImageButton.setOnAction(event -> {
             FileChooser fileChooser = DialogFactory.createImageFileChooser();
             File file = fileChooser.showOpenDialog(currentStage);
-            if (file != null) {
-                if (!imageFileValidator.validate(file)) {
-                    Alert validationErrorAlert = DialogFactory.createValidationErrorAlert(imageFileValidator.getMessage());
-                    validationErrorAlert.show();
-                    return;
-                }
+            if (file != null && imageFileValidator.validate(file)) {
                 try (
                         ByteArrayOutputStream out = new ByteArrayOutputStream();
                         InputStream input = new BufferedInputStream(new FileInputStream(file), 1024)
@@ -250,11 +245,15 @@ public class TestEditingController extends AbstractController {
         test.setRandomOrder(randomOrderCheckBox.isSelected());
 
         if (testValidator.validate(test)) {
-            DaoFacade.getTestDAOService().save(test);
-            parentController.refreshData();
-            changePositionOfStage(currentStage, mainStage);
-            currentStage.close();
-            mainStage.show();
+            if (DaoFacade.getTestDAOService().save(test)) {
+                parentController.refreshData();
+                changePositionOfStage(currentStage, mainStage);
+                currentStage.close();
+                mainStage.show();
+            } else {
+                Alert savingErrorAlert = DialogFactory.createSavingErrorAlert("Ошибка при сохранении теста. Возможно из-за сохранения слишком большого пакета в базу данных. Увеличьте параметр MAX_ALLOWED_PACKET в конфигурации вашего MySQL, перезапустите и попробуйте снова.");
+                savingErrorAlert.show();
+            }
         }
     }
 

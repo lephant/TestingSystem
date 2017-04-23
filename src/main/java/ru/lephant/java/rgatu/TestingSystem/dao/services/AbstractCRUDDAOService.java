@@ -29,7 +29,7 @@ public abstract class AbstractCRUDDAOService<T> implements CRUDDaoService<T> {
     }
 
     @Override
-    public void save(T object) {
+    public boolean save(T object) {
         Session session = null;
         Transaction transaction = null;
         try {
@@ -37,10 +37,12 @@ public abstract class AbstractCRUDDAOService<T> implements CRUDDaoService<T> {
             transaction = session.beginTransaction();
             session.saveOrUpdate(object);
             transaction.commit();
+            return true;
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
+            return false;
         } finally {
             if (session != null) {
                 session.close();

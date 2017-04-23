@@ -33,6 +33,12 @@ public class DialogFactory {
         return alert;
     }
 
+    public static Alert createSavingErrorAlert(String headerText) {
+        Alert alert = createDefaultAlert(Alert.AlertType.ERROR, ERROR_TITLE);
+        alert.setHeaderText(headerText);
+        return alert;
+    }
+
     public static Alert createValidationErrorAlert(String contentText) {
         Alert alert = createDefaultAlert(Alert.AlertType.ERROR, ERROR_TITLE);
         alert.setHeaderText(VALIDATION_ERROR_HEADER_TEXT);

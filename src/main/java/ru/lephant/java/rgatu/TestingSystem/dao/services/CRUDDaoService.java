@@ -11,6 +11,6 @@ public interface CRUDDaoService<T> {
 
     boolean delete(T object);
 
-    void save(T object);
+    boolean save(T object);
 
 }

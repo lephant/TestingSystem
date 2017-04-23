@@ -1,5 +1,6 @@
 package ru.lephant.java.rgatu.TestingSystem.validators.impl;
 
+import ru.lephant.java.rgatu.TestingSystem.dialogs.DialogFactory;
 import ru.lephant.java.rgatu.TestingSystem.validators.Validator;
 import ru.lephant.java.rgatu.TestingSystem.validators.supportingvalidators.imagefilevalidators.ImageExtensionValidator;
 import ru.lephant.java.rgatu.TestingSystem.validators.supportingvalidators.imagefilevalidators.ImageSizeValidator;
@@ -11,16 +12,14 @@ public class ImageFileValidator implements Validator<File> {
     private ImageExtensionValidator imageExtensionValidator = new ImageExtensionValidator();
     private ImageSizeValidator imageSizeValidator = new ImageSizeValidator();
 
-    private String message;
-
     @Override
     public boolean validate(File file) {
         if (!imageExtensionValidator.validate(file)) {
-            message = imageExtensionValidator.getMessage();
+            DialogFactory.createValidationErrorAlert(imageExtensionValidator.getMessage()).show();
             return false;
         }
         if (!imageSizeValidator.validate(file)) {
-            message = imageSizeValidator.getMessage();
+            DialogFactory.createValidationErrorAlert(imageSizeValidator.getMessage()).show();
             return false;
         }
         return true;
@@ -28,7 +27,7 @@ public class ImageFileValidator implements Validator<File> {
 
     @Override
     public String getMessage() {
-        return message;
+        return "Ошибка валидации файла изображения!";
     }
 
 }
