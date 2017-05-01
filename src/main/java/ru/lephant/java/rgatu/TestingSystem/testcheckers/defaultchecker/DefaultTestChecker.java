@@ -32,9 +32,9 @@ public class DefaultTestChecker implements TestChecker {
         double percent = (double) receivedScores / (double) totalScores;
 
         int mark;
-        if (percent >= 91) mark = 5;
-        else if (percent >= 76) mark = 4;
-        else if (percent >= 60) mark = 3;
+        if (percent >= 0.91) mark = 5;
+        else if (percent >= 0.76) mark = 4;
+        else if (percent >= 0.60) mark = 3;
         else mark = 2;
 
         return new Pair<>(percent, mark);

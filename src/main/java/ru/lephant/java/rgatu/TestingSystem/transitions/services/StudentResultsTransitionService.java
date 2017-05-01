@@ -26,7 +26,7 @@ public class StudentResultsTransitionService {
             resultWindowController.postInitialize();
 
             stage.setScene(new Scene(root));
-            stage.setTitle("Список групп");
+            stage.setTitle("Результаты");
             stage.getIcons().add(ReferenceData.getLogoImage());
 
             stage.setResizable(true);
