@@ -21,39 +21,6 @@ public class TestOfStudent implements Serializable {
     public TestOfStudent() {
     }
 
-    public TestOfStudent(Student student, Test test) {
-        this.student = student;
-        this.test = test;
-    }
-
-    public TestOfStudent(Student student, Test test, BigDecimal result) {
-        this.student = student;
-        this.test = test;
-        this.result = result;
-    }
-
-    public TestOfStudent(Student student, Test test, BigDecimal result, Date dateAndTime) {
-        this.student = student;
-        this.test = test;
-        this.result = result;
-        this.dateAndTime = dateAndTime;
-    }
-
-    public TestOfStudent(Student student, Test test, BigDecimal result, String computerName) {
-        this.student = student;
-        this.test = test;
-        this.result = result;
-        this.computerName = computerName;
-    }
-
-    public TestOfStudent(Student student, Test test, BigDecimal result, String computerName, Date dateAndTime) {
-        this.student = student;
-        this.test = test;
-        this.result = result;
-        this.computerName = computerName;
-        this.dateAndTime = dateAndTime;
-    }
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
